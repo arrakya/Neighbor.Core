@@ -6,7 +6,7 @@ namespace Neighbor.Server.Finance.MonthlyBalance.Services
 {
     public class MonthlyAverageIncomeCalculatorService
     {
-        public IEnumerable<Neighbor.Domain.Models.Finance.MonthlyBalance> CalculateAndSetAverageIncome(IEnumerable<Neighbor.Domain.Models.Finance.MonthlyBalance> models)
+        public IEnumerable<Neighbor.Core.Domain.Models.Finance.MonthlyBalance> CalculateAndSetAverageIncome(IEnumerable<Neighbor.Core.Domain.Models.Finance.MonthlyBalance> models)
         {
             var orderMonthlyHealthModelCollection = models.OrderBy(p => p.MonthNo).ToArray();
 

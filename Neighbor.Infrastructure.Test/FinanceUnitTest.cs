@@ -1,6 +1,6 @@
 using Xunit;
 
-namespace Neighbor.Application.Test
+namespace Neighbor.Core.Application.Test
 {
     public class FinanceUnitTest
     {

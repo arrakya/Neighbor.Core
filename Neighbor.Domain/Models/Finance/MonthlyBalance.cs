@@ -1,4 +1,4 @@
-﻿namespace Neighbor.Domain.Models.Finance
+﻿namespace Neighbor.Core.Domain.Models.Finance
 {
     public class MonthlyBalance
     {

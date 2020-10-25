@@ -1,7 +1,7 @@
 ﻿using Autofac;
-using Neighbor.Domain.Interfaces.Finance;
+using Neighbor.Core.Domain.Interfaces.Finance;
 
-namespace Neighbor.Application
+namespace Neighbor.Core.Application
 {
     public static class ApplicationStartup
     {

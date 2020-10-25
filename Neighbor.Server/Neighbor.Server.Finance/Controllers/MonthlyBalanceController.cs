@@ -26,7 +26,7 @@ namespace Neighbor.Server.Finance.MonthlyBalance.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Neighbor.Domain.Models.Finance.MonthlyBalance> Get(int year)
+        public IEnumerable<Neighbor.Core.Domain.Models.Finance.MonthlyBalance> Get(int year)
         {
             var monthlyBalanceCollection = _monthlyBalanceRetrieveService.Retrieve(year);
             _monthlyAverageIncomeCalculatorService.CalculateAndSetAverageIncome(monthlyBalanceCollection);

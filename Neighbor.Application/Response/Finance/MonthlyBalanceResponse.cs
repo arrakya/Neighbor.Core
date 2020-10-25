@@ -1,7 +1,7 @@
-﻿using Neighbor.Domain.Models.Finance;
+﻿using Neighbor.Core.Domain.Models.Finance;
 using System.Collections.Generic;
 
-namespace Neighbor.Application.Response.Finance
+namespace Neighbor.Core.Application.Response.Finance
 {
     public class MonthlyBalanceResponse
     {

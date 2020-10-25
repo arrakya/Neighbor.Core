@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30611.23
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neighbor.Domain", "Neighbor.Domain\Neighbor.Domain.csproj", "{17DAC6BC-A6BE-4369-BD6E-2473965A3A90}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neighbor.Core.Domain", "Neighbor.Domain\Neighbor.Core.Domain.csproj", "{17DAC6BC-A6BE-4369-BD6E-2473965A3A90}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neighbor.Infrastructure", "Neighbor.Infrastructure\Neighbor.Infrastructure.csproj", "{067A6888-4132-47E5-BFAA-1D825C12D74E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neighbor.Core.Infrastructure", "Neighbor.Infrastructure\Neighbor.Core.Infrastructure.csproj", "{067A6888-4132-47E5-BFAA-1D825C12D74E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neighbor.Infrastructure.Test", "Neighbor.Infrastructure.Test\Neighbor.Infrastructure.Test.csproj", "{54D5657A-09D0-4E64-8715-760780C34083}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neighbor.Core.Infrastructure.Test", "Neighbor.Infrastructure.Test\Neighbor.Core.Infrastructure.Test.csproj", "{54D5657A-09D0-4E64-8715-760780C34083}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neighbor.Application", "Neighbor.Application\Neighbor.Application.csproj", "{5ED936C2-C0BE-4263-9035-7596AAF1F896}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neighbor.Core.Application", "Neighbor.Application\Neighbor.Core.Application.csproj", "{5ED936C2-C0BE-4263-9035-7596AAF1F896}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neighbor.Mobile.Android", "Neighbor.Mobile\Neighbor.Mobile.Android\Neighbor.Mobile.Android.csproj", "{761ED4B7-A7C6-4B90-92B8-6C36A322AE35}"
 EndProject

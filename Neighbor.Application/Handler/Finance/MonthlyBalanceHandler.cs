@@ -1,11 +1,11 @@
 ﻿using MediatR;
-using Neighbor.Application.Request.Finance;
-using Neighbor.Application.Response.Finance;
-using Neighbor.Domain.Interfaces.Finance;
+using Neighbor.Core.Application.Request.Finance;
+using Neighbor.Core.Application.Response.Finance;
+using Neighbor.Core.Domain.Interfaces.Finance;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Neighbor.Application.Handler.Finance
+namespace Neighbor.Core.Application.Handler.Finance
 {
     public class MonthlyBalanceHandler : IRequestHandler<MonthlyBalanceRequest, MonthlyBalanceResponse>
     {

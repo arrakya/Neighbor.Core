@@ -1,14 +1,9 @@
-﻿using System;
-using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
-using Neighbor.Mobile.Services;
-using Neighbor.Mobile.Views;
-using Neighbor.Application;
-using Neighbor.Domain.Interfaces.Finance;
-using Autofac;
-using Xamarin.Forms.Internals;
-using MediatR;
+﻿using Autofac;
 using MediatR.Extensions.Autofac.DependencyInjection;
+using Neighbor.Core.Application;
+using Neighbor.Mobile.Services;
+using Xamarin.Forms;
+using Xamarin.Forms.Internals;
 
 namespace Neighbor.Mobile
 {

@@ -1,5 +1,5 @@
-﻿using Neighbor.Domain.Interfaces.Finance;
-using Neighbor.Domain.Models.Finance;
+﻿using Neighbor.Core.Domain.Interfaces.Finance;
+using Neighbor.Core.Domain.Models.Finance;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Text.Json;
 using System.Linq;
 
-namespace Neighbor.Application
+namespace Neighbor.Core.Application
 {
     public class FinanceRepository : IFinance
     {

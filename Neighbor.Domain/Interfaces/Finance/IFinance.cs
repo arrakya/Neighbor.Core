@@ -1,8 +1,8 @@
-﻿using Neighbor.Domain.Models.Finance;
+﻿using Neighbor.Core.Domain.Models.Finance;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Neighbor.Domain.Interfaces.Finance
+namespace Neighbor.Core.Domain.Interfaces.Finance
 {
     public interface IFinance
     {
