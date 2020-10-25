@@ -1,0 +1,12 @@
+version: "3.8"
+services:
+    monthly-balance:
+        image: arrak/neighbor.finance.monthlybalance
+        ports:
+            - "5000:5000"
+            - "5001:5001"
+        container_name: "monthly-balance"
+        networks:
+            - neighbor
+networks:
+    neighbor:

@@ -9,13 +9,21 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neighbor.Infrastructure", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neighbor.Infrastructure.Test", "Neighbor.Infrastructure.Test\Neighbor.Infrastructure.Test.csproj", "{54D5657A-09D0-4E64-8715-760780C34083}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neighbor.Application", "Neighbor.Application\Neighbor.Application.csproj", "{5ED936C2-C0BE-4263-9035-7596AAF1F896}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neighbor.Application", "Neighbor.Application\Neighbor.Application.csproj", "{5ED936C2-C0BE-4263-9035-7596AAF1F896}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neighbor.Mobile.Android", "Neighbor.Mobile\Neighbor.Mobile.Android\Neighbor.Mobile.Android.csproj", "{761ED4B7-A7C6-4B90-92B8-6C36A322AE35}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neighbor.Mobile.iOS", "Neighbor.Mobile\Neighbor.Mobile.iOS\Neighbor.Mobile.iOS.csproj", "{B003E864-41E8-4B16-A492-D1BD87400938}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neighbor.Mobile", "Neighbor.Mobile\Neighbor.Mobile\Neighbor.Mobile.csproj", "{526CFCCD-F46E-44F2-B45D-CB57698631C6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neighbor.Mobile", "Neighbor.Mobile\Neighbor.Mobile\Neighbor.Mobile.csproj", "{526CFCCD-F46E-44F2-B45D-CB57698631C6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{0C5EBA2C-5E83-484C-A4C6-EDDA95E65CC3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mobile", "Mobile", "{B8E5D408-F5FF-44AB-A37A-FFA61CFA2CD8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{E6842ADC-E320-4E58-AAAD-CE82B3A294DA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neighbor.Server.Finance.MonthlyBalance", "Neighbor.Server\Neighbor.Server.Finance\Neighbor.Server.Finance.MonthlyBalance.csproj", "{8B681420-F10E-4FB4-A5B1-F93F58998CDF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -115,9 +123,31 @@ Global
 		{526CFCCD-F46E-44F2-B45D-CB57698631C6}.Release|iPhone.Build.0 = Release|Any CPU
 		{526CFCCD-F46E-44F2-B45D-CB57698631C6}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{526CFCCD-F46E-44F2-B45D-CB57698631C6}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{8B681420-F10E-4FB4-A5B1-F93F58998CDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B681420-F10E-4FB4-A5B1-F93F58998CDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B681420-F10E-4FB4-A5B1-F93F58998CDF}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{8B681420-F10E-4FB4-A5B1-F93F58998CDF}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{8B681420-F10E-4FB4-A5B1-F93F58998CDF}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{8B681420-F10E-4FB4-A5B1-F93F58998CDF}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{8B681420-F10E-4FB4-A5B1-F93F58998CDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B681420-F10E-4FB4-A5B1-F93F58998CDF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B681420-F10E-4FB4-A5B1-F93F58998CDF}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{8B681420-F10E-4FB4-A5B1-F93F58998CDF}.Release|iPhone.Build.0 = Release|Any CPU
+		{8B681420-F10E-4FB4-A5B1-F93F58998CDF}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{8B681420-F10E-4FB4-A5B1-F93F58998CDF}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{17DAC6BC-A6BE-4369-BD6E-2473965A3A90} = {0C5EBA2C-5E83-484C-A4C6-EDDA95E65CC3}
+		{067A6888-4132-47E5-BFAA-1D825C12D74E} = {0C5EBA2C-5E83-484C-A4C6-EDDA95E65CC3}
+		{54D5657A-09D0-4E64-8715-760780C34083} = {0C5EBA2C-5E83-484C-A4C6-EDDA95E65CC3}
+		{5ED936C2-C0BE-4263-9035-7596AAF1F896} = {0C5EBA2C-5E83-484C-A4C6-EDDA95E65CC3}
+		{761ED4B7-A7C6-4B90-92B8-6C36A322AE35} = {B8E5D408-F5FF-44AB-A37A-FFA61CFA2CD8}
+		{B003E864-41E8-4B16-A492-D1BD87400938} = {B8E5D408-F5FF-44AB-A37A-FFA61CFA2CD8}
+		{526CFCCD-F46E-44F2-B45D-CB57698631C6} = {B8E5D408-F5FF-44AB-A37A-FFA61CFA2CD8}
+		{8B681420-F10E-4FB4-A5B1-F93F58998CDF} = {E6842ADC-E320-4E58-AAAD-CE82B3A294DA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {59130B6D-3637-4C7E-A587-5B5CAC809A58}
