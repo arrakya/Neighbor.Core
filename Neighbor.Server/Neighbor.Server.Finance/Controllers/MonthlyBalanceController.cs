@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Neighbor.Server.Finance.MonthlyBalance.Services;
+using Neighbor.Core.Application.Request.Finance;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Neighbor.Server.Finance.MonthlyBalance.Controllers
 {
@@ -10,28 +12,22 @@ namespace Neighbor.Server.Finance.MonthlyBalance.Controllers
     public class MonthlyBalanceController : ControllerBase
     {
         private readonly ILogger<MonthlyBalanceController> _logger;
-        private readonly MonthlyAverageIncomeCalculatorService _monthlyAverageIncomeCalculatorService;
-        private readonly MonthlyBalanceRetrieveService _monthlyBalanceRetrieveService;
-        private readonly MonthlyTotalIncomeCalculatorService _monthlyTotalIncomeCalculatorService;
+        private readonly IMediator _mediator;
 
         public MonthlyBalanceController(ILogger<MonthlyBalanceController> logger,
-            MonthlyAverageIncomeCalculatorService monthlyAverageIncomeCalculatorService,
-            MonthlyBalanceRetrieveService monthlyBalanceRetrieveService,
-            MonthlyTotalIncomeCalculatorService MonthlyTotalIncomeCalculatorService)
+            IMediator mediator)
         {
             _logger = logger;
-            _monthlyAverageIncomeCalculatorService = monthlyAverageIncomeCalculatorService;
-            _monthlyBalanceRetrieveService = monthlyBalanceRetrieveService;
-            _monthlyTotalIncomeCalculatorService = MonthlyTotalIncomeCalculatorService;
+            _mediator = mediator;
         }
 
         [HttpGet]
-        public IEnumerable<Neighbor.Core.Domain.Models.Finance.MonthlyBalance> Get(int year)
+        public async Task<IEnumerable<Neighbor.Core.Domain.Models.Finance.MonthlyBalance>> Get(int year)
         {
-            var monthlyBalanceCollection = _monthlyBalanceRetrieveService.Retrieve(year);
-            _monthlyAverageIncomeCalculatorService.CalculateAndSetAverageIncome(monthlyBalanceCollection);
-            _monthlyTotalIncomeCalculatorService.CalculateAndSetTotalIncome(monthlyBalanceCollection);
-
+            var request = new MonthlyBalanceRequest { Year = year };
+            var response = await _mediator.Send(request);
+            var monthlyBalanceCollection = response.Content;
+            
             return monthlyBalanceCollection;
         }
     }

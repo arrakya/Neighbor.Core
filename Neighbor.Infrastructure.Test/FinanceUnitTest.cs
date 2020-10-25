@@ -9,7 +9,7 @@ namespace Neighbor.Core.Application.Test
         {
             // Arrange
             var year = 2020;
-            var financeRepo = new FinanceRepository();
+            var financeRepo = new Client.FinanceRepository();
 
             // Action
             var monthlyBalanceCollection = await financeRepo.GetMonthlyBalances(year);

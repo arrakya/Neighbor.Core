@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Neighbor.Server.Finance.MonthlyBalance.Services;
+using MediatR;
+using System.Runtime.CompilerServices;
+using Neighbor.Core.Application;
 
 namespace Neighbor.Server.Finance.MonthlyBalance
 {
@@ -19,9 +21,8 @@ namespace Neighbor.Server.Finance.MonthlyBalance
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<MonthlyAverageIncomeCalculatorService>();
-            services.AddTransient<MonthlyBalanceRetrieveService>();
-            services.AddTransient<MonthlyTotalIncomeCalculatorService>();
+            ApplicationStartup.ConfigureBuilder(services);
+            services.AddMediatR(new[] { typeof(ApplicationStartup).Assembly, typeof(Startup).Assembly });
 
             services.AddControllers();
         }

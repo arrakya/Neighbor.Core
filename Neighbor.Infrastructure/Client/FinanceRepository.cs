@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Text.Json;
 using System.Linq;
 
-namespace Neighbor.Core.Application
+namespace Neighbor.Core.Application.Client
 {
     public class FinanceRepository : IFinance
     {

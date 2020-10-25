@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using System;
+using System.Linq;
+using MediatR;
 using Neighbor.Core.Application.Request.Finance;
 using Neighbor.Core.Application.Response.Finance;
 using Neighbor.Core.Domain.Interfaces.Finance;
@@ -19,6 +21,22 @@ namespace Neighbor.Core.Application.Handler.Finance
         public async Task<MonthlyBalanceResponse> Handle(MonthlyBalanceRequest request, CancellationToken cancellationToken)
         {
             var monthlyBalanceCollection = await _finance.GetMonthlyBalances(request.Year);
+
+            var orderMonthlyHealthModelCollection = monthlyBalanceCollection.OrderBy(p => p.MonthNo).ToArray();
+
+            var total = 0d;
+            for (int i = 0; i < monthlyBalanceCollection.Count(); i++)
+            {
+                total += orderMonthlyHealthModelCollection[i].IncomeAmount;
+                orderMonthlyHealthModelCollection[i].AverageIncomeAmount = Math.Round(total / (i + 1), 2);
+            }            
+
+            total = 0d;
+            for (int i = 0; i < monthlyBalanceCollection.Count(); i++)
+            {
+                total += orderMonthlyHealthModelCollection[i].IncomeAmount;
+                orderMonthlyHealthModelCollection[i].TotalIncomeAmount = total;
+            }
 
             var response = new MonthlyBalanceResponse
             {
