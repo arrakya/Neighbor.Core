@@ -1,12 +1,11 @@
 using System.Linq;
 using System.Collections.Generic;
-using Neighbor.Server.Finance.MonthlyBalance.Models;
 
 namespace Neighbor.Server.Finance.MonthlyBalance.Services
 {
     public class MonthlyTotalIncomeCalculatorService
     {
-        public IEnumerable<MonthlyBalanceModel> CalculateAndSetTotalIncome(IEnumerable<MonthlyBalanceModel> models)
+        public IEnumerable<Neighbor.Domain.Models.Finance.MonthlyBalance> CalculateAndSetTotalIncome(IEnumerable<Neighbor.Domain.Models.Finance.MonthlyBalance> models)
         {
             var orderMonthlyHealthModelCollection = models.OrderBy(p => p.MonthNo).ToArray();
 

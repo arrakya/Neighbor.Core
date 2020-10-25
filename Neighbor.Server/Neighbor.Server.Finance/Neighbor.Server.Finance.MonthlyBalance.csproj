@@ -5,4 +5,8 @@
     <RuntimeIdentifiers>win-x64;linux-musl-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Neighbor.Domain\Neighbor.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

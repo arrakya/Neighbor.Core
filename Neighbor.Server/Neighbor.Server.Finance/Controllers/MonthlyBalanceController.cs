@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Neighbor.Server.Finance.MonthlyBalance.Models;
 using Neighbor.Server.Finance.MonthlyBalance.Services;
 using System.Collections.Generic;
 
@@ -27,7 +26,7 @@ namespace Neighbor.Server.Finance.MonthlyBalance.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<MonthlyBalanceModel> Get(int year)
+        public IEnumerable<Neighbor.Domain.Models.Finance.MonthlyBalance> Get(int year)
         {
             var monthlyBalanceCollection = _monthlyBalanceRetrieveService.Retrieve(year);
             _monthlyAverageIncomeCalculatorService.CalculateAndSetAverageIncome(monthlyBalanceCollection);

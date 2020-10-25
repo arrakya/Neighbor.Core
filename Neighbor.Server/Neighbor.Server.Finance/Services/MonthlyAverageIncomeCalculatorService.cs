@@ -1,13 +1,12 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using Neighbor.Server.Finance.MonthlyBalance.Models;
 
 namespace Neighbor.Server.Finance.MonthlyBalance.Services
 {
     public class MonthlyAverageIncomeCalculatorService
     {
-        public IEnumerable<MonthlyBalanceModel> CalculateAndSetAverageIncome(IEnumerable<MonthlyBalanceModel> models)
+        public IEnumerable<Neighbor.Domain.Models.Finance.MonthlyBalance> CalculateAndSetAverageIncome(IEnumerable<Neighbor.Domain.Models.Finance.MonthlyBalance> models)
         {
             var orderMonthlyHealthModelCollection = models.OrderBy(p => p.MonthNo).ToArray();
 
