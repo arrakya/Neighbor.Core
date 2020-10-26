@@ -6,6 +6,8 @@ using Microsoft.Extensions.Hosting;
 using MediatR;
 using System.Runtime.CompilerServices;
 using Neighbor.Core.Application;
+using Neighbor.Server.Finance.MonthlyBalance.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Neighbor.Server.Finance.MonthlyBalance
 {
@@ -23,6 +25,13 @@ namespace Neighbor.Server.Finance.MonthlyBalance
         {
             ApplicationStartup.ConfigureBuilder(services);
             services.AddMediatR(new[] { typeof(ApplicationStartup).Assembly, typeof(Startup).Assembly });
+
+            var defaultConnection = Configuration.GetConnectionString("DefaultConnection");
+
+            services.AddDbContext<MonthlyBalanceDbContext>(options =>
+            {
+                options.UseSqlServer(defaultConnection);
+            });
 
             services.AddControllers();
         }
