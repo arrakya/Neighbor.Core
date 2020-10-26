@@ -1,4 +1,6 @@
-﻿namespace Neighbor.Core.Domain.Models.Finance
+﻿using System.ComponentModel;
+
+namespace Neighbor.Core.Domain.Models.Finance
 {
     public class MonthlyBalance
     {
@@ -9,5 +11,6 @@
         public double ExpenseAmount { get; set; }
         public double TotalIncomeAmount { get; set; }
         public double AverageIncomeAmount { get; set; }
+        public double BalanceAmount { get; set; }
     }
 }

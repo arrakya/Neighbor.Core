@@ -29,6 +29,7 @@ namespace Neighbor.Core.Application.Handler.Finance
             {
                 total += orderMonthlyHealthModelCollection[i].IncomeAmount;
                 orderMonthlyHealthModelCollection[i].AverageIncomeAmount = Math.Round(total / (i + 1), 2);
+                orderMonthlyHealthModelCollection[i].BalanceAmount = orderMonthlyHealthModelCollection[i].AverageIncomeAmount - orderMonthlyHealthModelCollection[i].ExpenseAmount;
             }            
 
             total = 0d;

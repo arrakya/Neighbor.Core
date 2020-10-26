@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Neighbor.Mobile.Views.MonthlyBalanceListViewPage"
+             Title="{Binding Title}"             >
+    <RefreshView Command="{Binding LoadItemsCommand}" CommandParameter="2020" IsRefreshing="{Binding IsBusy, Mode=TwoWay}">
+        <ListView x:Name="MyListView"
+            HasUnevenRows="true"
+              Margin="10,10,10,10"
+              SelectionMode="None"                  
+            ItemsSource="{Binding Items}"            
+            CachingStrategy="RecycleElement">
+
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Grid Margin="0,5,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="40*"></ColumnDefinition>
+                                <ColumnDefinition Width="20*"></ColumnDefinition>
+                                <ColumnDefinition Width="20*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"></RowDefinition>
+                                <RowDefinition Height="auto"></RowDefinition>
+                                <RowDefinition Height="auto"></RowDefinition>
+                                <RowDefinition Height="auto"></RowDefinition>
+                                <RowDefinition Height="auto"></RowDefinition>
+                                <RowDefinition Height="1"></RowDefinition>
+                                <RowDefinition Height="auto"></RowDefinition>
+                                <RowDefinition Height="1"></RowDefinition>
+                            </Grid.RowDefinitions>
+
+                            <Label TextColor="Navy" Grid.ColumnSpan="2" FontSize="Large" Text="{Binding MonthName}" />
+                            <Label TextColor="Green" Text="Income" Grid.Row="1" />
+                            <Label TextColor="Black" Text="Average Income" Grid.Row="2" />
+                            <Label TextColor="Black" Text="Total Income" Grid.Row="3" />
+                            <Label TextColor="Red" Text="Expense" Grid.Row="4" />
+                            <BoxView WidthRequest="1" HorizontalOptions="FillAndExpand" Color="LightGray" Grid.ColumnSpan="3" Grid.Row="5"></BoxView>
+                            <Label TextColor="Black" Text="Balance" Grid.Row="6" FontAttributes="Bold" />
+                            <BoxView WidthRequest="1" HorizontalOptions="FillAndExpand" Color="LightGray" Grid.ColumnSpan="3" Grid.Row="7"></BoxView>
+
+                            <Label TextColor="Green" Grid.Column="2" Grid.Row="1" HorizontalTextAlignment="End" Text="{Binding IncomeAmount, StringFormat='{0:C}'}" />
+                            <Label TextColor="Black" Grid.Column="1" Grid.Row="2" HorizontalTextAlignment="End" Text="{Binding AverageIncomeAmount, StringFormat='{0:C}'}" />
+                            <Label TextColor="Black" Grid.Column="1" Grid.Row="3" HorizontalTextAlignment="End" Text="{Binding TotalIncomeAmount, StringFormat='{0:C}'}" />
+                            <Label TextColor="Red" Grid.Column="2" Grid.Row="4" HorizontalTextAlignment="End" Text="{Binding ExpenseAmount, StringFormat='{0:C}'}" />
+                            <Label TextColor="Black" Grid.Column="2" Grid.Row="6" HorizontalTextAlignment="End" FontAttributes="Bold" Text="{Binding BalanceAmount, StringFormat='{0:C}'}" />
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+
+        </ListView>
+    </RefreshView>
+</ContentPage>

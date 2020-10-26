@@ -4,6 +4,9 @@ using Neighbor.Core.Application;
 using Neighbor.Mobile.Services;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 
 namespace Neighbor.Mobile
 {
@@ -32,6 +35,7 @@ namespace Neighbor.Mobile
 
         protected override void OnStart()
         {
+            AppCenter.Start("27f68fc7-587a-48b6-aa5f-48fcdc59e28c", typeof(Analytics), typeof(Crashes));
         }
 
         protected override void OnSleep()
