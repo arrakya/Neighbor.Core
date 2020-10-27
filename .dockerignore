@@ -1,6 +1,6 @@
 .vscode
-.bin
-.obj
 .git
+bin
+obj
 Neighbor.Mobile
 Neighbor.Infrastructure.Test

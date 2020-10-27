@@ -45,6 +45,13 @@ namespace Neighbor.Server.Finance.MonthlyBalance
             {
                 app.UseDeveloperExceptionPage();
             }
+            else
+            {
+                using var scope = app.ApplicationServices.CreateScope();
+                var dbContext = (MonthlyBalanceDbContext)scope.ServiceProvider.GetRequiredService(typeof(MonthlyBalanceDbContext));
+                dbContext.Database.Migrate();
+                dbContext.Database.EnsureCreated();
+            }
 
             // app.UseHttpsRedirection();
 
