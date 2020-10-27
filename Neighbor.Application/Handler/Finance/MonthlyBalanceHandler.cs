@@ -6,6 +6,7 @@ using Neighbor.Core.Application.Response.Finance;
 using Neighbor.Core.Domain.Interfaces.Finance;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Globalization;
 
 namespace Neighbor.Core.Application.Handler.Finance
 {
@@ -27,6 +28,7 @@ namespace Neighbor.Core.Application.Handler.Finance
             var total = 0d;
             for (int i = 0; i < monthlyBalanceCollection.Count(); i++)
             {
+                orderMonthlyHealthModelCollection[i].MonthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i + 1);
                 total += orderMonthlyHealthModelCollection[i].IncomeAmount;
                 orderMonthlyHealthModelCollection[i].AverageIncomeAmount = Math.Round(total / (i + 1), 2);
                 orderMonthlyHealthModelCollection[i].BalanceAmount = orderMonthlyHealthModelCollection[i].AverageIncomeAmount - orderMonthlyHealthModelCollection[i].ExpenseAmount;

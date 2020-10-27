@@ -4,8 +4,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MediatR;
-using System.Runtime.CompilerServices;
 using Neighbor.Core.Application;
+using Neighbor.Core.Infrastructure.Server;
 using Neighbor.Server.Finance.MonthlyBalance.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,6 +32,8 @@ namespace Neighbor.Server.Finance.MonthlyBalance
             {
                 options.UseSqlServer(defaultConnection);
             });
+
+            services.AddNeighborInfrastructureDbContext<MonthlyBalanceDbContext>();
 
             services.AddControllers();
         }
