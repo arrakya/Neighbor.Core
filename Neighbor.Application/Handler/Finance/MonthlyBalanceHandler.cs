@@ -25,13 +25,21 @@ namespace Neighbor.Core.Application.Handler.Finance
 
             var orderMonthlyHealthModelCollection = monthlyBalanceCollection.OrderBy(p => p.MonthNo).ToArray();
 
+            var response = new MonthlyBalanceResponse();
+
+            if (ApplicationStartup.RequestChannel == Request.RequestChannel.Client)
+            {
+                response.Content = orderMonthlyHealthModelCollection;
+                return response;
+            }
+
             var total = 0d;
             for (int i = 0; i < monthlyBalanceCollection.Count(); i++)
             {
                 orderMonthlyHealthModelCollection[i].MonthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i + 1);
                 total += orderMonthlyHealthModelCollection[i].IncomeAmount;
                 orderMonthlyHealthModelCollection[i].AverageIncomeAmount = Math.Round(total / (i + 1), 2);
-                orderMonthlyHealthModelCollection[i].BalanceAmount = orderMonthlyHealthModelCollection[i].AverageIncomeAmount - orderMonthlyHealthModelCollection[i].ExpenseAmount;
+                orderMonthlyHealthModelCollection[i].BalanceAmount = orderMonthlyHealthModelCollection[i].AverageIncomeAmount + orderMonthlyHealthModelCollection[i].ExpenseAmount;
             }            
 
             total = 0d;
@@ -41,10 +49,7 @@ namespace Neighbor.Core.Application.Handler.Finance
                 orderMonthlyHealthModelCollection[i].TotalIncomeAmount = total;
             }
 
-            var response = new MonthlyBalanceResponse
-            {
-                Content = monthlyBalanceCollection
-            };
+            response.Content = orderMonthlyHealthModelCollection;
 
             return response;
         }

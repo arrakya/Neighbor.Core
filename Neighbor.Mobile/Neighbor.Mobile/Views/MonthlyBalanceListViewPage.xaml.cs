@@ -27,7 +27,7 @@ namespace Neighbor.Mobile.Views
         {
             base.OnAppearing();
 
-            _viewModel.LoadItemsCommand.Execute(DateTime.Now.Year);
+           // _viewModel.LoadItemsCommand.Execute(DateTime.Now.Year);
         }
     }
 }
