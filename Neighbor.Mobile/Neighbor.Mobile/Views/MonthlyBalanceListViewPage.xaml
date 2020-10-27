@@ -16,9 +16,9 @@
                     <ViewCell>
                         <Grid Margin="0,5,0,10">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="40*"></ColumnDefinition>
-                                <ColumnDefinition Width="20*"></ColumnDefinition>
-                                <ColumnDefinition Width="20*"></ColumnDefinition>
+                                <ColumnDefinition Width="35*"></ColumnDefinition>
+                                <ColumnDefinition Width="30*"></ColumnDefinition>
+                                <ColumnDefinition Width="35*"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
 
                             <Grid.RowDefinitions>
@@ -34,16 +34,16 @@
 
                             <Label TextColor="Navy" Grid.ColumnSpan="2" FontSize="Large" Text="{Binding MonthName}" />
                             <Label TextColor="Green" Text="Income" Grid.Row="1" />
-                            <Label TextColor="Black" Text="Average Income" Grid.Row="2" />
-                            <Label TextColor="Black" Text="Total Income" Grid.Row="3" />
+                            <Label TextColor="Black" Text="Total Income" Grid.Row="2" />
+                            <Label TextColor="Black" Text="Average Income" Grid.Row="3" />
                             <Label TextColor="Red" Text="Expense" Grid.Row="4" />
                             <BoxView WidthRequest="1" HorizontalOptions="FillAndExpand" Color="LightGray" Grid.ColumnSpan="3" Grid.Row="5"></BoxView>
                             <Label TextColor="Black" Text="Balance" Grid.Row="6" FontAttributes="Bold" />
                             <BoxView WidthRequest="1" HorizontalOptions="FillAndExpand" Color="LightGray" Grid.ColumnSpan="3" Grid.Row="7"></BoxView>
 
-                            <Label TextColor="Green" Grid.Column="2" Grid.Row="1" HorizontalTextAlignment="End" Text="{Binding IncomeAmount, StringFormat='{0:C}'}" />
-                            <Label TextColor="Black" Grid.Column="1" Grid.Row="2" HorizontalTextAlignment="End" Text="{Binding AverageIncomeAmount, StringFormat='{0:C}'}" />
-                            <Label TextColor="Black" Grid.Column="1" Grid.Row="3" HorizontalTextAlignment="End" Text="{Binding TotalIncomeAmount, StringFormat='{0:C}'}" />
+                            <Label TextColor="Green" Grid.Column="1" Grid.Row="1" HorizontalTextAlignment="End" Text="{Binding IncomeAmount, StringFormat='{0:C}'}" />
+                            <Label TextColor="Black" Grid.Column="1" Grid.Row="2" HorizontalTextAlignment="End" Text="{Binding TotalIncomeAmount, StringFormat='{0:C}'}" />
+                            <Label TextColor="Black" Grid.Column="2" Grid.Row="3" HorizontalTextAlignment="End" Text="{Binding AverageIncomeAmount, StringFormat='{0:C}'}" />
                             <Label TextColor="Red" Grid.Column="2" Grid.Row="4" HorizontalTextAlignment="End" Text="{Binding ExpenseAmount, StringFormat='{0:C}'}" />
                             <Label TextColor="Black" Grid.Column="2" Grid.Row="6" HorizontalTextAlignment="End" FontAttributes="Bold" Text="{Binding BalanceAmount, StringFormat='{0:C}'}" />
                         </Grid>
