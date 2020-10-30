@@ -10,12 +10,5 @@ namespace Neighbor.Mobile.Views
         {
             InitializeComponent();
         }
-
-        protected override async void OnAppearing()
-        {
-
-
-            base.OnAppearing();
-        }
     }
 }

@@ -1,56 +1,131 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Neighbor.Mobile.Views.MonthlyBalanceListViewPage"
-             Title="{Binding Title}"             >
-    <RefreshView Command="{Binding LoadItemsCommand}" CommandParameter="2020" IsRefreshing="{Binding IsBusy, Mode=TwoWay}">
-        <ListView x:Name="MyListView"
-            HasUnevenRows="true"
-              Margin="10,10,10,10"
-              SelectionMode="None"                  
-            ItemsSource="{Binding Items}"            
-            CachingStrategy="RecycleElement">
+			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 x:Class="Neighbor.Mobile.Views.MonthlyBalanceListViewPage"
+			 xmlns:converters="clr-namespace:Neighbor.Mobile.Converters"
+			 Title="{Binding Title}">
 
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <ViewCell>
-                        <Grid Margin="0,5,0,10">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="35*"></ColumnDefinition>
-                                <ColumnDefinition Width="30*"></ColumnDefinition>
-                                <ColumnDefinition Width="35*"></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="{Binding Year}" />
+    </ContentPage.ToolbarItems>
+    
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:InvertBooleanConverter x:Key="invertBooleanConverter"></converters:InvertBooleanConverter>
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="auto"></RowDefinition>
-                                <RowDefinition Height="auto"></RowDefinition>
-                                <RowDefinition Height="auto"></RowDefinition>
-                                <RowDefinition Height="auto"></RowDefinition>
-                                <RowDefinition Height="auto"></RowDefinition>
-                                <RowDefinition Height="1"></RowDefinition>
-                                <RowDefinition Height="auto"></RowDefinition>
-                                <RowDefinition Height="1"></RowDefinition>
-                            </Grid.RowDefinitions>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="50*"></ColumnDefinition>
+            <ColumnDefinition Width="50*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+        </Grid.RowDefinitions>
 
-                            <Label TextColor="Navy" Grid.ColumnSpan="2" FontSize="Large" Text="{Binding MonthName}" />
-                            <Label TextColor="Green" Text="Income" Grid.Row="1" />
-                            <Label TextColor="Black" Text="Total Income" Grid.Row="2" />
-                            <Label TextColor="Black" Text="Average Income" Grid.Row="3" />
-                            <Label TextColor="Red" Text="Expense" Grid.Row="4" />
-                            <BoxView WidthRequest="1" HorizontalOptions="FillAndExpand" Color="LightGray" Grid.ColumnSpan="3" Grid.Row="5"></BoxView>
-                            <Label TextColor="Black" Text="Balance" Grid.Row="6" FontAttributes="Bold" />
-                            <BoxView WidthRequest="1" HorizontalOptions="FillAndExpand" Color="LightGray" Grid.ColumnSpan="3" Grid.Row="7"></BoxView>
+        <Frame Margin="0"
+			   Padding="10"
+			   Grid.ColumnSpan="2"
+			   Grid.RowSpan="4"
+			   BackgroundColor="LightGray">
+        </Frame>
 
-                            <Label TextColor="Green" Grid.Column="1" Grid.Row="1" HorizontalTextAlignment="End" Text="{Binding IncomeAmount, StringFormat='{0:C}'}" />
-                            <Label TextColor="Black" Grid.Column="1" Grid.Row="2" HorizontalTextAlignment="End" Text="{Binding TotalIncomeAmount, StringFormat='{0:C}'}" />
-                            <Label TextColor="Black" Grid.Column="2" Grid.Row="3" HorizontalTextAlignment="End" Text="{Binding AverageIncomeAmount, StringFormat='{0:C}'}" />
-                            <Label TextColor="Red" Grid.Column="2" Grid.Row="4" HorizontalTextAlignment="End" Text="{Binding ExpenseAmount, StringFormat='{0:C}'}" />
-                            <Label TextColor="Black" Grid.Column="2" Grid.Row="6" HorizontalTextAlignment="End" FontAttributes="Bold" Text="{Binding BalanceAmount, StringFormat='{0:C}'}" />
-                        </Grid>
-                    </ViewCell>
-                </DataTemplate>
-            </ListView.ItemTemplate>
+        <Label Grid.Row="1"
+               Grid.Column="0"
+			   TextColor="Black"
+               VerticalTextAlignment="Center"
+               FontSize="Small"
+               Padding="0"
+               Margin="20,0,0,0"
+               Text="Show All"></Label>
 
-        </ListView>
-    </RefreshView>
+        <Switch IsToggled="{Binding IsShowAll}"
+                Grid.Row="1"
+                Grid.Column="1"                
+                Margin="0,0,20,0"
+                HorizontalOptions="End"></Switch>
+
+        <Label Grid.Row="2"
+               Grid.Column="0"
+			   TextColor="Black"
+               VerticalTextAlignment="Center"
+               FontSize="Small"
+               Padding="0"
+               Margin="20,0,0,0"
+               Text="Income View"></Label>
+
+        <Switch IsToggled="{Binding ShowAllIncomeView}"
+                Grid.Row="2"
+                Grid.Column="1"
+                Margin="0,0,20,0"
+                HorizontalOptions="End"></Switch>
+
+        <RefreshView Grid.Row="4"
+                     Grid.ColumnSpan="2"
+                     Command="{Binding LoadItemsCommand}" 
+                     IsRefreshing="{Binding IsBusy, Mode=TwoWay}">
+
+            <ListView x:Name="MyListView"
+                      BackgroundColor="White"
+                      HasUnevenRows="true"
+                      Margin="0, 0,0 ,0"
+                      SelectionMode="None"
+                      ItemsSource="{Binding Items}"
+                      CachingStrategy="RecycleElement">
+
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Frame BorderColor="LightGray"
+                                   HasShadow="True"
+                                   CornerRadius="2"
+                                   Padding="0, 0, 15, 0"
+                                   Margin="5">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="4*"></ColumnDefinition>
+                                        <ColumnDefinition Width="48*"></ColumnDefinition>
+                                        <ColumnDefinition Width="48*"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="5"></RowDefinition>
+                                        <RowDefinition Height="auto"></RowDefinition>
+                                        <RowDefinition Height="auto"></RowDefinition>
+                                        <RowDefinition Height="auto"></RowDefinition>
+                                        <RowDefinition Height="auto"></RowDefinition>
+                                        <RowDefinition Height="10"></RowDefinition>
+                                    </Grid.RowDefinitions>
+
+                                    <BoxView BackgroundColor="{Binding Color}" CornerRadius="10" Grid.RowSpan="6" HorizontalOptions="Start" WidthRequest="4"></BoxView>
+
+                                    <Label TextColor="black" Grid.Column="1" Grid.Row="1"  HorizontalTextAlignment="Start" VerticalTextAlignment="Center" FontSize="Medium" Text="{Binding MonthName}" />
+                                    <Switch Grid.Column="2" Grid.Row="1" IsToggled="{Binding TurnOnIncomeView}" HorizontalOptions="End"></Switch>
+
+                                    <Label TextColor="gray" Grid.Column="1" Grid.Row="2" HorizontalTextAlignment="Start" VerticalTextAlignment="Center" Text="Income" IsVisible="{Binding TurnOnIncomeView}" />
+                                    <Label TextColor="gray" Grid.Column="2" Grid.Row="2" HorizontalTextAlignment="End" VerticalTextAlignment="End" Text="{Binding IncomeAmount, StringFormat='{0:C}'}" IsVisible="{Binding TurnOnIncomeView}" />
+
+                                    <Label TextColor="gray" Grid.Column="1" Grid.Row="2" HorizontalTextAlignment="Start" VerticalTextAlignment="Center" Text="Avg. Income" IsVisible="{Binding TurnOnIncomeView, Converter={StaticResource invertBooleanConverter}}" />
+                                    <Label TextColor="gray" Grid.Column="2" Grid.Row="2" HorizontalTextAlignment="End" VerticalTextAlignment="End" Text="{Binding AverageIncomeAmount, StringFormat='{0:C}'}" IsVisible="{Binding TurnOnIncomeView, Converter={StaticResource invertBooleanConverter}}" />
+
+                                    <Label TextColor="gray" Grid.Column="1" Grid.Row="3" HorizontalTextAlignment="Start" VerticalTextAlignment="Center" Text="Expense" />
+                                    <Label TextColor="gray" Grid.Column="2" Grid.Row="3" HorizontalTextAlignment="End" VerticalTextAlignment="End" FontSize="Small" Text="{Binding ExpenseAmount, StringFormat='{0:C}'}" />
+
+                                    <Label TextColor="gray" Grid.Column="1" Grid.Row="4" HorizontalTextAlignment="Start" VerticalTextAlignment="Center" Text="Balance" />
+                                    <Label TextColor="{Binding BalanceAmountColor}" Grid.Column="2" Grid.Row="4" HorizontalTextAlignment="End" VerticalTextAlignment="End" FontSize="Small" Text="{Binding BalanceAmount, StringFormat='{0:C}'}" />
+                                </Grid>
+                            </Frame>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+
+            </ListView>
+        </RefreshView>
+
+    </Grid>
+
 </ContentPage>
