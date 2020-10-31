@@ -23,7 +23,7 @@ namespace Neighbor.Server.Finance.MonthlyBalance
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            ApplicationStartup.ConfigureBuilder(services);
+            ApplicationStartup.ServerConfigureBuilder(services);
             services.AddMediatR(new[] { typeof(ApplicationStartup).Assembly, typeof(Startup).Assembly });
 
             var defaultConnection = Configuration.GetConnectionString("DefaultConnection");

@@ -1,24 +1,24 @@
 ﻿using Autofac;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using Neighbor.Core.Application.Request;
+using Neighbor.Core.Application.Behaviors.Finance;
+using Neighbor.Core.Application.Request.Finance;
+using Neighbor.Core.Application.Response.Finance;
 using Neighbor.Core.Domain.Interfaces.Finance;
 
 namespace Neighbor.Core.Application
 {
     public static class ApplicationStartup
     {
-        public static RequestChannel RequestChannel;
-
-        public static void ConfigureBuilder(ContainerBuilder builder)
-        {
+        public static void ClientConfigureBuilder(ContainerBuilder builder)
+        {   
             builder.RegisterType<Client.FinanceRepository>().As<IFinance>();
-            RequestChannel = RequestChannel.Client;
         }
 
-        public static void ConfigureBuilder(IServiceCollection services)
+        public static void ServerConfigureBuilder(IServiceCollection services)
         {
             services.AddTransient<IFinance, Server.FinanceRepository>();
-            RequestChannel = RequestChannel.Server;
+            services.AddTransient<IPipelineBehavior<MonthlyBalanceRequest, MonthlyBalanceResponse>, MonthBlanceBehavior>();
         }
     }
 }

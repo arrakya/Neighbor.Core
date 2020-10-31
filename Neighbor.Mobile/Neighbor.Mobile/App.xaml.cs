@@ -26,7 +26,7 @@ namespace Neighbor.Mobile
 
             var applicationAssembly = typeof(ApplicationStartup).Assembly;
             builder.RegisterMediatR(new[] { applicationAssembly });
-            ApplicationStartup.ConfigureBuilder(builder);
+            ApplicationStartup.ClientConfigureBuilder(builder);
 
             container = builder.Build();
 
