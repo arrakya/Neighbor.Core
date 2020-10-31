@@ -64,7 +64,7 @@ namespace Neighbor.Mobile.Models
             this.Color = colors[colorRandom.Next(0, colors.Length)];
             this.IncomeAmount = model.IncomeAmount;
             this.AverageIncomeAmount = model.AverageIncomeAmount;
-            this.BalanceAmount = model.BalanceAmount;
+            this.BalanceAmount = model.AverageIncomeAmount + model.ExpenseAmount;
             this.ExpenseAmount = model.ExpenseAmount;
             this.MonthName = model.MonthName;
             this.MonthNo = model.MonthNo;
