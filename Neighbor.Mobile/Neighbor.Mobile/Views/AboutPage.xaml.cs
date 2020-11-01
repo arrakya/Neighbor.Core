@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Neighbor.Core.Application.Request.Finance;
+using Neighbor.Core.Application.Requests.Finance;
 using Xamarin.Forms;
 
 namespace Neighbor.Mobile.Views

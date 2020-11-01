@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Neighbor.Core.Application.Request.Finance;
+using Neighbor.Core.Application.Requests.Finance;
 using Neighbor.Core.Domain.Models.Finance;
 using Neighbor.Mobile.ViewModels;
 using System;

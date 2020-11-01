@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Neighbor.Core.Application.Behaviors.Finance;
-using Neighbor.Core.Application.Request.Finance;
-using Neighbor.Core.Application.Response.Finance;
+using Neighbor.Core.Application.Requests.Finance;
+using Neighbor.Core.Application.Responses.Finance;
 using Neighbor.Core.Domain.Interfaces.Finance;
 using System;
 using System.Net.Http;

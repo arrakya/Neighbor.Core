@@ -1,6 +1,6 @@
 ﻿using MediatR;
-using Neighbor.Core.Application.Request.Finance;
-using Neighbor.Core.Application.Response.Finance;
+using Neighbor.Core.Application.Requests.Finance;
+using Neighbor.Core.Application.Responses.Finance;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
