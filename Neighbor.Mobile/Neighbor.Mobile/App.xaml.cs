@@ -1,34 +1,36 @@
-﻿using Autofac;
-using MediatR.Extensions.Autofac.DependencyInjection;
-using Neighbor.Core.Application;
-using Neighbor.Mobile.Services;
-using Xamarin.Forms;
-using Xamarin.Forms.Internals;
-using Microsoft.AppCenter;
+﻿using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using Microsoft.Extensions.DependencyInjection;
+using Neighbor.Core.Application;
+using Neighbor.Mobile.Services;
+using System;
+using System.Linq;
+using Xamarin.Forms;
+using Xamarin.Forms.Internals;
 
 namespace Neighbor.Mobile
 {
     public partial class App : Xamarin.Forms.Application
     {
-        static IContainer container;
-        static readonly ContainerBuilder builder = new ContainerBuilder();
-
+        public static string BaseAddress = "http://192.168.1.203";
 
         public App()
         {
             InitializeComponent();
 
-            DependencyService.Register<MockDataStore>();
-           
-            DependencyResolver.ResolveUsing(type => container.IsRegistered(type) ? container.Resolve(type) : null);
-
+            var services = new ServiceCollection();
+            DependencyService.Register<MockDataStore>();          
+            
+            // Configure services
             var applicationAssembly = typeof(ApplicationStartup).Assembly;
-            builder.RegisterMediatR(new[] { applicationAssembly });
-            ApplicationStartup.ClientConfigureBuilder(builder);
-
-            container = builder.Build();
+            ApplicationStartup.ClientConfigureBuilder(services, (httpClient) =>
+            {
+                httpClient.BaseAddress = new Uri(BaseAddress);
+            });
+            
+            var serviceProvider = services.BuildServiceProvider();
+            DependencyResolver.ResolveUsing(type => services.Any(p => p.ServiceType == type) ? serviceProvider.GetService(type) : null);
 
             MainPage = new AppShell();
         }

@@ -11,16 +11,20 @@ namespace Neighbor.Core.Application.Client
 {
     public class FinanceRepository : IFinance
     {
-        private readonly string baseUri = "http://192.168.1.203/neighbor/finance";
+        private readonly string baseUri = "/neighbor/finance";
+        private readonly HttpClient _httpClient;
+
+        public FinanceRepository(IHttpClientFactory httpClientFactory)
+        {
+            _httpClient = httpClientFactory.CreateClient("default");
+        }
 
         public virtual async Task<IEnumerable<MonthlyBalance>> GetMonthlyBalances(int year)
         {
-            var requestUri = $"{baseUri}/monthlybalance?year={year}";
-            var handler = new HttpClientHandler();
-            var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
-            var httpClient = new HttpClient(handler);
-
-            var response = await httpClient.SendAsync(request);
+            var requestUri = $"{baseUri}/monthlybalance?year={year}";            
+            var httpClient = _httpClient;
+            
+            var response = await httpClient.GetAsync(requestUri);
 
             if (response.StatusCode != HttpStatusCode.OK)
             {

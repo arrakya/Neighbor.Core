@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="6.0.0" />
     <PackageReference Include="MediatR.Extensions.Autofac.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="3.4.3" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="3.4.3" />

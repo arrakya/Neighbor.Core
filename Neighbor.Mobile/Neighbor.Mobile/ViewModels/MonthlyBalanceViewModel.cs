@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Neighbor.Core.Application.Request.Finance;
-using Neighbor.Core.Domain.Models.Finance;
 using Neighbor.Mobile.Models;
 using System;
 using System.Collections.Generic;
@@ -46,8 +45,10 @@ namespace Neighbor.Mobile.ViewModels
             get => _isShowAll;
             set
             {
-                SetProperty(ref _isShowAll, value, nameof(IsShowAll));
-                LoadItems(Year, value);
+                SetProperty(ref _isShowAll, value, nameof(IsShowAll), () =>
+                {
+                    LoadItemsCommand.Execute(null);
+                });
             }
         }        
 
@@ -68,14 +69,20 @@ namespace Neighbor.Mobile.ViewModels
         public MonthlyBalanceViewModel()
         {
             Year = DateTime.Now.Year;
-            LoadItemsCommand = new Command(async (object commandParam) => await LoadItems(Year, IsShowAll));           
+            LoadItemsCommand = new Command(async (object commandParam) =>
+            {             
+                IsBusy = true;
+
+                await LoadItems();
+
+                IsBusy = false;
+            });
         }
 
-        private async Task LoadItems(int year, bool showAll)
-        {
-            IsBusy = true;
+        private async Task LoadItems()
+        {   
             var mediator = DependencyService.Resolve<IMediator>();
-            var request = new MonthlyBalanceRequest { Year = year };
+            var request = new MonthlyBalanceRequest { Year = Year };
             var response = await mediator.Send(request);
             content = response.Content.Select(p => new MonthlyBalanceModel(p, ShowAllIncomeView));
 
@@ -87,8 +94,6 @@ namespace Neighbor.Mobile.ViewModels
             {
                 Items = new ObservableCollection<MonthlyBalanceModel>(content.OrderByDescending(p => p.MonthNo));
             }
-
-            IsBusy = false;
         }
     }
 }
