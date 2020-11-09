@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Neighbor.Core.Application.Request.Finance;
+using Neighbor.Core.Application.Requests.Finance;
 using Xamarin.Forms;
 
 namespace Neighbor.Mobile.Views
@@ -9,17 +9,6 @@ namespace Neighbor.Mobile.Views
         public AboutPage()
         {
             InitializeComponent();
-        }
-
-        protected override async void OnAppearing()
-        {
-            var mediator = DependencyService.Resolve<IMediator>();
-            var request = new MonthlyBalanceRequest { Year = 2020 };
-            var response = await mediator.Send(request);
-
-            System.Diagnostics.Debugger.Break();
-
-            base.OnAppearing();
         }
     }
 }

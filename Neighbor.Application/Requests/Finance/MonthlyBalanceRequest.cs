@@ -1,7 +1,7 @@
 ﻿using MediatR;
-using Neighbor.Core.Application.Response.Finance;
+using Neighbor.Core.Application.Responses.Finance;
 
-namespace Neighbor.Core.Application.Request.Finance
+namespace Neighbor.Core.Application.Requests.Finance
 {
     public class MonthlyBalanceRequest : IRequest<MonthlyBalanceResponse>
     {

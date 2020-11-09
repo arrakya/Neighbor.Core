@@ -21,7 +21,7 @@ namespace Neighbor.Mobile.ViewModels
             set { SetProperty(ref isBusy, value); }
         }
 
-        string title = string.Empty;
+        string title = "Neighbor";
         public string Title
         {
             get { return title; }

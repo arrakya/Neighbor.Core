@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Neighbor.Core.Application.Request.Finance;
+using Neighbor.Core.Application.Requests.Finance;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

@@ -1,18 +1,40 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RuntimeIdentifiers>win-x64;linux-musl-x64</RuntimeIdentifiers>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<RuntimeIdentifiers>win-x64;linux-x64;linux-musl-x64</RuntimeIdentifiers>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="MediatR" Version="9.0.0" />
-    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
-  </ItemGroup>
+	<ItemGroup>
+	  <Compile Remove="Data\20201026143255_Initial.cs" />
+	  <Compile Remove="Data\20201026143255_Initial.Designer.cs" />
+	  <Compile Remove="Data\Migrations\20201026143626_Initial.cs" />
+	  <Compile Remove="Data\Migrations\20201026143626_Initial.Designer.cs" />
+	  <Compile Remove="Data\Migrations\20201027034002_Add table MonthlyBalance.cs" />
+	  <Compile Remove="Data\Migrations\20201027034002_Add table MonthlyBalance.Designer.cs" />
+	  <Compile Remove="Data\Migrations\20201027034108_Add table MonthlyBalance.cs" />
+	  <Compile Remove="Data\Migrations\20201027034108_Add table MonthlyBalance.Designer.cs" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Neighbor.Application\Neighbor.Core.Application.csproj" />
-    <ProjectReference Include="..\..\Neighbor.Domain\Neighbor.Core.Domain.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="MediatR" Version="9.0.0" />
+		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.9" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.9" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.9">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>	
+	
+	<ItemGroup>
+		<ProjectReference Include="..\..\Neighbor.Application\Neighbor.Core.Application.csproj" />
+		<ProjectReference Include="..\..\Neighbor.Domain\Neighbor.Core.Domain.csproj" />
+		<ProjectReference Include="..\..\Neighbor.Infrastructure\Neighbor.Core.Infrastructure.csproj" />
+	</ItemGroup>	
+	
+	<ItemGroup>
+	  <Folder Include="Data\Migrations\" />
+	</ItemGroup>
 
 </Project>

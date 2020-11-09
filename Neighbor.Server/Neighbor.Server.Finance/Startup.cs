@@ -4,8 +4,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MediatR;
-using System.Runtime.CompilerServices;
 using Neighbor.Core.Application;
+using Neighbor.Core.Infrastructure.Server;
+using Neighbor.Server.Finance.MonthlyBalance.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Neighbor.Server.Finance.MonthlyBalance
 {
@@ -21,8 +23,17 @@ namespace Neighbor.Server.Finance.MonthlyBalance
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            ApplicationStartup.ConfigureBuilder(services);
+            ApplicationStartup.ServerConfigureBuilder(services);
             services.AddMediatR(new[] { typeof(ApplicationStartup).Assembly, typeof(Startup).Assembly });
+
+            var defaultConnection = Configuration.GetConnectionString("DefaultConnection");
+
+            services.AddDbContext<MonthlyBalanceDbContext>(options =>
+            {
+                options.UseSqlServer(defaultConnection);
+            });
+
+            services.AddNeighborInfrastructureDbContext<MonthlyBalanceDbContext>();
 
             services.AddControllers();
         }
@@ -33,6 +44,13 @@ namespace Neighbor.Server.Finance.MonthlyBalance
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                using var scope = app.ApplicationServices.CreateScope();
+                var dbContext = (MonthlyBalanceDbContext)scope.ServiceProvider.GetRequiredService(typeof(MonthlyBalanceDbContext));
+                dbContext.Database.Migrate();
+                dbContext.Database.EnsureCreated();
             }
 
             // app.UseHttpsRedirection();
