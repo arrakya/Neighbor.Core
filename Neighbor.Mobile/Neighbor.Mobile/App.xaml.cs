@@ -4,6 +4,7 @@ using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
 using Neighbor.Core.Application;
 using Neighbor.Mobile.Services;
+using Neighbor.Mobile.Views;
 using System;
 using System.Linq;
 using Xamarin.Forms;
@@ -20,15 +21,15 @@ namespace Neighbor.Mobile
             InitializeComponent();
 
             var services = new ServiceCollection();
-            DependencyService.Register<MockDataStore>();          
-            
+            DependencyService.Register<MockDataStore>();
+
             // Configure services
             var applicationAssembly = typeof(ApplicationStartup).Assembly;
             ApplicationStartup.ClientConfigureBuilder(services, (httpClient) =>
             {
                 httpClient.BaseAddress = new Uri(BaseAddress);
             });
-            
+
             var serviceProvider = services.BuildServiceProvider();
             DependencyResolver.ResolveUsing(type => services.Any(p => p.ServiceType == type) ? serviceProvider.GetService(type) : null);
 

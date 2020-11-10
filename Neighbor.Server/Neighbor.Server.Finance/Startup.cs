@@ -33,7 +33,7 @@ namespace Neighbor.Server.Finance.MonthlyBalance
                 options.UseSqlServer(defaultConnection);
             });
 
-            services.AddNeighborInfrastructureDbContext<MonthlyBalanceDbContext>();
+            services.AddTransient<IFinanceDbContext, MonthlyBalanceDbContext>();
 
             services.AddControllers();
         }

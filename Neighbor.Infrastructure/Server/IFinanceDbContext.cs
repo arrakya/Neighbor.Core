@@ -3,7 +3,7 @@ using Neighbor.Core.Domain.Models.Finance;
 
 namespace Neighbor.Core.Infrastructure.Server
 {
-    public interface IFinanceDbContext
+    public interface IFinanceDbContext : IServerDbContext
     {
         DbSet<MonthlyBalance> MonthlyBalances { get; }
      }

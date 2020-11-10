@@ -5,21 +5,25 @@ using Neighbor.Core.Infrastructure.Server;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace Neighbor.Core.Application.Server
 {
     public class FinanceRepository : IFinance
     {
-        private IFinanceDbContext _dbContext;
+        private readonly IServiceProvider services;
 
-        public FinanceRepository(IFinanceDbContext dbContext)
+        public FinanceRepository(IServiceProvider services)
         {
-            _dbContext = dbContext;
+            this.services = services;
         }
 
         public virtual async Task<IEnumerable<MonthlyBalance>> GetMonthlyBalances(int year)
         {
-            var monthlyBalanceCollection = await _dbContext.MonthlyBalances.Where(p => p.Year == year).ToListAsync();
+            var dbContext = (IFinanceDbContext)services.GetRequiredService(typeof(IFinanceDbContext));
+
+            var monthlyBalanceCollection = await dbContext.MonthlyBalances.Where(p => p.Year == year).ToListAsync();
 
             return monthlyBalanceCollection;
         }
