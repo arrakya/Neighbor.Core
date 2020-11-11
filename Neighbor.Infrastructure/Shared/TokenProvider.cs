@@ -7,7 +7,7 @@ namespace Neighbor.Core.Infrastructure.Shared
 {
     public class TokenProvider
     {
-        protected readonly string key;
+        protected string key;
 
         public TokenProvider()
         {

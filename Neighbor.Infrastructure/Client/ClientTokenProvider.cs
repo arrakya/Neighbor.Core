@@ -15,11 +15,12 @@ namespace Neighbor.Core.Infrastructure.Client
         public ClientTokenProvider(IHttpClientFactory httpClientFactory)
         {
             _httpClient = httpClientFactory.CreateClient("default");
+            key = "310060161466031006016146603100601614660";
         }
 
         public async Task<string> Create(double tokenLifeTimeInSec)
         {
-            var requestUri = $"{baseUri}/user/autorize";
+            var requestUri = $"{baseUri}/user/authorize";
             var httpClient = _httpClient;
             var formContent = new FormUrlEncodedContent(new[]
             {
