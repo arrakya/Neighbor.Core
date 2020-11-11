@@ -1,10 +1,10 @@
-﻿using System;
+﻿using System.Threading.Tasks;
 
 namespace Neighbor.Core.Domain.Interfaces.Security
 {
     public interface ITokenProvider
     {
-        string Create(double tokenLifeTimeInSec);
+        Task<string> Create(double tokenLifeTimeInSec);
 
         bool Validate(string token);
     }
