@@ -14,17 +14,17 @@ namespace Neighbor.Mobile
 {
     public partial class App : Xamarin.Forms.Application
     {
-        public readonly string IdentityBaseAddress = "http://10.0.2.2:6000";
-        public readonly string FinanceBaseAddress = "http://10.0.2.2:5000";
+        //public readonly string ServerAddress = "10.0.2.2";
+        public readonly string ServerAddress = "192.168.1.203";
+        public readonly string IdentityBaseAddress = $"http://192.168.1.203";
+        public readonly string FinanceBaseAddress = $"http://192.168.1.203";
 
         public App()
         {
             InitializeComponent();
 
             var services = new ServiceCollection();
-            DependencyService.Register<MockDataStore>();
-
-            var serviceProvider = services.BuildServiceProvider();
+            DependencyService.Register<MockDataStore>();            
 
             // Configure services
             var applicationAssembly = typeof(ApplicationStartup).Assembly;
@@ -38,6 +38,7 @@ namespace Neighbor.Mobile
                     httpClient.BaseAddress = new Uri(IdentityBaseAddress);
                 });
 
+            var serviceProvider = services.BuildServiceProvider();
             DependencyResolver.ResolveUsing(type => services.Any(p => p.ServiceType == type) ? serviceProvider.GetService(type) : null);
 
             MainPage = new AppShell();

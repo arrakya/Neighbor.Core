@@ -38,6 +38,12 @@ namespace Neighbor.Core.Infrastructure.Shared
             {
                 IssuerSigningKey = securityKey,
                 ValidateLifetime = true,
+                LifetimeValidator = (notBefore, expires, securityToken, validationParameters) =>
+                {
+                    var isValidLifeTime = expires > DateTime.UtcNow;
+
+                    return isValidLifeTime;
+                },
                 ValidateAudience = false,
                 ValidateIssuer = false,
                 ClockSkew = TimeSpan.Zero
