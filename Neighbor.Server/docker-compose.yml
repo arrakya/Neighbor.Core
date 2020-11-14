@@ -1,0 +1,51 @@
+version: "3.8"
+services:
+    gateway:
+        image: arrak/neighbor.server.api_gateway:latest
+        ports:            
+            - "80:80"
+            - "8081:8081"
+        container_name: "neighbor-api-gateway"
+        networks:
+            - neighbor
+    web-identity:
+        image: arrak/neighbor.server.identity:latest
+        ports:
+            - "6000:6000"
+            - "6001:6001"
+        container_name: "identity"
+        networks:
+            - neighbor
+    db-identity:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        ports:
+            - "1434:1433"
+        container_name: "db-identity"
+        environment:
+            - ACCEPT_EULA=Y 
+            - SA_PASSWORD=vkiydKN6580!
+            - MSSQL_PID=Express
+        networks:
+            - neighbor
+    web-finance:
+        image: arrak/neighbor.server.finance:latest
+        ports:
+            - "5000:5000"
+            - "5001:5001"
+        container_name: "monthly-balance"
+        networks:
+            - neighbor
+    db-finance:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        ports:
+            - "1433:1433"
+        container_name: "db-monthly-balance"
+        environment:
+            - ACCEPT_EULA=Y 
+            - SA_PASSWORD=vkiydKN6580!
+            - MSSQL_PID=Express
+        networks:
+            - neighbor
+networks:
+    neighbor:    
+        name: neighbor

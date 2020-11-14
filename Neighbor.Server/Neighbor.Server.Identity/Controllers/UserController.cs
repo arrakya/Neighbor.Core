@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Neighbor.Server.Identity.Controllers
 {
     [ApiController]
-    [Route("/neighbor/identity/[controller]")]
+    [Route("[controller]")]
     public class UserController
     {
         private readonly IMediator mediator;
