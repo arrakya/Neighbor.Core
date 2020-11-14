@@ -16,7 +16,7 @@ namespace Neighbor.Core.Application.Client
 
         public FinanceRepository(IHttpClientFactory httpClientFactory)
         {
-            _httpClient = httpClientFactory.CreateClient("default");
+            _httpClient = httpClientFactory.CreateClient("finance");
         }
 
         public virtual async Task<IEnumerable<MonthlyBalance>> GetMonthlyBalances(int year)

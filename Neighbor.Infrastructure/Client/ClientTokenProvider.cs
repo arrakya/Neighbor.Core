@@ -1,5 +1,6 @@
 ﻿using Neighbor.Core.Domain.Interfaces.Security;
 using Neighbor.Core.Infrastructure.Shared;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -12,9 +13,11 @@ namespace Neighbor.Core.Infrastructure.Client
         private readonly string baseUri = "/neighbor/identity";
         private readonly HttpClient _httpClient;
 
-        public ClientTokenProvider(IHttpClientFactory httpClientFactory)
+        public ClientTokenProvider(IServiceProvider serviceProvider): base (serviceProvider)
         {
-            _httpClient = httpClientFactory.CreateClient("default");
+            var httpClientFactory = (IHttpClientFactory)serviceProvider.GetService(typeof(IHttpClientFactory));
+            _httpClient = httpClientFactory.CreateClient("identity");
+            
             key = "310060161466031006016146603100601614660";
         }
 

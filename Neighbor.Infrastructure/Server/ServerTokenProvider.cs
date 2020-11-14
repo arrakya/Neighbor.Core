@@ -1,4 +1,6 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Neighbor.Core.Domain.Interfaces.Security;
 using Neighbor.Core.Infrastructure.Shared;
 using System;
@@ -9,7 +11,7 @@ namespace Neighbor.Core.Infrastructure.Server
 {
     public class ServerTokenProvider : TokenProvider, ITokenProvider
     {
-        public ServerTokenProvider() : base()
+        public ServerTokenProvider(IServiceProvider serviceProvider) : base(serviceProvider)
         {
 
         }

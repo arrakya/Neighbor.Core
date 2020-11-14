@@ -12,10 +12,13 @@ namespace Neighbor.Core.Application
 {
     public static class ApplicationStartup
     {
-        public static void ClientConfigureBuilder(IServiceCollection services, Action<HttpClient> httpClientConfigure)
+        public static void ClientConfigureBuilder(IServiceCollection services, 
+            Action<HttpClient> financeHttpClientConfigure,
+            Action<HttpClient> identityHttpClientConfigure)
         {
             services.AddMediatR(typeof(ApplicationStartup).Assembly);
-            services.AddHttpClient("default", httpClientConfigure);
+            services.AddHttpClient("finance", financeHttpClientConfigure);
+            services.AddHttpClient("identity", identityHttpClientConfigure);
             services.AddTransient<IFinance, Client.FinanceRepository>();
             services.AddTransient<ITokenProvider, Neighbor.Core.Infrastructure.Client.ClientTokenProvider>();
         }

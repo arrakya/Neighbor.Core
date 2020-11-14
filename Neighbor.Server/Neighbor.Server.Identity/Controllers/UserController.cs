@@ -2,15 +2,12 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Neighbor.Core.Application.Requests.Security;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Neighbor.Server.Identity.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("/neighbor/identity/[controller]")]
     public class UserController
     {
         private readonly IMediator mediator;

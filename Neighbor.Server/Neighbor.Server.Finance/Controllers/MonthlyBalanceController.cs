@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Neighbor.Server.Finance.MonthlyBalance.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("/neighbor/finance/[controller]")]
     public class MonthlyBalanceController : ControllerBase
     {
         private readonly ILogger<MonthlyBalanceController> _logger;
