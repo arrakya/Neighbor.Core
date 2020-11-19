@@ -17,6 +17,7 @@ namespace Neighbor.Mobile.ViewModels
 
         private async void OnLoginClicked(object obj)
         {
+            IsBusy = true;
             var request = new AuthorizeRequest
             {
                 Username = "arrak.ya",
@@ -32,7 +33,7 @@ namespace Neighbor.Mobile.ViewModels
             }
 
             Application.Current.Properties.Add("token", token);
-
+            IsBusy = false;
             // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
             await Shell.Current.GoToAsync($"//{nameof(MonthlyBalanceListViewPage)}");
         }

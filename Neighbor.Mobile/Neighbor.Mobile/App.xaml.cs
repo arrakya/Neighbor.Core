@@ -14,21 +14,27 @@ namespace Neighbor.Mobile
 {
     public partial class App : Xamarin.Forms.Application
     {
-        //public readonly string ServerAddress = "10.0.2.2";
-        public readonly string ServerAddress = "192.168.1.203";
-        public readonly string IdentityBaseAddress = $"http://192.168.1.203";
-        public readonly string FinanceBaseAddress = $"http://192.168.1.203";
+        public readonly string ServerAddress = "10.0.2.2";
+        
+        public readonly string IdentityBaseAddress;
+        public readonly string FinanceBaseAddress;
 
         public App()
         {
+#if !DEBUG
+            ServerAddress = "arrakya.thddns.net";
+#endif
+            IdentityBaseAddress = $"http://{ServerAddress}";
+            FinanceBaseAddress = $"http://{ServerAddress}";
+
             InitializeComponent();
 
             var services = new ServiceCollection();
-            DependencyService.Register<MockDataStore>();            
+            DependencyService.Register<MockDataStore>();
 
             // Configure services
             var applicationAssembly = typeof(ApplicationStartup).Assembly;
-            ApplicationStartup.ClientConfigureBuilder(services, 
+            ApplicationStartup.ClientConfigureBuilder(services,
                 (httpClient) =>
                 {
                     httpClient.BaseAddress = new Uri(FinanceBaseAddress);
