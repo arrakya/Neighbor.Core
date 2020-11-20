@@ -155,27 +155,27 @@ namespace Neighbor.Server.Identity.Data.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "c98188b7-1ebf-4eca-aeac-bc2f5441e0b9", "b9a15461-263c-48f6-bbeb-7c52e4915569", "Admin", null });
+                values: new object[] { "fde73014-44a9-48e1-abbd-8fd228d57027", "d73c02da-8657-4a0d-95b5-40504718f6e2", "Admin", null });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "6e17e65d-edd1-4c92-a4b3-5185563ad8cb", 0, "f7eb1658-26d1-499d-8013-64fd7841e110", "arrak.ya@outlook.com", false, false, null, null, null, "AQAAAAEAACcQAAAAEKdsPu1JzrL1WIZ5haFzbEpYf4kT5sHl6Na/6OzffjdAYa575oevOcQZE4b5ef3ntA==", "0917712328", false, "33231b03-3eaa-43f1-a54c-26b3bf118515", false, "arrakya" });
+                values: new object[] { "bc21d80e-32a8-4634-85d5-83b1cd1b4964", 0, "d85c8580-4ccb-4cd8-b501-a4b73ac9536d", "arrak.ya@outlook.com", false, false, null, "ARRAK.YA@OUTLOOK.COM", "ARRAKYA", "AQAAAAEAACcQAAAAEMd7tY6/JcF+FnKfsldeMn0WJJICrmo3lpsOhP+LCyysHSQ7un6ywpMam8FDEvNP7Q==", "0917712328", false, "2fd1ff16-9585-4dcd-bd7a-5021ca5fb7ff", false, "arrakya" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserClaims",
                 columns: new[] { "Id", "ClaimType", "ClaimValue", "UserId" },
                 values: new object[,]
                 {
-                    { 1, "FirstName", "Arrak", "6e17e65d-edd1-4c92-a4b3-5185563ad8cb" },
-                    { 2, "LastName", "Yambubpah", "6e17e65d-edd1-4c92-a4b3-5185563ad8cb" },
-                    { 3, "HouseNumber", "89/86", "6e17e65d-edd1-4c92-a4b3-5185563ad8cb" }
+                    { 1, "FirstName", "Arrak", "bc21d80e-32a8-4634-85d5-83b1cd1b4964" },
+                    { 2, "LastName", "Yambubpah", "bc21d80e-32a8-4634-85d5-83b1cd1b4964" },
+                    { 3, "HouseNumber", "89/86", "bc21d80e-32a8-4634-85d5-83b1cd1b4964" }
                 });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
                 columns: new[] { "RoleId", "UserId" },
-                values: new object[] { "c98188b7-1ebf-4eca-aeac-bc2f5441e0b9", "6e17e65d-edd1-4c92-a4b3-5185563ad8cb" });
+                values: new object[] { "fde73014-44a9-48e1-abbd-8fd228d57027", "bc21d80e-32a8-4634-85d5-83b1cd1b4964" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

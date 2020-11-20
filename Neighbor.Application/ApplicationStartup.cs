@@ -5,6 +5,7 @@ using Neighbor.Core.Application.Requests.Finance;
 using Neighbor.Core.Application.Responses.Finance;
 using Neighbor.Core.Domain.Interfaces.Finance;
 using Neighbor.Core.Domain.Interfaces.Security;
+using Server = Neighbor.Core.Infrastructure.Server;
 using System;
 using System.Net.Http;
 
@@ -28,7 +29,7 @@ namespace Neighbor.Core.Application
             services.AddTransient<IFinance, Server.FinanceRepository>();
             services.AddTransient<ITokenProvider, Neighbor.Core.Infrastructure.Server.ServerTokenProvider>();
             services.AddTransient<IPipelineBehavior<MonthlyBalanceRequest, MonthlyBalanceResponse>, MonthBlanceBehavior>();
-            
+            services.AddTransient<IUserContextProvider, Server.UserContextProvider>();
         }
     }
 }

@@ -9,6 +9,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Neighbor.Core.Application;
 using Neighbor.Core.Infrastructure.Server;
 using Neighbor.Server.Identity.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Neighbor.Server.Identity
 {
@@ -45,6 +49,28 @@ namespace Neighbor.Server.Identity
                 options.Password.RequiredLength = 8;
             }).AddEntityFrameworkStores<IdentityDbContext>();
 
+            services.AddAuthorization();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+                {
+                    var key = "310060161466031006016146603100601614660";
+                    var securityKey = new SymmetricSecurityKey(Encoding.UTF32.GetBytes(key));
+                    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                    {
+                        IssuerSigningKey = securityKey,
+                        ValidateLifetime = true,
+                        LifetimeValidator = (notBefore, expires, securityToken, validationParameters) =>
+                        {
+                            var isValidLifeTime = expires > DateTime.UtcNow;
+
+                            return isValidLifeTime;
+                        },
+                        ValidateAudience = false,
+                        ValidateIssuer = false,
+                        ClockSkew = TimeSpan.Zero
+                    };
+                });
+            
             services.AddTransient<IIdentityDbContext, IdentityDbContext>();
 
             services.AddControllers();
@@ -65,6 +91,9 @@ namespace Neighbor.Server.Identity
             }
 
             app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

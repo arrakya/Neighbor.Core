@@ -1,14 +1,18 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Neighbor.Core.Application.Requests.Identity;
 using Neighbor.Core.Application.Requests.Security;
+using Neighbor.Core.Domain.Models.Identity;
 using System.Threading.Tasks;
 
 namespace Neighbor.Server.Identity.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class UserController
+    public class UserController : Controller
     {
         private readonly IMediator mediator;
 
@@ -30,6 +34,20 @@ namespace Neighbor.Server.Identity.Controllers
             var token = response.Token;
 
             return token;
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPost]
+        [Route("context")]
+        public async Task<IdentityUserContext> GetContext()
+        {
+            var request = new GetUserIdentityRequest
+            {
+                UserName = User.Identity.Name
+            };
+            var response = await mediator.Send(request);
+
+            return response.Content;
         }
     }
 }

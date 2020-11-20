@@ -8,7 +8,7 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace Neighbor.Core.Application.Server
+namespace Neighbor.Core.Infrastructure.Server
 {
     public class FinanceRepository : IFinance
     {

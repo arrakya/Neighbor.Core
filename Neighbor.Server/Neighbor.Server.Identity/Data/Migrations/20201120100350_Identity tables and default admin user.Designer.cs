@@ -10,7 +10,7 @@ using Neighbor.Server.Identity.Data;
 namespace Neighbor.Server.Identity.Data.Migrations
 {
     [DbContext(typeof(IdentityDbContext))]
-    [Migration("20201120083259_Identity tables and default admin user")]
+    [Migration("20201120100350_Identity tables and default admin user")]
     partial class Identitytablesanddefaultadminuser
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,8 +50,8 @@ namespace Neighbor.Server.Identity.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "c98188b7-1ebf-4eca-aeac-bc2f5441e0b9",
-                            ConcurrencyStamp = "b9a15461-263c-48f6-bbeb-7c52e4915569",
+                            Id = "fde73014-44a9-48e1-abbd-8fd228d57027",
+                            ConcurrencyStamp = "d73c02da-8657-4a0d-95b5-40504718f6e2",
                             Name = "Admin"
                         });
                 });
@@ -147,16 +147,18 @@ namespace Neighbor.Server.Identity.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "6e17e65d-edd1-4c92-a4b3-5185563ad8cb",
+                            Id = "bc21d80e-32a8-4634-85d5-83b1cd1b4964",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "f7eb1658-26d1-499d-8013-64fd7841e110",
+                            ConcurrencyStamp = "d85c8580-4ccb-4cd8-b501-a4b73ac9536d",
                             Email = "arrak.ya@outlook.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAEAACcQAAAAEKdsPu1JzrL1WIZ5haFzbEpYf4kT5sHl6Na/6OzffjdAYa575oevOcQZE4b5ef3ntA==",
+                            NormalizedEmail = "ARRAK.YA@OUTLOOK.COM",
+                            NormalizedUserName = "ARRAKYA",
+                            PasswordHash = "AQAAAAEAACcQAAAAEMd7tY6/JcF+FnKfsldeMn0WJJICrmo3lpsOhP+LCyysHSQ7un6ywpMam8FDEvNP7Q==",
                             PhoneNumber = "0917712328",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "33231b03-3eaa-43f1-a54c-26b3bf118515",
+                            SecurityStamp = "2fd1ff16-9585-4dcd-bd7a-5021ca5fb7ff",
                             TwoFactorEnabled = false,
                             UserName = "arrakya"
                         });
@@ -191,21 +193,21 @@ namespace Neighbor.Server.Identity.Data.Migrations
                             Id = 1,
                             ClaimType = "FirstName",
                             ClaimValue = "Arrak",
-                            UserId = "6e17e65d-edd1-4c92-a4b3-5185563ad8cb"
+                            UserId = "bc21d80e-32a8-4634-85d5-83b1cd1b4964"
                         },
                         new
                         {
                             Id = 2,
                             ClaimType = "LastName",
                             ClaimValue = "Yambubpah",
-                            UserId = "6e17e65d-edd1-4c92-a4b3-5185563ad8cb"
+                            UserId = "bc21d80e-32a8-4634-85d5-83b1cd1b4964"
                         },
                         new
                         {
                             Id = 3,
                             ClaimType = "HouseNumber",
                             ClaimValue = "89/86",
-                            UserId = "6e17e65d-edd1-4c92-a4b3-5185563ad8cb"
+                            UserId = "bc21d80e-32a8-4634-85d5-83b1cd1b4964"
                         });
                 });
 
@@ -248,8 +250,8 @@ namespace Neighbor.Server.Identity.Data.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "6e17e65d-edd1-4c92-a4b3-5185563ad8cb",
-                            RoleId = "c98188b7-1ebf-4eca-aeac-bc2f5441e0b9"
+                            UserId = "bc21d80e-32a8-4634-85d5-83b1cd1b4964",
+                            RoleId = "fde73014-44a9-48e1-abbd-8fd228d57027"
                         });
                 });
 

@@ -21,7 +21,9 @@ namespace Neighbor.Server.Identity.Data
             {
                 Id = Guid.NewGuid().ToString(),
                 Email = "arrak.ya@outlook.com",
+                NormalizedEmail = "arrak.ya@outlook.com".ToUpper().Normalize(),
                 UserName = "arrakya",
+                NormalizedUserName = "arrakya".ToUpper().Normalize(),
                 PhoneNumber = "0917712328"
             };
             adminUser.PasswordHash = passwordHasher.HashPassword(adminUser, "12345678");

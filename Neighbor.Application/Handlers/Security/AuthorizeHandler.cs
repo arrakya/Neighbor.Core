@@ -20,7 +20,7 @@ namespace Neighbor.Core.Application.Handlers.Security
         public async Task<AuthorizeResponse> Handle(AuthorizeRequest request, CancellationToken cancellationToken)
         {            
             var tokenLifetime = (DateTime.Now.AddSeconds(30) - DateTime.Now).TotalSeconds;
-            var token = await tokenProvider.Create(tokenLifetime);
+            var token = await tokenProvider.Create(tokenLifetime, request.Username, request.Password);
             var response = new AuthorizeResponse { Token = token };
 
             return response;

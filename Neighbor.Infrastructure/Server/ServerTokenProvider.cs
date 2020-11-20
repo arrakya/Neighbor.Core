@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Neighbor.Core.Domain.Interfaces.Security;
 using Neighbor.Core.Infrastructure.Shared;
 using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,8 +16,23 @@ namespace Neighbor.Core.Infrastructure.Server
 
         }
 
-        public async Task<string> Create(double tokenLifeTimeInSec)
+        public async Task<string> Create(double tokenLifeTimeInSec, string name, string password)
         {
+            var userManager = (UserManager<IdentityUser>)serviceProvider.GetService(typeof(UserManager<IdentityUser>));
+            var userIdentity = await userManager.FindByNameAsync(name.ToUpper().Normalize());
+
+            if(userIdentity == null)
+            {
+                return string.Empty;
+            }
+
+            var singInManager = (SignInManager<IdentityUser>)serviceProvider.GetService(typeof(SignInManager<IdentityUser>));
+            var signInResult = await singInManager.CheckPasswordSignInAsync(userIdentity, password, false);
+            if (!signInResult.Succeeded)
+            {
+                return string.Empty;
+            }
+
             if (string.IsNullOrEmpty(key))
             {
                 throw new Exception("NEIGHBOR_IDENTITY_KEY are empty");
@@ -27,6 +42,10 @@ namespace Neighbor.Core.Infrastructure.Server
             var tokenDesc = new SecurityTokenDescriptor
             {
                 IssuedAt = DateTime.Now
+            };
+            tokenDesc.Claims = new Dictionary<string, object>
+            {
+                { "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name",name }
             };
             tokenDesc.Expires = tokenDesc.IssuedAt.Value.AddSeconds(tokenLifeTimeInSec);
 

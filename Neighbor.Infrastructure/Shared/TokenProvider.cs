@@ -8,8 +8,9 @@ namespace Neighbor.Core.Infrastructure.Shared
 {
     public class TokenProvider
     {
-        private readonly ILogger<TokenProvider> logger;
-        private readonly IHostEnvironment hostEnvironment;
+        protected readonly ILogger<TokenProvider> logger;
+        protected readonly IHostEnvironment hostEnvironment;
+        protected readonly IServiceProvider serviceProvider;
         protected string key;
 
         public TokenProvider(IServiceProvider serviceProvider)
@@ -17,6 +18,7 @@ namespace Neighbor.Core.Infrastructure.Shared
             this.key = Environment.GetEnvironmentVariable("NEIGHBOR_IDENTITY_KEY");
             this.logger = (ILogger<TokenProvider>)serviceProvider.GetService(typeof(ILogger<TokenProvider>));
             this.hostEnvironment = (IHostEnvironment)serviceProvider.GetService(typeof(IHostEnvironment));
+            this.serviceProvider = serviceProvider;
         }
 
         public bool Validate(string tokenString)
