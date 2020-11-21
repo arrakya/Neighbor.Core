@@ -22,7 +22,7 @@ namespace Neighbor.Core.Infrastructure.Client
             key = "310060161466031006016146603100601614660";
         }
 
-        public async Task<string> Create(double tokenLifeTimeInSec, string name, string password)
+        public async Task<string> Create(string name, string password)
         {
             var requestUri = $"{baseUri}/user/authorize";
             var httpClient = _httpClient;

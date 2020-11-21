@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Neighbor.Core.Domain.Interfaces.Security;
 using Neighbor.Core.Infrastructure.Shared;
@@ -16,7 +17,7 @@ namespace Neighbor.Core.Infrastructure.Server
 
         }
 
-        public async Task<string> Create(double tokenLifeTimeInSec, string name, string password)
+        public async Task<string> Create(string name, string password)
         {
             var userManager = (UserManager<IdentityUser>)serviceProvider.GetService(typeof(UserManager<IdentityUser>));
             var userIdentity = await userManager.FindByNameAsync(name.ToUpper().Normalize());
@@ -47,7 +48,11 @@ namespace Neighbor.Core.Infrastructure.Server
             {
                 { "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name",name }
             };
-            tokenDesc.Expires = tokenDesc.IssuedAt.Value.AddSeconds(tokenLifeTimeInSec);
+
+            var configure = (IConfiguration)serviceProvider.GetService(typeof(IConfiguration));
+            var tokenLifeTimeInSec = Convert.ToInt32(configure["Token:LifeTimeSecond"]);
+            var tokenLifetime = (DateTime.Now.AddSeconds(tokenLifeTimeInSec) - DateTime.Now).TotalSeconds;
+            tokenDesc.Expires = tokenDesc.IssuedAt.Value.AddSeconds(tokenLifetime);
 
             var securityKey = new SymmetricSecurityKey(Encoding.UTF32.GetBytes(key));
             tokenDesc.SigningCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
