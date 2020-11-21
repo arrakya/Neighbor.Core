@@ -50,10 +50,13 @@ namespace Neighbor.Server.Identity
             }).AddEntityFrameworkStores<IdentityDbContext>();
 
             services.AddAuthorization();
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            services.AddAuthentication(config =>
+            {
+                config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
-                    var key = "310060161466031006016146603100601614660";
+                    var key = Environment.GetEnvironmentVariable("NEIGHBOR_IDENTITY_KEY");
                     var securityKey = new SymmetricSecurityKey(Encoding.UTF32.GetBytes(key));
                     options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                     {
