@@ -20,8 +20,8 @@ namespace Neighbor.Mobile.ViewModels
             IsBusy = true;
             var request = new AuthorizeRequest
             {
-                Username = "arrak.ya",
-                Password = "vkiydKN6580"
+                Username = "arrakya",
+                Password = "12345678"
             };
             var mediator = DependencyService.Resolve<IMediator>();
             var response = await mediator.Send(request);

@@ -18,7 +18,7 @@ namespace Neighbor.Core.Application.Handlers.Security
 
         public async Task<CheckAuthorizeResponse> Handle(CheckAuthorizeRequest request, CancellationToken cancellationToken)
         {
-            var isValid = await Task.FromResult(tokenProvider.Validate(request.Token));
+            var isValid = await tokenProvider.Validate(request.Token);
             var response = new CheckAuthorizeResponse { IsValid = isValid };
             
             return response;

@@ -38,10 +38,16 @@ namespace Neighbor.Mobile
                 (httpClient) =>
                 {
                     httpClient.BaseAddress = new Uri(FinanceBaseAddress);
+#if DEBUG
+                    httpClient.BaseAddress = new Uri("http://10.0.2.2:5000");
+#endif
                 },
                 (httpClient) =>
                 {
                     httpClient.BaseAddress = new Uri(IdentityBaseAddress);
+#if DEBUG
+                    httpClient.BaseAddress = new Uri("http://10.0.2.2:6000");
+#endif
                 });
 
             var serviceProvider = services.BuildServiceProvider();

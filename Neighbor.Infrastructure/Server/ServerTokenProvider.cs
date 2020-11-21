@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Neighbor.Core.Domain.Interfaces.Security;
-using Neighbor.Core.Infrastructure.Shared;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,11 +11,19 @@ using System.Threading.Tasks;
 
 namespace Neighbor.Core.Infrastructure.Server
 {
-    public class ServerTokenProvider : TokenProvider, ITokenProvider
+    public class ServerTokenProvider : ITokenProvider
     {
-        public ServerTokenProvider(IServiceProvider serviceProvider) : base(serviceProvider)
-        {
+        protected readonly ILogger<ITokenProvider> logger;
+        protected readonly IHostEnvironment hostEnvironment;
+        protected readonly IServiceProvider serviceProvider;
+        protected string key;
 
+        public ServerTokenProvider(IServiceProvider serviceProvider)
+        {
+            this.key = Environment.GetEnvironmentVariable("NEIGHBOR_IDENTITY_KEY");
+            this.logger = (ILogger<ITokenProvider>)serviceProvider.GetService(typeof(ILogger<ITokenProvider>));
+            this.hostEnvironment = (IHostEnvironment)serviceProvider.GetService(typeof(IHostEnvironment));
+            this.serviceProvider = serviceProvider;
         }
 
         public async Task<string> Create(string name, string password)
@@ -61,6 +70,54 @@ namespace Neighbor.Core.Infrastructure.Server
             var tokenString = await Task.FromResult(tokenHandler.WriteToken(token));
 
             return tokenString;
+        }
+
+        public async Task<bool> Validate(string tokenString)
+        {
+            if (string.IsNullOrEmpty(key))
+            {
+                logger?.LogCritical("NEIGHBOR_IDENTITY_KEY are empty");
+
+                if (hostEnvironment.IsDevelopment())
+                {
+                    throw new Exception("NEIGHBOR_IDENTITY_KEY are empty");
+                }
+            }
+
+            var token = new System.IdentityModel.Tokens.Jwt.JwtSecurityToken(tokenString);
+            var tokenHandler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF32.GetBytes(key));
+            var validateParams = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+            {
+                IssuerSigningKey = securityKey,
+                ValidateLifetime = true,
+                LifetimeValidator = (notBefore, expires, securityToken, validationParameters) =>
+                {
+                    var isValidLifeTime = expires > DateTime.UtcNow;
+
+                    return isValidLifeTime;
+                },
+                ValidateAudience = false,
+                ValidateIssuer = false,
+                ClockSkew = TimeSpan.Zero
+            };
+            var isValid = true;
+
+            try
+            {
+                var claimsPrincipal = tokenHandler.ValidateToken(tokenString, validateParams, out var securityToken);
+            }
+            catch (Exception ex)
+            {
+                logger?.LogError($"Token {(isValid ? "valid" : "invalid")} - {tokenString} - {ex.Message}");
+                isValid = false;
+
+                return await Task.FromResult(isValid);
+            }
+
+            logger?.LogInformation($"Token {(isValid ? "valid" : "invalid")} - {tokenString}");
+
+            return await Task.FromResult(isValid);
         }
     }
 }

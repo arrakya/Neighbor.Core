@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Neighbor.Core.Domain.Interfaces.Security;
 using Neighbor.Core.Domain.Models.Identity;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,9 +11,9 @@ namespace Neighbor.Core.Infrastructure.Server
     {
         private readonly UserManager<IdentityUser> userManager;
 
-        public UserContextProvider(UserManager<IdentityUser> userManager)
+        public UserContextProvider(IServiceProvider services)
         {
-            this.userManager = userManager;
+            this.userManager = (UserManager<IdentityUser>)services.GetService(typeof(UserManager<IdentityUser>));
         }
 
         public async Task<IdentityUserContext> GetUserContext(string userName)

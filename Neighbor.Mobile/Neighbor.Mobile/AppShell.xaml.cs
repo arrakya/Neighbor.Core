@@ -27,7 +27,7 @@ namespace Neighbor.Mobile
             base.OnNavigated(args);
 
             var isNotInLoginRoute = !CurrentItem.Route.ToLower().Contains($"_{nameof(LoginPage).ToLower()}");
-            var isNoToken = !Application.Current.Properties.ContainsKey("token");
+            var isNoToken = !Application.Current.Properties.ContainsKey("token") || string.IsNullOrEmpty(Application.Current.Properties["token"].ToString());
 
             if (!isNotInLoginRoute)
             {
@@ -41,6 +41,11 @@ namespace Neighbor.Mobile
             }
 
             var token = Application.Current.Properties["token"].ToString();
+            if (string.IsNullOrEmpty(token))
+            {
+                await GoToAsync($"//{nameof(LoginPage)}");
+            }
+
             var checkAuthorizeRequest = new CheckAuthorizeRequest { Token = token };
             var mediator = DependencyService.Resolve<IMediator>();
             var response = await mediator.Send(checkAuthorizeRequest);

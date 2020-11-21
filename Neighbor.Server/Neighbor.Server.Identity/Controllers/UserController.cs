@@ -48,5 +48,18 @@ namespace Neighbor.Server.Identity.Controllers
 
             return response.Content;
         }
+
+        [HttpPost]
+        [Route("check/token")]
+        public async Task<bool> CheckToken([FromForm] IFormCollection form)
+        {
+            var request = new CheckAuthorizeRequest
+            {
+                Token = form["token"].ToString(),
+            };
+            var response = await mediator.Send(request);
+
+            return response.IsValid;
+        }
     }
 }

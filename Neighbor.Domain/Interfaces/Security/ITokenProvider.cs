@@ -1,5 +1,4 @@
-﻿using Neighbor.Core.Domain.Models.Identity;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Neighbor.Core.Domain.Interfaces.Security
 {
@@ -7,6 +6,6 @@ namespace Neighbor.Core.Domain.Interfaces.Security
     {
         Task<string> Create(string name, string password);
 
-        bool Validate(string token);
+        Task<bool> Validate(string token);
     }
 }
