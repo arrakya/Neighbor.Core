@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Neighbor.Core.Application.Handlers.Security;
 using Neighbor.Core.Application.Requests.Security;
 using Neighbor.Mobile.Views;
 using System;
@@ -17,45 +16,8 @@ namespace Neighbor.Mobile
         }
 
         private async void OnMenuItemClicked(object sender, EventArgs e)
-        {
-            Application.Current.Properties.Remove("token");
+        {            
             await Current.GoToAsync("//LoginPage");
-        }
-
-        protected async override void OnNavigated(ShellNavigatedEventArgs args)
-        {
-            base.OnNavigated(args);
-
-            var isNotInLoginRoute = !CurrentItem.Route.ToLower().Contains($"_{nameof(LoginPage).ToLower()}");
-            var isNoToken = !Application.Current.Properties.ContainsKey("token") || string.IsNullOrEmpty(Application.Current.Properties["token"].ToString());
-
-            if (!isNotInLoginRoute)
-            {
-                return;
-            }
-
-            if (isNoToken)
-            {
-                await GoToAsync($"//{nameof(LoginPage)}");
-                return;
-            }
-
-            var token = Application.Current.Properties["token"].ToString();
-            if (string.IsNullOrEmpty(token))
-            {
-                await GoToAsync($"//{nameof(LoginPage)}");
-            }
-
-            var checkAuthorizeRequest = new CheckAuthorizeRequest { Token = token };
-            var mediator = DependencyService.Resolve<IMediator>();
-            var response = await mediator.Send(checkAuthorizeRequest);
-
-            if (!response.IsValid)
-            {
-                await GoToAsync($"//{nameof(LoginPage)}");
-                
-                return;
-            }
         }
     }
 }

@@ -15,13 +15,15 @@ namespace Neighbor.Core.Application
     {
         public static void ClientConfigureBuilder(IServiceCollection services, 
             Action<HttpClient> financeHttpClientConfigure,
-            Action<HttpClient> identityHttpClientConfigure)
+            Action<HttpClient> identityHttpClientConfigure,
+            Func<IServiceProvider, Neighbor.Core.Infrastructure.Client.ClientTokenProvider> clientTokenFactory)
         {
             services.AddMediatR(typeof(ApplicationStartup).Assembly);
             services.AddHttpClient("finance", financeHttpClientConfigure);
             services.AddHttpClient("identity", identityHttpClientConfigure);
             services.AddTransient<IFinance, Client.FinanceRepository>();
-            services.AddTransient<ITokenProvider, Neighbor.Core.Infrastructure.Client.ClientTokenProvider>();
+            services.AddTransient<ITokenProvider, Neighbor.Core.Infrastructure.Client.ClientTokenProvider>(clientTokenFactory);
+            services.AddTransient<IClientTokenProvider, Neighbor.Core.Infrastructure.Client.ClientTokenProvider>(clientTokenFactory);
         }
 
         public static void ServerConfigureBuilder(IServiceCollection services)

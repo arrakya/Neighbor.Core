@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace Neighbor.Mobile.ViewModels
@@ -24,7 +25,7 @@ namespace Neighbor.Mobile.ViewModels
             {
                 SetProperty(ref _showAllIncomeView, value, nameof(ShowAllIncomeView));
 
-                foreach(var item in Items)
+                foreach (var item in Items)
                 {
                     item.TurnOnIncomeView = value;
                 }
@@ -50,9 +51,9 @@ namespace Neighbor.Mobile.ViewModels
                     LoadItemsCommand.Execute(null);
                 });
             }
-        }        
+        }
 
-        public ICommand LoadItemsCommand { get; }        
+        public ICommand LoadItemsCommand { get; }
 
         private ObservableCollection<MonthlyBalanceModel> items;
         private IEnumerable<MonthlyBalanceModel> content;
@@ -70,7 +71,7 @@ namespace Neighbor.Mobile.ViewModels
         {
             Year = DateTime.Now.Year;
             LoadItemsCommand = new Command(async (object commandParam) =>
-            {             
+            {
                 IsBusy = true;
 
                 await LoadItems();
@@ -80,7 +81,7 @@ namespace Neighbor.Mobile.ViewModels
         }
 
         private async Task LoadItems()
-        {   
+        {
             var mediator = DependencyService.Resolve<IMediator>();
             var request = new MonthlyBalanceRequest { Year = Year };
             var response = await mediator.Send(request);

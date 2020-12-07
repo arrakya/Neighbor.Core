@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using Neighbor.Core.Application.Requests.Identity;
 using Neighbor.Core.Application.Requests.Security;
 using Neighbor.Core.Domain.Models.Identity;
+using System;
+using System.Net;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Neighbor.Server.Identity.Controllers
@@ -20,19 +23,60 @@ namespace Neighbor.Server.Identity.Controllers
             this.mediator = mediator;
         }
 
+        [Authorize(AuthenticationSchemes = "Basic", Policy = "Basic")]
         [HttpPost]
-        [Route("authorize")]
-        public async Task<string> Authorize([FromForm]IFormCollection form)
+        [Route("oauth/token")]
+        public async Task<IActionResult> AccessToken([FromForm] IFormCollection form)
         {
-            var request = new AuthorizeRequest
-            {
-                Username = form["username"].ToString(),
-                Password = form["password"].ToString()
-            };
-            var response = await mediator.Send(request);
-            var token = response.Token;
+            var grantType = form["grant_type"].ToString();
+            var refreshToken = string.Empty;
 
-            return token;
+            switch (grantType.ToLower())
+            {
+                case "password":
+                    var username = form["username"].ToString();
+                    var password = form["password"].ToString();
+
+                    var requestRefreshToken = new RefreshTokenRequest
+                    {
+                        Username = username,
+                        Password = password
+                    };
+                    var responseRefreshTokenResponse = await mediator.Send(requestRefreshToken);
+                    refreshToken = responseRefreshTokenResponse.RefreshToken;
+                    break;
+                case "refresh_token":
+                    refreshToken = form["refresh_token"].ToString();
+
+                    var requestValidateRefreshToken = new ValidateRefreshTokenRequest
+                    {
+                        RefreshToken = refreshToken
+                    };
+                    var validateRefershTokenResponse = await mediator.Send(requestValidateRefreshToken);
+                    var isRefreshTokenAlive = validateRefershTokenResponse.IsValid;
+                    if (!isRefreshTokenAlive)
+                    {
+                        return new UnauthorizedResult();
+                    }
+                    break;
+            }
+
+            var requestAccessToken = new AccessTokenRequest
+            {
+                RefreshToken = refreshToken
+            };
+            var responseAccessToken = await mediator.Send(requestAccessToken);
+
+            var jsonOption = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = null
+            };
+
+            return Json(new
+            {
+                refresh_token = refreshToken,
+                access_token = responseAccessToken.AccessToken
+            }, jsonOption);
         }
 
         [Authorize]
@@ -47,19 +91,6 @@ namespace Neighbor.Server.Identity.Controllers
             var response = await mediator.Send(request);
 
             return response.Content;
-        }
-
-        [HttpPost]
-        [Route("check/token")]
-        public async Task<bool> CheckToken([FromForm] IFormCollection form)
-        {
-            var request = new CheckAuthorizeRequest
-            {
-                Token = form["token"].ToString(),
-            };
-            var response = await mediator.Send(request);
-
-            return response.IsValid;
         }
     }
 }

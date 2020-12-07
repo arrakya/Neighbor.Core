@@ -6,8 +6,9 @@ using System.Text;
 
 namespace Neighbor.Core.Application.Requests.Security
 {
-    public class CheckAuthorizeRequest : IRequest<CheckAuthorizeResponse>
+    public class RefreshTokenRequest : IRequest<RefreshTokenResponse>
     {
-        public string Token { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
     }
 }

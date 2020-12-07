@@ -21,13 +21,13 @@ namespace Neighbor.Mobile.Views
             InitializeComponent();
 
             BindingContext = _viewModel = new MonthlyBalanceViewModel();
+
+            AppShell.Current.Navigated += Current_Navigated;
         }
 
-        protected override void OnAppearing()
+        private void Current_Navigated(object sender, ShellNavigatedEventArgs e)
         {
-            base.OnAppearing();
-
-           _viewModel.LoadItemsCommand.Execute(DateTime.Now.Year);
+            _viewModel.LoadItemsCommand.Execute(DateTime.Now.Year);
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Neighbor.Core.Application.Requests.Security;
 using Neighbor.Mobile.Views;
 using Xamarin.Forms;
@@ -18,14 +17,14 @@ namespace Neighbor.Mobile.ViewModels
         private async void OnLoginClicked(object obj)
         {
             IsBusy = true;
-            var request = new AuthorizeRequest
+            var request = new RefreshTokenRequest
             {
                 Username = "arrakya",
                 Password = "12345678"
             };
             var mediator = DependencyService.Resolve<IMediator>();
             var response = await mediator.Send(request);
-            var token = response.Token;
+            var token = response.RefreshToken;
 
             if (Application.Current.Properties.ContainsKey("token"))
             {

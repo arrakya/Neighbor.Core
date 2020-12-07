@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Security.Cryptography.X509Certificates;
+using Microsoft.AspNetCore.Authentication;
 
 namespace Neighbor.Server.Identity
 {
@@ -49,7 +51,14 @@ namespace Neighbor.Server.Identity
                 options.Password.RequiredLength = 8;
             }).AddEntityFrameworkStores<IdentityDbContext>();
 
-            services.AddAuthorization();
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Basic", policy =>
+                {
+                    policy.RequireClaim("client_id");
+                    policy.RequireClaim("client_secret");
+                });
+            });
             services.AddAuthentication(config =>
             {
                 config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -58,9 +67,14 @@ namespace Neighbor.Server.Identity
                 {
                     var key = Environment.GetEnvironmentVariable("NEIGHBOR_IDENTITY_KEY");
                     var securityKey = new SymmetricSecurityKey(Encoding.UTF32.GetBytes(key));
+
+                    var x509CertificateFilePath = @"C:\Users\arrak\source\repos\Neighbor\Neighbor.Server\Neighbor.Server.Identity\arrakya.thddns.net.crt";
+                    var x509Certfificate = new X509Certificate2(x509CertificateFilePath);
+                    var x509SecurityKey = new X509SecurityKey(x509Certfificate);
+
                     options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                     {
-                        IssuerSigningKey = securityKey,
+                        IssuerSigningKey = x509SecurityKey,
                         ValidateLifetime = true,
                         LifetimeValidator = (notBefore, expires, securityToken, validationParameters) =>
                         {
@@ -72,7 +86,8 @@ namespace Neighbor.Server.Identity
                         ValidateIssuer = false,
                         ClockSkew = TimeSpan.Zero
                     };
-                });
+                })
+                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("Basic", null);
             
             services.AddTransient<IIdentityDbContext, IdentityDbContext>();
 

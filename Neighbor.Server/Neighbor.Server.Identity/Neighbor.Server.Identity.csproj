@@ -6,6 +6,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="arrakya.thddns.net.crt" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="MediatR" Version="9.0.0" />
 		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
 		<PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.7" />
@@ -24,6 +28,10 @@
 		<ProjectReference Include="..\..\Neighbor.Application\Neighbor.Core.Application.csproj" />
 		<ProjectReference Include="..\..\Neighbor.Domain\Neighbor.Core.Domain.csproj" />
 		<ProjectReference Include="..\..\Neighbor.Infrastructure\Neighbor.Core.Infrastructure.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Resource Include="arrakya.thddns.net.crt" />
 	</ItemGroup>
 
 </Project>
