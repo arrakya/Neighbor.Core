@@ -65,10 +65,7 @@ namespace Neighbor.Server.Identity
             })
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
-                    var key = Environment.GetEnvironmentVariable("NEIGHBOR_IDENTITY_KEY");
-                    var securityKey = new SymmetricSecurityKey(Encoding.UTF32.GetBytes(key));
-
-                    var x509CertificateFilePath = @"C:\Users\arrak\source\repos\Neighbor\Neighbor.Server\Neighbor.Server.Identity\arrakya.thddns.net.crt";
+                    var x509CertificateFilePath = Configuration.GetSection("Security:CertificatePath").Value;
                     var x509Certfificate = new X509Certificate2(x509CertificateFilePath);
                     var x509SecurityKey = new X509SecurityKey(x509Certfificate);
 
