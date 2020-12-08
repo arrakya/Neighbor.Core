@@ -1,0 +1,46 @@
+version: "3.8"
+services:
+    gateway:
+        image: arrak/neighbor.server.api_gateway:latest
+        ports:            
+            - "8080:80"
+            - "8081:8081"
+        container_name: "gateway-sit"
+        networks:
+            - neighbor-sit
+    web-identity:
+        image: arrak/neighbor.server.identity:latest
+        container_name: "web-identity-sit"
+        networks:
+            - neighbor-sit
+    db-identity:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        container_name: "db-identity-sit"
+        environment:
+            - ACCEPT_EULA=Y 
+            - SA_PASSWORD=vkiydKN6580!
+            - MSSQL_PID=Express
+        networks:
+            - neighbor-sit
+    web-finance:
+        image: arrak/neighbor.server.finance:latest
+        container_name: "monthly-balance-sit"
+        ports:
+            - "5000:5000"
+            - "5001:5001"
+        networks:
+            - neighbor-sit
+    db-finance:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        container_name: "db-monthly-balance-sit"
+        ports:
+            - "1433:1433"
+        environment:
+            - ACCEPT_EULA=Y 
+            - SA_PASSWORD=vkiydKN6580!
+            - MSSQL_PID=Express
+        networks:
+            - neighbor-sit
+networks:
+    neighbor-sit:
+        name: neighbor-sit
