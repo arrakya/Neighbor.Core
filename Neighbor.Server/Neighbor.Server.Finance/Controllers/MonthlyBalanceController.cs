@@ -1,4 +1,6 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Neighbor.Core.Application.Requests.Finance;
@@ -7,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace Neighbor.Server.Finance.MonthlyBalance.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class MonthlyBalanceController : ControllerBase
