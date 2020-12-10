@@ -3,8 +3,7 @@ services:
     gateway:
         image: arrak/neighbor.server.api_gateway:latest
         ports:            
-            - "8080:80"
-            - "8081:8081"
+            - "443:443"
         container_name: "gateway-sit"
         networks:
             - neighbor-sit
