@@ -17,4 +17,4 @@ WORKDIR /app
 RUN ls -lah
 ENV ASPNETCORE_URLS http://*:5000
 
-ENTRYPOINT [ "dotnet", "./Neighbor.Server.Finance.MonthlyBalance.dll" ]
+ENTRYPOINT [ "dotnet", "./Neighbor.Server.Finance.dll" ]
