@@ -15,11 +15,14 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Logging;
 
 namespace Neighbor.Server.Identity
 {
     public class Startup
     {
+        private string _connectionString;
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -32,11 +35,11 @@ namespace Neighbor.Server.Identity
             ApplicationStartup.ServerConfigureBuilder(services);
             services.AddMediatR(new[] { typeof(ApplicationStartup).Assembly, typeof(Startup).Assembly });            
 
-            var defaultConnection = Configuration.GetConnectionString("DefaultConnection");
-            
+            _connectionString = Configuration.GetConnectionString("DefaultConnection");
+
             services.AddDbContext<IdentityDbContext>(options =>
             {
-                options.UseSqlServer(defaultConnection);
+                options.UseSqlServer(_connectionString);
             });
             services.AddIdentity<IdentityUser, IdentityRole>(options =>
             {
@@ -91,8 +94,11 @@ namespace Neighbor.Server.Identity
             services.AddControllers();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
+            logger.LogInformation($"Host Environment : {env.EnvironmentName}");
+            logger.LogInformation($"ConnectionString : {_connectionString}");
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
