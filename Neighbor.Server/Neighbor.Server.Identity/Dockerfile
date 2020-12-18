@@ -5,18 +5,18 @@
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1.403-alpine3.12 AS build
 ARG EnvName
-ENV ASPNETCORE_ENVIRONMENT=$EnvName
+ENV ASPNETCORE_ENVIRONMENT $EnvName
 RUN mkdir app
 COPY . /app/
 RUN echo "Build for $ASPNETCORE_ENVIRONMENT environment."
 WORKDIR /app/Neighbor.Server/Neighbor.Server.Identity
 RUN dotnet restore
-RUN dotnet publish -c Release -r linux-x64 -o output --no-restore
+RUN dotnet publish -c $EnvName -r linux-x64 -o output --no-restore
 RUN cp /app/Neighbor.Certificates/arrakya.thddns.net.crt output/
 RUN cp /app/Neighbor.Certificates/arrakya.thddns.net.pfx output/
 
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1.9-focal as run
-ENV ASPNETCORE_ENVIRONMENT=$EnvName
+ENV ASPNETCORE_ENVIRONMENT $EnvName
 RUN mkdir app
 COPY --from=build /app/Neighbor.Server/Neighbor.Server.Identity/output /app/
 
