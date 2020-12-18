@@ -10,6 +10,8 @@ services:
     web-identity:        
         image: arrak/neighbor.server.identity:sit-latest
         container_name: "web-identity-sit"
+        environment:
+            - ASPNETCORE_ENVIRONMENT=SIT
         networks:
             - neighbor-sit
     db-identity:
