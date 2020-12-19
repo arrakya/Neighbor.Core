@@ -1,0 +1,45 @@
+﻿pipeline {
+    agent any
+
+    stages {
+        stage('Code Checkout') {
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name: 'feature/identity']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'GitHub', url: 'https://github.com/arrakya/Neighbor.Core.git']]])
+            }
+        }
+        stage('Prepare SSL'){
+            steps {
+                script {
+                    sh 'cp /etc/ssl/arrakya.thddns.net.pfx ./Neighbor.Certificates/'
+                }
+            }
+        }
+        stage('Start Identity Database'){
+            steps {
+                script {
+                    catchError {
+                        sh 'docker container rm db-identity-sit --force'
+                    }
+                    sh 'docker-compose -f ./Neighbor.Server/docker-compose-sit.yml up -d db-identity'
+                }
+            }
+        }
+        stage('Build Identity Image') {
+            steps {
+                script {
+                    sh 'docker build -f ./Neighbor.Server/Neighbor.Server.Identity/Dockerfile -t arrak/neighbor.server.identity:sit-latest . --build-arg EnvName=SIT --no-cache'
+                }
+            }
+        }
+        stage('Start Identity Service') {
+            steps {
+                script {
+                     catchError {
+                        sh 'docker container rm web-identity-sit --force'
+                    }
+                    sh 'docker-compose -f ./Neighbor.Server/docker-compose-sit.yml up -d web-identity'
+                }
+            }
+        }
+    }
+}
