@@ -26,6 +26,8 @@ services:
     web-finance:
         image: arrak/neighbor.server.finance:sit-latest
         container_name: "web-finance-sit"
+        environment:
+            - ASPNETCORE_ENVIRONMENT=SIT
         networks:
             - neighbor-sit
     db-finance:
