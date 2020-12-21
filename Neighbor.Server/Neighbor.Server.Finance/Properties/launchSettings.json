@@ -17,10 +17,8 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Neighbor.Finance.MonthlyBalance": {
+    "Neighbor.Server.Finance": {
       "commandName": "Project",
-      "launchBrowser": true,
-      "launchUrl": "weatherforecast",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

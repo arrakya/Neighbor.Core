@@ -5,6 +5,10 @@
 		<RuntimeIdentifiers>win-x64;linux-x64;linux-musl-x64</RuntimeIdentifiers>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	  <WarningLevel>5</WarningLevel>
+	</PropertyGroup>
+
 	<ItemGroup>
 	  <Compile Remove="Data\20201026143255_Initial.cs" />
 	  <Compile Remove="Data\20201026143255_Initial.Designer.cs" />
