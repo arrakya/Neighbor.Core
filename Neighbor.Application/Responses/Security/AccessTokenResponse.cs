@@ -1,7 +1,9 @@
-﻿namespace Neighbor.Core.Application.Responses.Security
+﻿using Neighbor.Core.Domain.Models.Security;
+
+namespace Neighbor.Core.Application.Responses.Security
 {
     public class AccessTokenResponse
     {
-        public string AccessToken { get; set; }
+        public TokensModel Tokens { get; set; }
     }
 }

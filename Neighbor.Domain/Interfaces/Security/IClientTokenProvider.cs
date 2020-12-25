@@ -2,12 +2,15 @@
 
 namespace Neighbor.Core.Domain.Interfaces.Security
 {
-    public delegate string GetCurrentRefreshTokenDelegate();
+    public delegate string GetCurrentTokenDelegate();
+    public delegate void SetCurrentTokenDelegate(string token);
     public delegate Task<byte[]> GetCertificateDelegate();
 
     public interface IClientTokenProvider : ITokenProvider
     {
-        GetCurrentRefreshTokenDelegate GetCurrentRefreshToken { get; }
+        GetCurrentTokenDelegate GetCurrentRefreshToken { get; }
+        GetCurrentTokenDelegate GetCurrentAccessToken { get; }
+        SetCurrentTokenDelegate SetCurrentAccessToken { get; }
         GetCertificateDelegate GetCertificate { get; }
     }
 }

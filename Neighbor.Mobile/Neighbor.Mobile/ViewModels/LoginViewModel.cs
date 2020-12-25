@@ -1,6 +1,10 @@
 ﻿using MediatR;
 using Neighbor.Core.Application.Requests.Security;
+using Neighbor.Mobile.Models;
 using Neighbor.Mobile.Views;
+using System.IO;
+using System.Text;
+using System.Text.Json;
 using Xamarin.Forms;
 
 namespace Neighbor.Mobile.ViewModels
@@ -24,14 +28,24 @@ namespace Neighbor.Mobile.ViewModels
             };
             var mediator = DependencyService.Resolve<IMediator>();
             var response = await mediator.Send(request);
-            var token = response.RefreshToken;
+            var tokens = response.Tokens;
 
-            if (Application.Current.Properties.ContainsKey("token"))
+            const string refreshTokenPropertyName = "refresh_token";
+            if (Application.Current.Properties.ContainsKey(refreshTokenPropertyName))
             {
-                Application.Current.Properties.Remove("token");
+                Application.Current.Properties.Remove(refreshTokenPropertyName);
             }
 
-            Application.Current.Properties.Add("token", token);
+            const string accessTokenPropertyName = "access_token";
+            if (Application.Current.Properties.ContainsKey(accessTokenPropertyName))
+            {
+                Application.Current.Properties.Remove(accessTokenPropertyName);
+            }
+
+            Application.Current.Properties.Add(refreshTokenPropertyName, tokens.refresh_token);
+            Application.Current.Properties.Add(accessTokenPropertyName, tokens.access_token);
+
+
             IsBusy = false;
             // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
             await Shell.Current.GoToAsync($"//{nameof(MonthlyBalanceListViewPage)}");

@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Security.Cryptography.X509Certificates;
 using System.IdentityModel.Tokens.Jwt;
+using Neighbor.Core.Domain.Models.Security;
 
 namespace Neighbor.Core.Infrastructure.Server
 {
@@ -42,6 +43,12 @@ namespace Neighbor.Core.Infrastructure.Server
 
         private string ExtractUserNameFromClaims(string tokenString)
         {
+            if (string.IsNullOrEmpty(tokenString))
+            {
+                logger.LogError("tokenString is empty");
+                return string.Empty;
+            }
+
             var token = new JwtSecurityToken(tokenString);
             var tokenHandler = new JwtSecurityTokenHandler();
             var userName = token.Claims.SingleOrDefault(p => p.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name" || p.Type == "unique_name")?.Value;
@@ -55,21 +62,21 @@ namespace Neighbor.Core.Infrastructure.Server
             return userName;
         }        
 
-        public async Task<string> CreateRefreshToken(string name, string password)
+        public async Task<TokensModel> CreateToken(string name, string password)
         {
             var userManager = (UserManager<IdentityUser>)serviceProvider.GetService(typeof(UserManager<IdentityUser>));
             var userIdentity = await userManager.FindByNameAsync(name.ToUpper().Normalize());
 
             if (userIdentity == null)
             {
-                return string.Empty;
+                return default;
             }
 
             var singInManager = (SignInManager<IdentityUser>)serviceProvider.GetService(typeof(SignInManager<IdentityUser>));
             var signInResult = await singInManager.CheckPasswordSignInAsync(userIdentity, password, false);
             if (!signInResult.Succeeded)
             {
-                return string.Empty;
+                return default;
             }
 
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -95,17 +102,19 @@ namespace Neighbor.Core.Infrastructure.Server
             await userManager.RemoveAuthenticationTokenAsync(userIdentity, "neighbor", "refresh_token");
             await userManager.SetAuthenticationTokenAsync(userIdentity, "neighbor", "refresh_token", tokenString);
 
-            return tokenString;
+            var tokens = new TokensModel { refresh_token = tokenString };
+
+            return tokens;
         }
 
-        public async Task<string> CreateAccessToken(string refreshToken)
+        public async Task<TokensModel> CreateToken(string refreshToken)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var userName = ExtractUserNameFromClaims(refreshToken);
 
             if (string.IsNullOrEmpty(userName))
             {
-                return string.Empty;
+                return default;
             }
 
             var tokenDesc = new SecurityTokenDescriptor
@@ -127,7 +136,9 @@ namespace Neighbor.Core.Infrastructure.Server
 
             var tokenString = await Task.FromResult(tokenHandler.WriteToken(newToken));
 
-            return tokenString;
+            var tokens = new TokensModel { refresh_token = refreshToken, access_token = tokenString };
+
+            return tokens;
         }
 
         public async Task<bool> Validate(string tokenString)

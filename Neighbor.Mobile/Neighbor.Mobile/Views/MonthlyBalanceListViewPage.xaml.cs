@@ -22,12 +22,13 @@ namespace Neighbor.Mobile.Views
 
             BindingContext = _viewModel = new MonthlyBalanceViewModel();
 
-            AppShell.Current.Navigated += Current_Navigated;
+            _viewModel.AccessTokenExpired += ViewModel_OpenLoginPage;
+            _viewModel.LoadItemsCommand.Execute(DateTime.Now.Year);
         }
 
-        private void Current_Navigated(object sender, ShellNavigatedEventArgs e)
+        private async void ViewModel_OpenLoginPage(object sender, EventArgs e)
         {
-            _viewModel.LoadItemsCommand.Execute(DateTime.Now.Year);
+            await Shell.Current.GoToAsync("//LoginPage");
         }
     }
 }

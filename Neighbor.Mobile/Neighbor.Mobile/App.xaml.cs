@@ -18,7 +18,8 @@ namespace Neighbor.Mobile
 {
     public partial class App : Xamarin.Forms.Application
     {
-        public readonly string ServerAddress = "10.0.2.2";
+        //public readonly string ServerAddress = "10.0.2.2";
+        public readonly string ServerAddress = "arrakya.thddns.net:4431";
 
         public readonly string IdentityBaseAddress;
         public readonly string FinanceBaseAddress;
@@ -28,8 +29,8 @@ namespace Neighbor.Mobile
 #if !DEBUG
             ServerAddress = "arrakya.thddns.net";
 #endif
-            IdentityBaseAddress = $"http://{ServerAddress}";
-            FinanceBaseAddress = $"http://{ServerAddress}";
+            IdentityBaseAddress = $"https://{ServerAddress}";
+            FinanceBaseAddress = $"https://{ServerAddress}";
 
             InitializeComponent();
 
@@ -42,16 +43,10 @@ namespace Neighbor.Mobile
                 (httpClient) =>
                 {
                     httpClient.BaseAddress = new Uri(FinanceBaseAddress);
-#if DEBUG
-                    httpClient.BaseAddress = new Uri("http://10.0.2.2:5000");
-#endif
                 },
                 (httpClient) =>
                 {
                     httpClient.BaseAddress = new Uri(IdentityBaseAddress);
-#if DEBUG
-                    httpClient.BaseAddress = new Uri("http://10.0.2.2:6000");
-#endif
                 },
                 (clientServices) =>
                 {
@@ -59,14 +54,29 @@ namespace Neighbor.Mobile
                     {
                         GetCurrentRefreshToken = () =>
                         {
-                            Application.Current.Properties.TryGetValue("token", out var refreshToken);
+                            Application.Current.Properties.TryGetValue("refresh_token", out var refreshToken);
 
                             return refreshToken?.ToString() ?? string.Empty;
+                        },
+                        GetCurrentAccessToken = () =>
+                        {
+                            Application.Current.Properties.TryGetValue("access_token", out var accessToken);
+
+                            return accessToken?.ToString() ?? string.Empty;
+                        },
+                        SetCurrentAccessToken = (token) =>
+                        {
+                            if (Application.Current.Properties.ContainsKey("access_token"))
+                            {
+                                Application.Current.Properties.Remove("access_token");
+                            }
+
+                            Application.Current.Properties.Add("access_token", token);
                         },
                         GetCertificate = () =>
                         {
                             var assetProvider = DependencyService.Resolve<IAssetsProvider>();
-                            var certBytes = assetProvider.Get<byte[]>("");
+                            var certBytes = assetProvider.Get<byte[]>("arrakya.thddns.net.crt");
 
                             return certBytes;
                         }
@@ -79,68 +89,19 @@ namespace Neighbor.Mobile
             DependencyResolver.ResolveUsing(type => services.Any(p => p.ServiceType == type) ? serviceProvider.GetService(type) : null);
 
             MainPage = new AppShell();
-        }                
-
-        private async void Current_Navigating(object sender, ShellNavigatingEventArgs e)
-        {
-            if(e.Current.Location.OriginalString == "//LoginPage")
-            {
-                return;
-            }
-
-            var isAlive = await CheckApplicationLifetime();
-            if (!isAlive)
-            {
-                e.Cancel();
-                await Shell.Current.GoToAsync("//LoginPage");
-            }
         }
 
-        protected async override void OnStart()
+        protected override void OnStart()
         {
             AppCenter.Start("27f68fc7-587a-48b6-aa5f-48fcdc59e28c", typeof(Analytics), typeof(Crashes));
-
-            var isAlive = await CheckApplicationLifetime();
-            if (!isAlive)
-            {
-                await Shell.Current.GoToAsync("//LoginPage");
-            }
-
-            Shell.Current.Navigating += Current_Navigating;
         }
 
         protected override void OnSleep()
         {
         }
 
-        protected async override void OnResume()
+        protected override void OnResume()
         {
-            var isAlive = await CheckApplicationLifetime();
-            if (!isAlive)
-            {
-                await Shell.Current.GoToAsync("//LoginPage");
-            }
-        }
-
-        public static async Task<bool> CheckApplicationLifetime()
-        {
-            if (!Application.Current.Properties.TryGetValue("token", out var tokenObj) 
-                || string.IsNullOrEmpty(tokenObj?.ToString()))
-            {
-                return false;                
-            }
-
-            var token = tokenObj.ToString();
-            var checkAuthorizeRequest = new ValidateRefreshTokenRequest { RefreshToken = token.ToString() };
-            var mediator = DependencyService.Resolve<IMediator>();
-            var response = await mediator.Send(checkAuthorizeRequest);
-
-            if (!response.IsValid)
-            {
-                return false;                
-            }
-
-            return true;
         }
     }
 }

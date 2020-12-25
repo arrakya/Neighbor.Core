@@ -28,7 +28,12 @@ namespace Neighbor.Server.Identity.Controllers
         [Route("oauth/token")]
         public async Task<IActionResult> AccessToken([FromForm] IFormCollection form)
         {
-            var grantType = form["grant_type"].ToString();
+            if (!form.ContainsKey("grant_type"))
+            {
+                return new BadRequestResult();
+            }
+
+            var grantType = form["grant_type"].ToString();            
             var refreshToken = string.Empty;
 
             switch (grantType.ToLower())
@@ -43,7 +48,7 @@ namespace Neighbor.Server.Identity.Controllers
                         Password = password
                     };
                     var responseRefreshTokenResponse = await mediator.Send(requestRefreshToken);
-                    refreshToken = responseRefreshTokenResponse.RefreshToken;
+                    refreshToken = responseRefreshTokenResponse.Tokens.refresh_token;
                     break;
                 case "refresh_token":
                     refreshToken = form["refresh_token"].ToString();
@@ -75,7 +80,7 @@ namespace Neighbor.Server.Identity.Controllers
             return Json(new
             {
                 refresh_token = refreshToken,
-                access_token = responseAccessToken.AccessToken
+                access_token = responseAccessToken.Tokens.access_token
             }, jsonOption);
         }
 

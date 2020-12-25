@@ -18,11 +18,11 @@ namespace Neighbor.Core.Application.Handlers.Security
 
         public async Task<RefreshTokenResponse> Handle(RefreshTokenRequest request, CancellationToken cancellationToken)
         {            
-            var refreshToken = await tokenProvider.CreateRefreshToken(request.Username, request.Password);
+            var tokens = await tokenProvider.CreateToken(request.Username, request.Password);
 
             var response = new RefreshTokenResponse 
             { 
-                RefreshToken = refreshToken 
+                Tokens = tokens
             };
 
             return response;

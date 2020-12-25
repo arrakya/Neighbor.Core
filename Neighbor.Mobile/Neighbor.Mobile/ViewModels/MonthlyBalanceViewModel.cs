@@ -18,6 +18,8 @@ namespace Neighbor.Mobile.ViewModels
         private int _year;
         private bool _isShowAll;
 
+        public event EventHandler AccessTokenExpired;
+
         public bool ShowAllIncomeView
         {
             get => _showAllIncomeView;
@@ -85,6 +87,13 @@ namespace Neighbor.Mobile.ViewModels
             var mediator = DependencyService.Resolve<IMediator>();
             var request = new MonthlyBalanceRequest { Year = Year };
             var response = await mediator.Send(request);
+
+            if(response.Exception != null)
+            {
+                AccessTokenExpired?.Invoke(this, null);
+                return;
+            }
+
             content = response.Content.Select(p => new MonthlyBalanceModel(p, ShowAllIncomeView));
 
             if (!IsShowAll)

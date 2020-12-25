@@ -1,13 +1,14 @@
-﻿using System.Threading.Tasks;
+﻿using Neighbor.Core.Domain.Models.Security;
+using System.Threading.Tasks;
 
 namespace Neighbor.Core.Domain.Interfaces.Security
 {
     public interface ITokenProvider
     {
-        Task<string> CreateRefreshToken(string name, string password);
+        Task<TokensModel> CreateToken(string name, string password);
+        Task<TokensModel> CreateToken(string refreshToken);
 
         Task<bool> Validate(string token);
 
-        Task<string> CreateAccessToken(string refreshToken);
     }
 }
