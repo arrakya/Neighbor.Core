@@ -17,26 +17,26 @@ namespace Neighbor.Core.Application.Client
     {
         private readonly string baseUri = "/neighbor/finance";
         private readonly HttpClient _httpClient;
-        private readonly HttpClient _identityHttpClient;
-        private readonly IClientTokenProvider tokenProvider;
+        private readonly ITokenProvider tokenProvider;
+        private readonly IClientTokenAccessor tokenAccessor;
 
         public FinanceRepository(IServiceProvider serviceProvider)
         {
             var httpClientFactory = (IHttpClientFactory)serviceProvider.GetService(typeof(IHttpClientFactory));
-            tokenProvider = (IClientTokenProvider)serviceProvider.GetService(typeof(IClientTokenProvider));
+            tokenProvider = (ITokenProvider)serviceProvider.GetService(typeof(ITokenProvider));
+            tokenAccessor = (IClientTokenAccessor)serviceProvider.GetService(typeof(IClientTokenAccessor));
 
             _httpClient = httpClientFactory.CreateClient("finance");
-            _identityHttpClient = httpClientFactory.CreateClient("identity");
         }
 
         public virtual async Task<IEnumerable<MonthlyBalance>> GetMonthlyBalances(int year)
         {
-            var accessToken = tokenProvider.GetCurrentAccessToken();
+            var accessToken = tokenAccessor.GetCurrentAccessToken();
             var isAccessTokenValid = await tokenProvider.Validate(accessToken);
 
             if (!isAccessTokenValid)
             {
-                var refreshToken = tokenProvider.GetCurrentRefreshToken();
+                var refreshToken = tokenAccessor.GetCurrentRefreshToken();
                 var isRefreshTokenValid = await tokenProvider.Validate(refreshToken);
 
                 if (!isRefreshTokenValid)
@@ -47,7 +47,7 @@ namespace Neighbor.Core.Application.Client
                 var tokens = await tokenProvider.CreateToken(refreshToken);
                 accessToken = tokens.access_token;
 
-                tokenProvider.SetCurrentAccessToken(accessToken);
+                tokenAccessor.SetCurrentAccessToken(accessToken);
             }
 
             var requestUri = $"{baseUri}/monthlybalance?year={year}";

@@ -13,10 +13,10 @@ namespace Neighbor.Core.Application
 {
     public static class ApplicationStartup
     {
-        public static void ClientConfigureBuilder(IServiceCollection services,
+        public static void ClientConfigureBuilder<clientTokenAccessorType>(IServiceCollection services,
             Action<HttpClient> financeHttpClientConfigure,
-            Action<HttpClient> identityHttpClientConfigure,
-            Func<IServiceProvider, Neighbor.Core.Infrastructure.Client.ClientTokenProvider> clientTokenFactory)
+            Action<HttpClient> identityHttpClientConfigure)
+            where clientTokenAccessorType : IClientTokenAccessor, new()
         {
             services.AddMediatR(typeof(ApplicationStartup).Assembly);
             services.AddHttpClient("finance", financeHttpClientConfigure).ConfigurePrimaryHttpMessageHandler(() =>
@@ -42,8 +42,8 @@ namespace Neighbor.Core.Application
                 return handler;
             });
             services.AddTransient<IFinance, Client.FinanceRepository>();
-            services.AddTransient<ITokenProvider, Neighbor.Core.Infrastructure.Client.ClientTokenProvider>(clientTokenFactory);
-            services.AddTransient<IClientTokenProvider, Neighbor.Core.Infrastructure.Client.ClientTokenProvider>(clientTokenFactory);
+            services.AddTransient(typeof(IClientTokenAccessor), (_) => new clientTokenAccessorType());
+            services.AddTransient<ITokenProvider, Neighbor.Core.Infrastructure.Client.ClientTokenProvider>();
         }
 
         public static void ServerConfigureBuilder(IServiceCollection services)

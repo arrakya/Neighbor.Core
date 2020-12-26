@@ -39,7 +39,7 @@ namespace Neighbor.Mobile
 
             // Configure services
             var applicationAssembly = typeof(ApplicationStartup).Assembly;
-            ApplicationStartup.ClientConfigureBuilder(services,
+            ApplicationStartup.ClientConfigureBuilder<ClientTokenAccessor>(services,
                 (httpClient) =>
                 {
                     httpClient.BaseAddress = new Uri(FinanceBaseAddress);
@@ -47,42 +47,6 @@ namespace Neighbor.Mobile
                 (httpClient) =>
                 {
                     httpClient.BaseAddress = new Uri(IdentityBaseAddress);
-                },
-                (clientServices) =>
-                {
-                    var clientTokenProvider = new ClientTokenProvider(clientServices)
-                    {
-                        GetCurrentRefreshToken = () =>
-                        {
-                            Application.Current.Properties.TryGetValue("refresh_token", out var refreshToken);
-
-                            return refreshToken?.ToString() ?? string.Empty;
-                        },
-                        GetCurrentAccessToken = () =>
-                        {
-                            Application.Current.Properties.TryGetValue("access_token", out var accessToken);
-
-                            return accessToken?.ToString() ?? string.Empty;
-                        },
-                        SetCurrentAccessToken = (token) =>
-                        {
-                            if (Application.Current.Properties.ContainsKey("access_token"))
-                            {
-                                Application.Current.Properties.Remove("access_token");
-                            }
-
-                            Application.Current.Properties.Add("access_token", token);
-                        },
-                        GetCertificate = () =>
-                        {
-                            var assetProvider = DependencyService.Resolve<IAssetsProvider>();
-                            var certBytes = assetProvider.Get<byte[]>("arrakya.thddns.net.crt");
-
-                            return certBytes;
-                        }
-                    };
-
-                    return clientTokenProvider;
                 });
 
             var serviceProvider = services.BuildServiceProvider();

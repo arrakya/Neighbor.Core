@@ -14,22 +14,18 @@ using System.Threading.Tasks;
 
 namespace Neighbor.Core.Infrastructure.Client
 {
-    public class ClientTokenProvider : IClientTokenProvider
+    public class ClientTokenProvider : ITokenProvider
     {
         private readonly string baseUri = "/neighbor/identity";
         private readonly HttpClient _httpClient;
+        private readonly IServiceProvider serviceProvider;
 
         public ClientTokenProvider(IServiceProvider serviceProvider)
         {
             var httpClientFactory = (IHttpClientFactory)serviceProvider.GetService(typeof(IHttpClientFactory));
             _httpClient = httpClientFactory.CreateClient("identity");
+            this.serviceProvider = serviceProvider;
         }
-
-        public GetCurrentTokenDelegate GetCurrentRefreshToken { get; set; }
-        public GetCurrentTokenDelegate GetCurrentAccessToken { get; set; }
-        public SetCurrentTokenDelegate SetCurrentAccessToken { get; set; }
-
-        public GetCertificateDelegate GetCertificate { get; set; }
 
         public async Task<TokensModel> CreateToken(string name, string password)
         {
@@ -75,8 +71,9 @@ namespace Neighbor.Core.Infrastructure.Client
 
         public async Task<bool> Validate(string tokenString)
         {
+            var tokenAccessor = (IClientTokenAccessor)serviceProvider.GetService(typeof(IClientTokenAccessor));
             var isValid = true;
-            var x509CertificateBytes = await GetCertificate();
+            var x509CertificateBytes = await tokenAccessor.GetCertificate();
             var x509Certfificate = new X509Certificate2(x509CertificateBytes);
             var x509SecurityKey = new X509SecurityKey(x509Certfificate);
 
