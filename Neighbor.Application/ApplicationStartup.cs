@@ -46,12 +46,20 @@ namespace Neighbor.Core.Application
             services.AddTransient<ITokenProvider, Neighbor.Core.Infrastructure.Client.ClientTokenProvider>();
         }
 
-        public static void ServerConfigureBuilder(IServiceCollection services)
+        public static void ServerConfigureBuilder(IServiceCollection services)            
         {
             services.AddTransient<IFinance, Server.FinanceRepository>();
             services.AddTransient<ITokenProvider, Neighbor.Core.Infrastructure.Server.ServerTokenProvider>();
             services.AddTransient<IPipelineBehavior<MonthlyBalanceRequest, MonthlyBalanceResponse>, MonthBlanceBehavior>();
-            services.AddTransient<IUserContextProvider, Server.UserContextProvider>();
+        }
+
+        public static void ServerConfigureBuilder<UserContextProvderType>(IServiceCollection services)
+            where UserContextProvderType : IUserContextProvider, new()
+        {
+            services.AddTransient<IFinance, Server.FinanceRepository>();
+            services.AddTransient<ITokenProvider, Neighbor.Core.Infrastructure.Server.ServerTokenProvider>();
+            services.AddTransient<IPipelineBehavior<MonthlyBalanceRequest, MonthlyBalanceResponse>, MonthBlanceBehavior>();
+            services.AddTransient(typeof(IUserContextProvider), (_) => new UserContextProvderType());
         }
     }
 }

@@ -1,12 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Neighbor.Core.Domain.Interfaces.Finance;
 using Neighbor.Core.Domain.Models.Finance;
-using Neighbor.Core.Infrastructure.Server;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Neighbor.Core.Infrastructure.Server
 {

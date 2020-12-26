@@ -4,14 +4,13 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Neighbor.Core.Domain.Interfaces.Security;
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using System.Security.Cryptography.X509Certificates;
-using System.IdentityModel.Tokens.Jwt;
 using Neighbor.Core.Domain.Models.Security;
+using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 
 namespace Neighbor.Core.Infrastructure.Server
 {
@@ -64,17 +63,10 @@ namespace Neighbor.Core.Infrastructure.Server
 
         public async Task<TokensModel> CreateToken(string name, string password)
         {
-            var userManager = (UserManager<IdentityUser>)serviceProvider.GetService(typeof(UserManager<IdentityUser>));
-            var userIdentity = await userManager.FindByNameAsync(name.ToUpper().Normalize());
+            var userContext = (IUserContextProvider)serviceProvider.GetService(typeof(IUserContextProvider));
+            var isValidCredential = await userContext.CheckUserCredential(name, password);
 
-            if (userIdentity == null)
-            {
-                return default;
-            }
-
-            var singInManager = (SignInManager<IdentityUser>)serviceProvider.GetService(typeof(SignInManager<IdentityUser>));
-            var signInResult = await singInManager.CheckPasswordSignInAsync(userIdentity, password, false);
-            if (!signInResult.Succeeded)
+            if (!isValidCredential)
             {
                 return default;
             }
@@ -99,8 +91,7 @@ namespace Neighbor.Core.Infrastructure.Server
 
             var tokenString = await Task.FromResult(tokenHandler.WriteToken(token));
 
-            await userManager.RemoveAuthenticationTokenAsync(userIdentity, "neighbor", "refresh_token");
-            await userManager.SetAuthenticationTokenAsync(userIdentity, "neighbor", "refresh_token", tokenString);
+            await userContext.UpdateRefreshTokenInStorage(name, tokenString);
 
             var tokens = new TokensModel { refresh_token = tokenString };
 

@@ -32,7 +32,7 @@ namespace Neighbor.Server.Identity
 
         public void ConfigureServices(IServiceCollection services)
         {
-            ApplicationStartup.ServerConfigureBuilder(services);
+            ApplicationStartup.ServerConfigureBuilder<UserContextProvider>(services);
             services.AddMediatR(new[] { typeof(ApplicationStartup).Assembly, typeof(Startup).Assembly });            
 
             _connectionString = Configuration.GetConnectionString("DefaultConnection");

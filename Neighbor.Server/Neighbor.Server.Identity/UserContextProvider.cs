@@ -5,15 +5,22 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Neighbor.Core.Infrastructure.Server
+namespace Neighbor.Server.Identity
 {
     public class UserContextProvider : IUserContextProvider
     {
         private readonly UserManager<IdentityUser> userManager;
+        private readonly IServiceProvider services;
+
+        public UserContextProvider()
+        {
+
+        }
 
         public UserContextProvider(IServiceProvider services)
         {
             this.userManager = (UserManager<IdentityUser>)services.GetService(typeof(UserManager<IdentityUser>));
+            this.services = services;
         }
 
         public async Task<IdentityUserContext> GetUserContext(string userName)
@@ -36,6 +43,31 @@ namespace Neighbor.Core.Infrastructure.Server
             }
 
             return userContext;
+        }
+
+        public async Task<bool> CheckUserCredential(string username, string password)
+        {
+            var userManager = (UserManager<IdentityUser>)services.GetService(typeof(UserManager<IdentityUser>));
+            var userIdentity = await userManager.FindByNameAsync(username.ToUpper().Normalize());
+
+            if (userIdentity == null)
+            {
+                return default;
+            }
+
+            var singInManager = (SignInManager<IdentityUser>)services.GetService(typeof(SignInManager<IdentityUser>));
+            var signInResult = await singInManager.CheckPasswordSignInAsync(userIdentity, password, false);
+
+            return signInResult.Succeeded;            
+        }
+
+        public async Task UpdateRefreshTokenInStorage(string username, string token)
+        {
+            var userManager = (UserManager<IdentityUser>)services.GetService(typeof(UserManager<IdentityUser>));
+            var userIdentity = await userManager.FindByNameAsync(username.ToUpper().Normalize());
+
+            await userManager.RemoveAuthenticationTokenAsync(userIdentity, "neighbor", "refresh_token");
+            await userManager.SetAuthenticationTokenAsync(userIdentity, "neighbor", "refresh_token", token);
         }
     }
 }
