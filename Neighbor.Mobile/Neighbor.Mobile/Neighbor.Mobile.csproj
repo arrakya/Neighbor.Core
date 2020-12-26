@@ -16,7 +16,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Neighbor.Application\Neighbor.Core.Application.csproj" />
     <ProjectReference Include="..\..\Neighbor.Domain\Neighbor.Core.Domain.csproj" />
-    <ProjectReference Include="..\..\Neighbor.Infrastructure\Neighbor.Core.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
