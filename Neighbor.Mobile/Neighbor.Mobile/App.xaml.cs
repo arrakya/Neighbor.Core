@@ -49,13 +49,13 @@ namespace Neighbor.Mobile
             var serviceProvider = services.BuildServiceProvider();
             DependencyResolver.ResolveUsing(type => services.Any(p => p.ServiceType == type) ? serviceProvider.GetService(type) : null);
 
-            MainPage = new AppShell();
+            MainPage = new AppShell();            
         }
 
         protected override void OnStart()
         {
             AppCenter.Start("27f68fc7-587a-48b6-aa5f-48fcdc59e28c", typeof(Analytics), typeof(Crashes));
-        }
+        }        
 
         protected override void OnSleep()
         {
