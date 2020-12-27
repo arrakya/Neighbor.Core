@@ -26,9 +26,6 @@ namespace Neighbor.Mobile
 
         public App()
         {
-#if !DEBUG
-            ServerAddress = "arrakya.thddns.net";
-#endif
             IdentityBaseAddress = $"https://{ServerAddress}";
             FinanceBaseAddress = $"https://{ServerAddress}";
 
