@@ -1,5 +1,7 @@
 ﻿using MediatR;
+using Microsoft.AppCenter;
 using Neighbor.Core.Application.Requests.Security;
+using Neighbor.Core.Domain.Models.Security;
 using Neighbor.Mobile.Models;
 using Neighbor.Mobile.Views;
 using System.IO;
@@ -21,14 +23,23 @@ namespace Neighbor.Mobile.ViewModels
         private async void OnLoginClicked(object obj)
         {
             IsBusy = true;
-            var request = new RefreshTokenRequest
+            var tokens = default(TokensModel);
+
+            try
             {
-                Username = "arrakya",
-                Password = "12345678"
-            };
-            var mediator = DependencyService.Resolve<IMediator>();
-            var response = await mediator.Send(request);
-            var tokens = response.Tokens;
+                var request = new RefreshTokenRequest
+                {
+                    Username = "arrakya",
+                    Password = "12345678"
+                };
+                var mediator = DependencyService.Resolve<IMediator>();
+                var response = await mediator.Send(request);
+                tokens = response.Tokens;
+            }
+            catch (System.Exception ex)
+            {
+                throw new System.Exception("Refresh Token Request Error" ,ex);             
+            }
 
             const string refreshTokenPropertyName = "refresh_token";
             if (Application.Current.Properties.ContainsKey(refreshTokenPropertyName))
