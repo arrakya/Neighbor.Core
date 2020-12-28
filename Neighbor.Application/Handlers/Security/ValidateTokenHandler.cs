@@ -8,19 +8,19 @@ using System.Threading.Tasks;
 
 namespace Neighbor.Core.Application.Handlers.Security
 {
-    public class ValidateRefreshTokenHandler : IRequestHandler<ValidateRefreshTokenRequest, ValidateRefreshTokenResponse>
+    public class ValidateTokenHandler : IRequestHandler<ValidateTokenRequest, ValidateTokenResponse>
     {
         private readonly ITokenProvider tokenProvider;
 
-        public ValidateRefreshTokenHandler(IServiceProvider serviceProvider)
+        public ValidateTokenHandler(IServiceProvider serviceProvider)
         {
             tokenProvider = (ITokenProvider)serviceProvider.GetService(typeof(ITokenProvider));
         }
 
-        public async Task<ValidateRefreshTokenResponse> Handle(ValidateRefreshTokenRequest request, CancellationToken cancellationToken)
+        public async Task<ValidateTokenResponse> Handle(ValidateTokenRequest request, CancellationToken cancellationToken)
         {
-            var isValid = await tokenProvider.Validate(request.RefreshToken);
-            var response = new ValidateRefreshTokenResponse { IsValid = isValid };
+            var isValid = await tokenProvider.Validate(request.Token);
+            var response = new ValidateTokenResponse { IsValid = isValid };
 
             return response;
         }

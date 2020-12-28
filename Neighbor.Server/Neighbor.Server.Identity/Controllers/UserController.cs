@@ -53,9 +53,9 @@ namespace Neighbor.Server.Identity.Controllers
                 case "refresh_token":
                     refreshToken = form["refresh_token"].ToString();
 
-                    var requestValidateRefreshToken = new ValidateRefreshTokenRequest
+                    var requestValidateRefreshToken = new ValidateTokenRequest
                     {
-                        RefreshToken = refreshToken
+                        Token = refreshToken
                     };
                     var validateRefershTokenResponse = await mediator.Send(requestValidateRefreshToken);
                     var isRefreshTokenAlive = validateRefershTokenResponse.IsValid;

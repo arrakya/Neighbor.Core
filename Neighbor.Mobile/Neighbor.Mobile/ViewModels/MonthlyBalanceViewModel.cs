@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Neighbor.Core.Application.Requests.Finance;
+using Neighbor.Core.Application.Requests.Security;
 using Neighbor.Mobile.Models;
 using System;
 using System.Collections.Generic;
@@ -84,11 +85,18 @@ namespace Neighbor.Mobile.ViewModels
 
         private async Task LoadItems()
         {
+            var tokenReady = await PrepareAccessToken();
+            if (!tokenReady)
+            {
+                AccessTokenExpired?.Invoke(this, null);
+                return;
+            }
+
             var mediator = DependencyService.Resolve<IMediator>();
             var request = new MonthlyBalanceRequest { Year = Year };
             var response = await mediator.Send(request);
 
-            if(response.Exception != null)
+            if (response.Exception != null)
             {
                 AccessTokenExpired?.Invoke(this, null);
                 return;

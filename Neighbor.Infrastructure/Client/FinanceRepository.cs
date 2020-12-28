@@ -1,5 +1,4 @@
-﻿using Neighbor.Core.Domain.Exceptions;
-using Neighbor.Core.Domain.Interfaces.Finance;
+﻿using Neighbor.Core.Domain.Interfaces.Finance;
 using Neighbor.Core.Domain.Interfaces.Security;
 using Neighbor.Core.Domain.Models.Finance;
 using System;
@@ -32,24 +31,6 @@ namespace Neighbor.Core.Application.Client
         public virtual async Task<IEnumerable<MonthlyBalance>> GetMonthlyBalances(int year)
         {
             var accessToken = tokenAccessor.GetCurrentAccessToken();
-            var isAccessTokenValid = await tokenProvider.Validate(accessToken);
-
-            if (!isAccessTokenValid)
-            {
-                var refreshToken = tokenAccessor.GetCurrentRefreshToken();
-                var isRefreshTokenValid = await tokenProvider.Validate(refreshToken);
-
-                if (!isRefreshTokenValid)
-                {
-                    throw new RefershTokenInvalidException("Refresh token expired");
-                }
-
-                var tokens = await tokenProvider.CreateToken(refreshToken);
-                accessToken = tokens.access_token;
-
-                tokenAccessor.SetCurrentAccessToken(accessToken);
-            }
-
             var requestUri = $"{baseUri}/monthlybalance?year={year}";
             var httpClient = _httpClient;
 

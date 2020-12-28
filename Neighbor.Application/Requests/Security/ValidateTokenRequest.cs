@@ -3,8 +3,8 @@ using Neighbor.Core.Application.Responses.Security;
 
 namespace Neighbor.Core.Application.Requests.Security
 {
-    public class ValidateRefreshTokenRequest : IRequest<ValidateRefreshTokenResponse>
+    public class ValidateTokenRequest : IRequest<ValidateTokenResponse>
     {
-        public string RefreshToken { get; set; }
+        public string Token { get; set; }
     }
 }

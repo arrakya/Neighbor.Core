@@ -23,8 +23,10 @@ namespace Neighbor.Mobile
             Analytics.TrackEvent(args.Current.Location.OriginalString);
         }
 
-        private async void OnMenuItemClicked(object sender, EventArgs e)
-        {            
+        private async void OnLogoutClicked(object sender, EventArgs e)
+        {
+            Application.Current.Properties.Remove("refresh_token");
+            Application.Current.Properties.Remove("access_token");
             await Current.GoToAsync("//LoginPage");
         }
     }
