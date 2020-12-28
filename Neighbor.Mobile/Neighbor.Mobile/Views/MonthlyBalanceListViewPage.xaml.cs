@@ -21,8 +21,13 @@ namespace Neighbor.Mobile.Views
             InitializeComponent();
 
             BindingContext = _viewModel = new MonthlyBalanceViewModel();
-
             _viewModel.AccessTokenExpired += ViewModel_OpenLoginPage;
+
+            this.Appearing += MonthlyBalanceListViewPage_Appearing;
+        }
+
+        private void MonthlyBalanceListViewPage_Appearing(object sender, EventArgs e)
+        {
             _viewModel.LoadItemsCommand.Execute(DateTime.Now.Year);
         }
 
