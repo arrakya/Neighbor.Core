@@ -15,6 +15,8 @@ namespace Neighbor.Mobile.ViewModels
 {
     public class BaseViewModel : INotifyPropertyChanged
     {
+        public event EventHandler AccessTokenExpired;
+
         public IDataStore<Item> DataStore => DependencyService.Get<IDataStore<Item>>();
 
         bool isBusy = false;
@@ -76,7 +78,7 @@ namespace Neighbor.Mobile.ViewModels
                 return true;
             }
 
-            var hasRefreshToken = Application.Current.Properties.TryGetValue("access_token", out var refreshToken);
+            var hasRefreshToken = Application.Current.Properties.TryGetValue("refresh_token", out var refreshToken);
             if (!hasRefreshToken)
             {
                 // No refresh token
@@ -103,6 +105,21 @@ namespace Neighbor.Mobile.ViewModels
             Application.Current.Properties.Add("access_token", accessTokenResponse.Tokens.access_token);
 
             return true;
+        }
+
+        protected async Task<TResponse> Request<TRequest, TResponse>(TRequest request) where TRequest : IRequest<TResponse>
+        {
+            var tokenReady = await PrepareAccessToken();
+            if (!tokenReady)
+            {
+                AccessTokenExpired?.Invoke(this, null);
+                return default;
+            }
+
+            var mediator = DependencyService.Resolve<IMediator>();
+            var response = await mediator.Send(request);
+
+            return response;
         }
     }
 }

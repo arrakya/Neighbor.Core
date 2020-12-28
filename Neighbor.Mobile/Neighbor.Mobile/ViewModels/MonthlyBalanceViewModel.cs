@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Neighbor.Core.Application.Requests.Finance;
 using Neighbor.Core.Application.Requests.Security;
+using Neighbor.Core.Application.Responses.Finance;
 using Neighbor.Mobile.Models;
 using System;
 using System.Collections.Generic;
@@ -18,8 +19,6 @@ namespace Neighbor.Mobile.ViewModels
         private bool _showAllIncomeView;
         private int _year;
         private bool _isShowAll;
-
-        public event EventHandler AccessTokenExpired;
 
         public bool ShowAllIncomeView
         {
@@ -84,21 +83,12 @@ namespace Neighbor.Mobile.ViewModels
         }
 
         private async Task LoadItems()
-        {
-            var tokenReady = await PrepareAccessToken();
-            if (!tokenReady)
-            {
-                AccessTokenExpired?.Invoke(this, null);
-                return;
-            }
-
-            var mediator = DependencyService.Resolve<IMediator>();
+        {            
             var request = new MonthlyBalanceRequest { Year = Year };
-            var response = await mediator.Send(request);
+            var response = await Request<MonthlyBalanceRequest, MonthlyBalanceResponse>(request);
 
-            if (response.Exception != null)
+            if(response?.Content == null)
             {
-                AccessTokenExpired?.Invoke(this, null);
                 return;
             }
 
