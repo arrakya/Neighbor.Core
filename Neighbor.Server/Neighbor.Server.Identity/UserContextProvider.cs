@@ -12,11 +12,6 @@ namespace Neighbor.Server.Identity
         private readonly UserManager<IdentityUser> userManager;
         private readonly IServiceProvider services;
 
-        public UserContextProvider()
-        {
-
-        }
-
         public UserContextProvider(IServiceProvider services)
         {
             this.userManager = (UserManager<IdentityUser>)services.GetService(typeof(UserManager<IdentityUser>));

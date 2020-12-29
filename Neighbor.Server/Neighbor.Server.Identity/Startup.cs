@@ -16,6 +16,7 @@ using System.Text;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
+using Neighbor.Core.Domain.Interfaces.Security;
 
 namespace Neighbor.Server.Identity
 {
@@ -32,7 +33,8 @@ namespace Neighbor.Server.Identity
 
         public void ConfigureServices(IServiceCollection services)
         {
-            ApplicationStartup.ServerConfigureBuilder<UserContextProvider>(services);
+            services.AddTransient<IUserContextProvider, UserContextProvider>();
+            ApplicationStartup.ServerConfigureBuilder(services);
             services.AddMediatR(new[] { typeof(ApplicationStartup).Assembly, typeof(Startup).Assembly });            
 
             _connectionString = Configuration.GetConnectionString("DefaultConnection");
