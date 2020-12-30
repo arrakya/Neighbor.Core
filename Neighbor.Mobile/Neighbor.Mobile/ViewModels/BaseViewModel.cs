@@ -7,11 +7,16 @@ using Xamarin.Forms;
 
 using Neighbor.Mobile.Models;
 using Neighbor.Mobile.Services;
+using Neighbor.Core.Application.Requests.Security;
+using MediatR;
+using System.Threading.Tasks;
 
 namespace Neighbor.Mobile.ViewModels
 {
     public class BaseViewModel : INotifyPropertyChanged
     {
+        public event EventHandler AccessTokenExpired;
+
         public IDataStore<Item> DataStore => DependencyService.Get<IDataStore<Item>>();
 
         bool isBusy = false;
@@ -52,5 +57,69 @@ namespace Neighbor.Mobile.ViewModels
             changed.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         #endregion
+
+        protected async Task<bool> PrepareAccessToken()
+        {
+            var mediator = DependencyService.Resolve<IMediator>();
+
+            var hasAccessToken = Application.Current.Properties.TryGetValue("access_token", out var accessToken);
+            if (!hasAccessToken)
+            {
+                // No access token
+                return false;
+            }
+
+            var validateTokenRequest = new ValidateTokenRequest { Token = accessToken.ToString() };
+            var validateTokenResponse = await mediator.Send(validateTokenRequest);
+
+            if (validateTokenResponse.IsValid)
+            {
+                // Has access token and valid
+                return true;
+            }
+
+            var hasRefreshToken = Application.Current.Properties.TryGetValue("refresh_token", out var refreshToken);
+            if (!hasRefreshToken)
+            {
+                // No refresh token
+                return false;
+            }
+
+            validateTokenRequest.Token = refreshToken.ToString();
+            validateTokenResponse = await mediator.Send(validateTokenRequest);
+
+            if (!validateTokenResponse.IsValid)
+            {
+                // Has refresh token but not valid
+                return false;
+            }
+
+            var accessTokenRequest = new AccessTokenRequest { RefreshToken = refreshToken.ToString() };
+            var accessTokenResponse = await mediator.Send(accessTokenRequest);
+
+            if (Application.Current.Properties.ContainsKey("access_token"))
+            {
+                Application.Current.Properties.Remove("access_token");
+            }
+
+            Application.Current.Properties.Add("access_token", accessTokenResponse.Tokens.access_token);
+
+            return true;
+        }
+
+        protected async Task<TResponse> Request<TRequest, TResponse>(TRequest request) where TRequest : IRequest<TResponse>
+        {
+            var tokenReady = await PrepareAccessToken();
+            if (!tokenReady)
+            {
+                AccessTokenExpired?.Invoke(this, null);
+                return default;
+            }
+
+            var mediator = DependencyService.Resolve<IMediator>();
+            var response = await mediator.Send(request);
+
+            return response;
+        }
     }
 }

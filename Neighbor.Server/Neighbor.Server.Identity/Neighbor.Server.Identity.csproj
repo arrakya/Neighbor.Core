@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<RuntimeIdentifiers>win-x64;linux-x64;linux-musl-x64</RuntimeIdentifiers>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Remove="arrakya.thddns.net.crt" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MediatR" Version="9.0.0" />
+		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
+		<PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.7" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.10" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Neighbor.Application\Neighbor.Core.Application.csproj" />
+		<ProjectReference Include="..\..\Neighbor.Domain\Neighbor.Core.Domain.csproj" />
+		<ProjectReference Include="..\..\Neighbor.Infrastructure\Neighbor.Core.Infrastructure.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Resource Include="arrakya.thddns.net.crt" />
+	</ItemGroup>
+
+</Project>

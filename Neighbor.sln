@@ -22,8 +22,25 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mobile", "Mobile", "{B8E5D408-F5FF-44AB-A37A-FFA61CFA2CD8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{E6842ADC-E320-4E58-AAAD-CE82B3A294DA}"
+	ProjectSection(SolutionItems) = preProject
+		Neighbor.Server\docker-compose-sit.yml = Neighbor.Server\docker-compose-sit.yml
+		Neighbor.Server\docker-compose.yml = Neighbor.Server\docker-compose.yml
+	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neighbor.Server.Finance.MonthlyBalance", "Neighbor.Server\Neighbor.Server.Finance\Neighbor.Server.Finance.MonthlyBalance.csproj", "{8B681420-F10E-4FB4-A5B1-F93F58998CDF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neighbor.Server.Finance", "Neighbor.Server\Neighbor.Server.Finance\Neighbor.Server.Finance.csproj", "{8B681420-F10E-4FB4-A5B1-F93F58998CDF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neighbor.Server.Identity", "Neighbor.Server\Neighbor.Server.Identity\Neighbor.Server.Identity.csproj", "{F87D2C77-7116-4702-85A8-AD5F8967C8DD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Neighbor.Server.ApiGateway", "Neighbor.Server.ApiGateway", "{EACCAE06-6657-4E51-91CB-80A344BC5855}"
+	ProjectSection(SolutionItems) = preProject
+		Neighbor.Server\Neighbor.Server.ApiGateway\Dockerfile-sit = Neighbor.Server\Neighbor.Server.ApiGateway\Dockerfile-sit
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "etc_nginx_confd", "etc_nginx_confd", "{E5D26263-B789-4812-B104-60772E367F86}"
+	ProjectSection(SolutionItems) = preProject
+		Neighbor.Server\Neighbor.Server.ApiGateway\etc_nginx_confd\default.conf = Neighbor.Server\Neighbor.Server.ApiGateway\etc_nginx_confd\default.conf
+		Neighbor.Server\Neighbor.Server.ApiGateway\etc_nginx_confd\neighbor-sit.conf = Neighbor.Server\Neighbor.Server.ApiGateway\etc_nginx_confd\neighbor-sit.conf
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -135,6 +152,18 @@ Global
 		{8B681420-F10E-4FB4-A5B1-F93F58998CDF}.Release|iPhone.Build.0 = Release|Any CPU
 		{8B681420-F10E-4FB4-A5B1-F93F58998CDF}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{8B681420-F10E-4FB4-A5B1-F93F58998CDF}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{F87D2C77-7116-4702-85A8-AD5F8967C8DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F87D2C77-7116-4702-85A8-AD5F8967C8DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F87D2C77-7116-4702-85A8-AD5F8967C8DD}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{F87D2C77-7116-4702-85A8-AD5F8967C8DD}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{F87D2C77-7116-4702-85A8-AD5F8967C8DD}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{F87D2C77-7116-4702-85A8-AD5F8967C8DD}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{F87D2C77-7116-4702-85A8-AD5F8967C8DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F87D2C77-7116-4702-85A8-AD5F8967C8DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F87D2C77-7116-4702-85A8-AD5F8967C8DD}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{F87D2C77-7116-4702-85A8-AD5F8967C8DD}.Release|iPhone.Build.0 = Release|Any CPU
+		{F87D2C77-7116-4702-85A8-AD5F8967C8DD}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{F87D2C77-7116-4702-85A8-AD5F8967C8DD}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -148,6 +177,9 @@ Global
 		{B003E864-41E8-4B16-A492-D1BD87400938} = {B8E5D408-F5FF-44AB-A37A-FFA61CFA2CD8}
 		{526CFCCD-F46E-44F2-B45D-CB57698631C6} = {B8E5D408-F5FF-44AB-A37A-FFA61CFA2CD8}
 		{8B681420-F10E-4FB4-A5B1-F93F58998CDF} = {E6842ADC-E320-4E58-AAAD-CE82B3A294DA}
+		{F87D2C77-7116-4702-85A8-AD5F8967C8DD} = {E6842ADC-E320-4E58-AAAD-CE82B3A294DA}
+		{EACCAE06-6657-4E51-91CB-80A344BC5855} = {E6842ADC-E320-4E58-AAAD-CE82B3A294DA}
+		{E5D26263-B789-4812-B104-60772E367F86} = {EACCAE06-6657-4E51-91CB-80A344BC5855}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {59130B6D-3637-4C7E-A587-5B5CAC809A58}

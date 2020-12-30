@@ -21,13 +21,19 @@ namespace Neighbor.Mobile.Views
             InitializeComponent();
 
             BindingContext = _viewModel = new MonthlyBalanceViewModel();
+            _viewModel.AccessTokenExpired += ViewModel_OpenLoginPage;
+
+            this.Appearing += MonthlyBalanceListViewPage_Appearing;
         }
 
-        protected override void OnAppearing()
+        private void MonthlyBalanceListViewPage_Appearing(object sender, EventArgs e)
         {
-            base.OnAppearing();
+            _viewModel.LoadItemsCommand.Execute(DateTime.Now.Year);
+        }
 
-           _viewModel.LoadItemsCommand.Execute(DateTime.Now.Year);
+        private async void ViewModel_OpenLoginPage(object sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync("//LoginPage");
         }
     }
 }

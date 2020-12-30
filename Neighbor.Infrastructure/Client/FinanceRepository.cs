@@ -1,11 +1,14 @@
 ﻿using Neighbor.Core.Domain.Interfaces.Finance;
+using Neighbor.Core.Domain.Interfaces.Security;
 using Neighbor.Core.Domain.Models.Finance;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
+using System.Net.Http.Headers;
 using System.Text.Json;
-using System.Linq;
+using System.Threading.Tasks;
 
 namespace Neighbor.Core.Application.Client
 {
@@ -13,17 +16,26 @@ namespace Neighbor.Core.Application.Client
     {
         private readonly string baseUri = "/neighbor/finance";
         private readonly HttpClient _httpClient;
+        private readonly ITokenProvider tokenProvider;
+        private readonly IClientTokenAccessor tokenAccessor;
 
-        public FinanceRepository(IHttpClientFactory httpClientFactory)
+        public FinanceRepository(IServiceProvider serviceProvider)
         {
-            _httpClient = httpClientFactory.CreateClient("default");
+            var httpClientFactory = (IHttpClientFactory)serviceProvider.GetService(typeof(IHttpClientFactory));
+            tokenProvider = (ITokenProvider)serviceProvider.GetService(typeof(ITokenProvider));
+            tokenAccessor = (IClientTokenAccessor)serviceProvider.GetService(typeof(IClientTokenAccessor));
+
+            _httpClient = httpClientFactory.CreateClient("finance");
         }
 
         public virtual async Task<IEnumerable<MonthlyBalance>> GetMonthlyBalances(int year)
         {
-            var requestUri = $"{baseUri}/monthlybalance?year={year}";            
+            var accessToken = tokenAccessor.GetCurrentAccessToken();
+            var requestUri = $"{baseUri}/monthlybalance?year={year}";
             var httpClient = _httpClient;
-            
+
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
             var response = await httpClient.GetAsync(requestUri);
 
             if (response.StatusCode != HttpStatusCode.OK)

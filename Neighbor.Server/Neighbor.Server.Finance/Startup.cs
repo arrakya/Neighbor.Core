@@ -8,6 +8,10 @@ using Neighbor.Core.Application;
 using Neighbor.Core.Infrastructure.Server;
 using Neighbor.Server.Finance.MonthlyBalance.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Security.Cryptography.X509Certificates;
+using Microsoft.IdentityModel.Tokens;
+using System;
 
 namespace Neighbor.Server.Finance.MonthlyBalance
 {
@@ -33,7 +37,34 @@ namespace Neighbor.Server.Finance.MonthlyBalance
                 options.UseSqlServer(defaultConnection);
             });
 
-            services.AddNeighborInfrastructureDbContext<MonthlyBalanceDbContext>();
+            services.AddAuthentication(config =>
+            {
+                config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+                {
+                    var x509CertificateFilePath = Configuration.GetSection("Security:CertificatePath").Value;
+                    var x509Certfificate = new X509Certificate2(x509CertificateFilePath);
+                    var x509SecurityKey = new X509SecurityKey(x509Certfificate);
+
+                    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                    {
+                        IssuerSigningKey = x509SecurityKey,
+                        ValidateLifetime = true,
+                        LifetimeValidator = (notBefore, expires, securityToken, validationParameters) =>
+                        {
+                            var isValidLifeTime = expires > DateTime.UtcNow;
+
+                            return isValidLifeTime;
+                        },
+                        ValidateAudience = false,
+                        ValidateIssuer = false,
+                        ClockSkew = TimeSpan.Zero
+                    };
+                });            
+
+            services.AddTransient<IFinanceDbContext, MonthlyBalanceDbContext>();
 
             services.AddControllers();
         }
@@ -57,6 +88,7 @@ namespace Neighbor.Server.Finance.MonthlyBalance
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

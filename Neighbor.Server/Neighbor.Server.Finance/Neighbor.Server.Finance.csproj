@@ -5,6 +5,10 @@
 		<RuntimeIdentifiers>win-x64;linux-x64;linux-musl-x64</RuntimeIdentifiers>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	  <WarningLevel>5</WarningLevel>
+	</PropertyGroup>
+
 	<ItemGroup>
 	  <Compile Remove="Data\20201026143255_Initial.cs" />
 	  <Compile Remove="Data\20201026143255_Initial.Designer.cs" />
@@ -19,6 +23,7 @@
 	<ItemGroup>
 		<PackageReference Include="MediatR" Version="9.0.0" />
 		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.10" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.9" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.9" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.9">

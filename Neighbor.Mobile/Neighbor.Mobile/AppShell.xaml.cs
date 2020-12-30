@@ -1,7 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Neighbor.Mobile.ViewModels;
+﻿using MediatR;
+using Microsoft.AppCenter.Analytics;
+using Neighbor.Core.Application.Requests.Security;
 using Neighbor.Mobile.Views;
+using System;
 using Xamarin.Forms;
 
 namespace Neighbor.Mobile
@@ -15,9 +16,18 @@ namespace Neighbor.Mobile
             Routing.RegisterRoute(nameof(NewItemPage), typeof(NewItemPage));
         }
 
-        private async void OnMenuItemClicked(object sender, EventArgs e)
+        protected override void OnNavigated(ShellNavigatedEventArgs args)
         {
-            await Shell.Current.GoToAsync("//LoginPage");
+            base.OnNavigated(args);
+            
+            Analytics.TrackEvent(args.Current.Location.OriginalString);
+        }
+
+        private async void OnLogoutClicked(object sender, EventArgs e)
+        {
+            Application.Current.Properties.Remove("refresh_token");
+            Application.Current.Properties.Remove("access_token");
+            await Current.GoToAsync("//LoginPage");
         }
     }
 }

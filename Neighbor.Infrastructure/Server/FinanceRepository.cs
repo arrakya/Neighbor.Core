@@ -1,25 +1,28 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Neighbor.Core.Domain.Interfaces.Finance;
 using Neighbor.Core.Domain.Models.Finance;
-using Neighbor.Core.Infrastructure.Server;
+using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Linq;
+using System.Threading.Tasks;
 
-namespace Neighbor.Core.Application.Server
+namespace Neighbor.Core.Infrastructure.Server
 {
     public class FinanceRepository : IFinance
     {
-        private IFinanceDbContext _dbContext;
+        private readonly IServiceProvider services;
 
-        public FinanceRepository(IFinanceDbContext dbContext)
+        public FinanceRepository(IServiceProvider services)
         {
-            _dbContext = dbContext;
+            this.services = services;
         }
 
         public virtual async Task<IEnumerable<MonthlyBalance>> GetMonthlyBalances(int year)
         {
-            var monthlyBalanceCollection = await _dbContext.MonthlyBalances.Where(p => p.Year == year).ToListAsync();
+            var dbContext = (IFinanceDbContext)services.GetRequiredService(typeof(IFinanceDbContext));
+
+            var monthlyBalanceCollection = await dbContext.MonthlyBalances.Where(p => p.Year == year).ToListAsync();
 
             return monthlyBalanceCollection;
         }
