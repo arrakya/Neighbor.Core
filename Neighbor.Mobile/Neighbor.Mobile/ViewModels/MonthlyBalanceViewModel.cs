@@ -1,6 +1,4 @@
-﻿using MediatR;
-using Neighbor.Core.Application.Requests.Finance;
-using Neighbor.Core.Application.Requests.Security;
+﻿using Neighbor.Core.Application.Requests.Finance;
 using Neighbor.Core.Application.Responses.Finance;
 using Neighbor.Mobile.Models;
 using System;
@@ -9,7 +7,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace Neighbor.Mobile.ViewModels
@@ -39,7 +36,10 @@ namespace Neighbor.Mobile.ViewModels
             get => _year;
             set
             {
-                SetProperty(ref _year, value, nameof(Year));
+                SetProperty(ref _year, value, nameof(Year), () =>
+                {
+                    LoadItemsCommand.Execute(null);
+                });
             }
         }
 
@@ -57,6 +57,10 @@ namespace Neighbor.Mobile.ViewModels
 
         public ICommand LoadItemsCommand { get; }
 
+        public ICommand OpenYearPickerCommand { get; }
+
+        public event EventHandler OpenYearPickerHandler;
+
         private ObservableCollection<MonthlyBalanceModel> items;
         private IEnumerable<MonthlyBalanceModel> content;
 
@@ -71,7 +75,6 @@ namespace Neighbor.Mobile.ViewModels
 
         public MonthlyBalanceViewModel()
         {
-            Year = DateTime.Now.Year;
             LoadItemsCommand = new Command(async (object commandParam) =>
             {
                 IsBusy = true;
@@ -80,14 +83,18 @@ namespace Neighbor.Mobile.ViewModels
 
                 IsBusy = false;
             });
+            OpenYearPickerCommand = new Command(() =>
+            {
+                OpenYearPickerHandler?.Invoke(this, null);
+            });
         }
 
         private async Task LoadItems()
-        {            
+        {
             var request = new MonthlyBalanceRequest { Year = Year };
             var response = await Request<MonthlyBalanceRequest, MonthlyBalanceResponse>(request);
 
-            if(response?.Content == null)
+            if (response?.Content == null)
             {
                 return;
             }

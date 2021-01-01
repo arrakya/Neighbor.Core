@@ -1,10 +1,5 @@
-﻿using MediatR;
-using Neighbor.Core.Application.Requests.Finance;
-using Neighbor.Core.Domain.Models.Finance;
-using Neighbor.Mobile.ViewModels;
+﻿using Neighbor.Mobile.ViewModels;
 using System;
-using System.Collections.ObjectModel;
-using System.Linq;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -22,13 +17,18 @@ namespace Neighbor.Mobile.Views
 
             BindingContext = _viewModel = new MonthlyBalanceViewModel();
             _viewModel.AccessTokenExpired += ViewModel_OpenLoginPage;
-
-            this.Appearing += MonthlyBalanceListViewPage_Appearing;
+            _viewModel.OpenYearPickerHandler += ViewModel_OpenYearPickerHandler;
+            _viewModel.Year = DateTime.Now.Year;
         }
 
-        private void MonthlyBalanceListViewPage_Appearing(object sender, EventArgs e)
+        private async void ViewModel_OpenYearPickerHandler(object sender, EventArgs e)
         {
-            _viewModel.LoadItemsCommand.Execute(DateTime.Now.Year);
+            var yearStr = await DisplayActionSheet("Select Year", string.Empty, string.Empty, new[] { "2020", "2021" });
+            if (string.IsNullOrEmpty(yearStr))
+            {
+                yearStr = _viewModel.Year.ToString();
+            }
+            _viewModel.Year = Convert.ToInt16(yearStr);
         }
 
         private async void ViewModel_OpenLoginPage(object sender, EventArgs e)
