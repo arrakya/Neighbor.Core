@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Code Checkout') {
             steps {
-                checkout([$class: 'GitSCM', branches: [[name: 'feature/identity']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'GitHub', url: 'https://github.com/arrakya/Neighbor.Core.git']]])
+                checkout([$class: 'GitSCM', branches: [[name: 'develop']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'GitHub', url: 'https://github.com/arrakya/Neighbor.Core.git']]])
             }
         }
         stage('Start Finance Database'){

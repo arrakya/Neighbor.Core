@@ -17,6 +17,8 @@ services:
     db-identity:
         image: mcr.microsoft.com/mssql/server:2019-latest
         container_name: "db-identity-sit"
+        ports:            
+            - "1434:1433"
         environment:
             - ACCEPT_EULA=Y 
             - SA_PASSWORD=vkiydKN6580!
@@ -33,6 +35,8 @@ services:
     db-finance:
         image: mcr.microsoft.com/mssql/server:2019-latest
         container_name: "db-finance-sit"
+        ports:            
+            - "1433:1433"
         environment:
             - ACCEPT_EULA=Y 
             - SA_PASSWORD=vkiydKN6580!
