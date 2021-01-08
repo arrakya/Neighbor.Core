@@ -33,7 +33,7 @@ namespace Neighbor.Server.Identity.Controllers
                 return new BadRequestResult();
             }
 
-            var grantType = form["grant_type"].ToString();            
+            var grantType = form["grant_type"].ToString();
             var refreshToken = string.Empty;
 
             switch (grantType.ToLower())
@@ -84,6 +84,41 @@ namespace Neighbor.Server.Identity.Controllers
             }, jsonOption);
         }
 
+        [Authorize(AuthenticationSchemes = "Basic", Policy = "Basic")]
+        [HttpPost]
+        [Route("create")]
+        public async Task<IActionResult> Create([FromForm] IFormCollection form)
+        {
+            var userName = form["userName"].ToString();
+            var password = form["password"].ToString();
+            var email = form["email"].ToString();
+            var phone = form["phone"].ToString();
+            var houseNumber = form["houseNumber"].ToString();
+
+            var request = new CreateUserRequest
+            {
+                UserName = userName,
+                Password = password,
+                Email = email,
+                Phone = phone,
+                HouseNumber = houseNumber
+            };
+            var response = await mediator.Send(request);
+            var isSuccess = response.IsSuccess;
+
+            if (isSuccess)
+            {
+                return Ok();
+            }
+
+            return new ContentResult
+            {
+                StatusCode = Convert.ToInt32(HttpStatusCode.BadRequest),
+                Content = response.ErrorMessage,
+                ContentType = "text/plain"
+            };
+        }
+
         [Authorize]
         [HttpPost]
         [Route("context")]
@@ -97,5 +132,8 @@ namespace Neighbor.Server.Identity.Controllers
 
             return response.Content;
         }
+
+
+
     }
 }

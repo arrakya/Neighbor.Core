@@ -19,7 +19,7 @@ namespace Neighbor.Core.Application.Handlers.Identity
         public async Task<GetUserIdentityResponse> Handle(GetUserIdentityRequest request, CancellationToken cancellationToken)
         {
             var userContextProvider = (IUserContextProvider)services.GetService(typeof(IUserContextProvider));
-            var userContext = await userContextProvider.GetUserContext(request.UserName);
+            var userContext = await userContextProvider.GetUserContextAsync(request.UserName);
 
             if (userContext == null)
             {

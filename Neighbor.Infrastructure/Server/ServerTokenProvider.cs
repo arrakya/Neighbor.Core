@@ -61,10 +61,10 @@ namespace Neighbor.Core.Infrastructure.Server
             return userName;
         }        
 
-        public async Task<TokensModel> CreateToken(string name, string password)
+        public async Task<TokensModel> CreateToken(string username, string password)
         {
             var userContext = (IUserContextProvider)serviceProvider.GetService(typeof(IUserContextProvider));
-            var isValidCredential = await userContext.CheckUserCredential(name, password);
+            var isValidCredential = await userContext.CheckUserCredential(username, password);
 
             if (!isValidCredential)
             {
@@ -78,7 +78,7 @@ namespace Neighbor.Core.Infrastructure.Server
             };
             tokenDesc.Claims = new Dictionary<string, object>
             {
-                { "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name", name }
+                { "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name", username }
             };
 
             var configure = (IConfiguration)serviceProvider.GetService(typeof(IConfiguration));
@@ -91,7 +91,7 @@ namespace Neighbor.Core.Infrastructure.Server
 
             var tokenString = await Task.FromResult(tokenHandler.WriteToken(token));
 
-            await userContext.UpdateRefreshTokenInStorage(name, tokenString);
+            await userContext.UpdateRefreshTokenInStorage(username, tokenString);
 
             var tokens = new TokensModel { refresh_token = tokenString };
 

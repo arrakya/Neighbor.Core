@@ -10,8 +10,8 @@ using Neighbor.Server.Identity.Data;
 namespace Neighbor.Server.Identity.Data.Migrations
 {
     [DbContext(typeof(IdentityDbContext))]
-    [Migration("20201120100350_Identity tables and default admin user")]
-    partial class Identitytablesanddefaultadminuser
+    [Migration("20210107144034_Add identity tables")]
+    partial class Addidentitytables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -50,9 +50,17 @@ namespace Neighbor.Server.Identity.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "fde73014-44a9-48e1-abbd-8fd228d57027",
-                            ConcurrencyStamp = "d73c02da-8657-4a0d-95b5-40504718f6e2",
-                            Name = "Admin"
+                            Id = "6e9d9005-189b-4f28-9353-1399a9d682ec",
+                            ConcurrencyStamp = "53d2df25-b670-4da8-962d-67cb9063babe",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "68e31331-e6d1-4ff4-ac98-342bb137ac5d",
+                            ConcurrencyStamp = "06d68ee7-1035-4fc3-a6f0-dce6491d83f1",
+                            Name = "Member",
+                            NormalizedName = "MEMBER"
                         });
                 });
 
@@ -143,25 +151,6 @@ namespace Neighbor.Server.Identity.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "bc21d80e-32a8-4634-85d5-83b1cd1b4964",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "d85c8580-4ccb-4cd8-b501-a4b73ac9536d",
-                            Email = "arrak.ya@outlook.com",
-                            EmailConfirmed = false,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "ARRAK.YA@OUTLOOK.COM",
-                            NormalizedUserName = "ARRAKYA",
-                            PasswordHash = "AQAAAAEAACcQAAAAEMd7tY6/JcF+FnKfsldeMn0WJJICrmo3lpsOhP+LCyysHSQ7un6ywpMam8FDEvNP7Q==",
-                            PhoneNumber = "0917712328",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "2fd1ff16-9585-4dcd-bd7a-5021ca5fb7ff",
-                            TwoFactorEnabled = false,
-                            UserName = "arrakya"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -186,29 +175,6 @@ namespace Neighbor.Server.Identity.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("AspNetUserClaims");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ClaimType = "FirstName",
-                            ClaimValue = "Arrak",
-                            UserId = "bc21d80e-32a8-4634-85d5-83b1cd1b4964"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            ClaimType = "LastName",
-                            ClaimValue = "Yambubpah",
-                            UserId = "bc21d80e-32a8-4634-85d5-83b1cd1b4964"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            ClaimType = "HouseNumber",
-                            ClaimValue = "89/86",
-                            UserId = "bc21d80e-32a8-4634-85d5-83b1cd1b4964"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
@@ -246,13 +212,6 @@ namespace Neighbor.Server.Identity.Data.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles");
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = "bc21d80e-32a8-4634-85d5-83b1cd1b4964",
-                            RoleId = "fde73014-44a9-48e1-abbd-8fd228d57027"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>

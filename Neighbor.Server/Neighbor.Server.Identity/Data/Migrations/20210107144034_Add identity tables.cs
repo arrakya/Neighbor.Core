@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Neighbor.Server.Identity.Data.Migrations
 {
-    public partial class Identitytablesanddefaultadminuser : Migration
+    public partial class Addidentitytables : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -155,27 +155,12 @@ namespace Neighbor.Server.Identity.Data.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "fde73014-44a9-48e1-abbd-8fd228d57027", "d73c02da-8657-4a0d-95b5-40504718f6e2", "Admin", null });
+                values: new object[] { "6e9d9005-189b-4f28-9353-1399a9d682ec", "53d2df25-b670-4da8-962d-67cb9063babe", "Admin", "ADMIN" });
 
             migrationBuilder.InsertData(
-                table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "bc21d80e-32a8-4634-85d5-83b1cd1b4964", 0, "d85c8580-4ccb-4cd8-b501-a4b73ac9536d", "arrak.ya@outlook.com", false, false, null, "ARRAK.YA@OUTLOOK.COM", "ARRAKYA", "AQAAAAEAACcQAAAAEMd7tY6/JcF+FnKfsldeMn0WJJICrmo3lpsOhP+LCyysHSQ7un6ywpMam8FDEvNP7Q==", "0917712328", false, "2fd1ff16-9585-4dcd-bd7a-5021ca5fb7ff", false, "arrakya" });
-
-            migrationBuilder.InsertData(
-                table: "AspNetUserClaims",
-                columns: new[] { "Id", "ClaimType", "ClaimValue", "UserId" },
-                values: new object[,]
-                {
-                    { 1, "FirstName", "Arrak", "bc21d80e-32a8-4634-85d5-83b1cd1b4964" },
-                    { 2, "LastName", "Yambubpah", "bc21d80e-32a8-4634-85d5-83b1cd1b4964" },
-                    { 3, "HouseNumber", "89/86", "bc21d80e-32a8-4634-85d5-83b1cd1b4964" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "AspNetUserRoles",
-                columns: new[] { "RoleId", "UserId" },
-                values: new object[] { "fde73014-44a9-48e1-abbd-8fd228d57027", "bc21d80e-32a8-4634-85d5-83b1cd1b4964" });
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[] { "68e31331-e6d1-4ff4-ac98-342bb137ac5d", "06d68ee7-1035-4fc3-a6f0-dce6491d83f1", "Member", "MEMBER" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
