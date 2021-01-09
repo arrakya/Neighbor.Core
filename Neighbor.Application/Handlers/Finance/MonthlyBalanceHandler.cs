@@ -9,19 +9,20 @@ using System.Threading.Tasks;
 namespace Neighbor.Core.Application.Handlers.Finance
 {
     public class MonthlyBalanceHandler : IRequestHandler<MonthlyBalanceRequest, MonthlyBalanceResponse>
-    {
-        private readonly IFinance _finance;
+    {        
+        private readonly IServiceProvider services;
 
-        public MonthlyBalanceHandler(IFinance finance)
-        {   
-            _finance = finance;
+        public MonthlyBalanceHandler(IServiceProvider serviceProvider)
+        {
+            services = serviceProvider;
         }
 
         public async Task<MonthlyBalanceResponse> Handle(MonthlyBalanceRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                var monthlyBalanceCollection = await _finance.GetMonthlyBalances(request.Year);
+                var finance = (IFinance)services.GetService(typeof(IFinance));
+                var monthlyBalanceCollection = await finance.GetMonthlyBalances(request.Year);
 
                 var response = new MonthlyBalanceResponse
                 {

@@ -2,6 +2,7 @@
 using Neighbor.Core.Application.Requests.Security;
 using Neighbor.Core.Application.Responses.Security;
 using Neighbor.Core.Domain.Interfaces.Security;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,15 +10,16 @@ namespace Neighbor.Core.Application.Handlers.Security
 {
     public class AccessTokenHandler : IRequestHandler<AccessTokenRequest, AccessTokenResponse>
     {
-        private readonly ITokenProvider tokenProvider;
+        private readonly IServiceProvider services;
 
-        public AccessTokenHandler(ITokenProvider tokenProvider)
+        public AccessTokenHandler(IServiceProvider serviceProvider)
         {
-            this.tokenProvider = tokenProvider;
+            services = serviceProvider;
         }
 
         public async Task<AccessTokenResponse> Handle(AccessTokenRequest request, CancellationToken cancellationToken)
         {
+            var tokenProvider = (ITokenProvider)services.GetService(typeof(ITokenProvider));
             var tokens = await tokenProvider.CreateToken(request.RefreshToken);
             var response = new AccessTokenResponse
             {

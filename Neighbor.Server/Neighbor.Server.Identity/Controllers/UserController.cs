@@ -48,7 +48,13 @@ namespace Neighbor.Server.Identity.Controllers
                         Password = password
                     };
                     var responseRefreshTokenResponse = await mediator.Send(requestRefreshToken);
-                    refreshToken = responseRefreshTokenResponse.Tokens.refresh_token;
+                    refreshToken = responseRefreshTokenResponse.Tokens?.refresh_token;
+
+                    if (string.IsNullOrEmpty(refreshToken))
+                    {
+                        return new ContentResult { Content = "Invalid Credential", StatusCode = Convert.ToInt16(HttpStatusCode.Unauthorized), ContentType = "text/plain" };
+                    }
+
                     break;
                 case "refresh_token":
                     refreshToken = form["refresh_token"].ToString();
@@ -61,7 +67,7 @@ namespace Neighbor.Server.Identity.Controllers
                     var isRefreshTokenAlive = validateRefershTokenResponse.IsValid;
                     if (!isRefreshTokenAlive)
                     {
-                        return new UnauthorizedResult();
+                        return new ContentResult { Content = "Invalid Passed Refresh Token", StatusCode = Convert.ToInt16(HttpStatusCode.Unauthorized), ContentType = "text/plain" };                        
                     }
                     break;
             }
