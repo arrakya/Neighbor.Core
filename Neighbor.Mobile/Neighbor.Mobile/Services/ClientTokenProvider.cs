@@ -12,7 +12,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Neighbor.Core.Infrastructure.Client
+namespace Neighbor.Mobile.Services
 {
     public class ClientTokenProvider : ITokenProvider
     {
@@ -71,7 +71,7 @@ namespace Neighbor.Core.Infrastructure.Client
 
         public async Task<bool> Validate(string tokenString)
         {
-            var tokenAccessor = (IClientTokenAccessor)serviceProvider.GetService(typeof(IClientTokenAccessor));
+            var tokenAccessor = (ITokenAccessor)serviceProvider.GetService(typeof(ITokenAccessor));
             var isValid = true;
             var x509CertificateBytes = await tokenAccessor.GetCertificate();
             var x509Certfificate = new X509Certificate2(x509CertificateBytes);
@@ -91,7 +91,7 @@ namespace Neighbor.Core.Infrastructure.Client
             {
                 tokenHandler.ValidateToken(tokenString, validateParams, out var _);
             }
-            catch (Exception ex)
+            catch
             {
                 isValid = false;
             }

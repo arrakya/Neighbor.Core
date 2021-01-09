@@ -1,25 +1,27 @@
-﻿using MediatR;
-using Microsoft.AppCenter;
+﻿using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
 using Neighbor.Core.Application;
-using Neighbor.Core.Application.Requests.Security;
-using Neighbor.Core.Infrastructure.Client;
+using Neighbor.Core.Domain.Interfaces.Finance;
+using Neighbor.Core.Domain.Interfaces.Security;
 using Neighbor.Mobile.Services;
-using Neighbor.Mobile.Shared;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
+using MediatR;
+using System.Net.Http;
 
 namespace Neighbor.Mobile
 {
     public partial class App : Xamarin.Forms.Application
     {
-        //public readonly string ServerAddress = "10.0.2.2";
+#if DEBUG
+        public readonly string ServerAddress = "10.0.2.2";
+#else
         public readonly string ServerAddress = "arrakya.thddns.net:4431";
+#endif
 
         public readonly string IdentityBaseAddress;
         public readonly string FinanceBaseAddress;
@@ -33,20 +35,25 @@ namespace Neighbor.Mobile
 
             var services = new ServiceCollection();
             DependencyService.Register<MockDataStore>();
+            
+            services.AddMediatR(typeof(ApplicationStartup).Assembly);
 
-            // Configure services
-            var applicationAssembly = typeof(ApplicationStartup).Assembly;
-            ApplicationStartup.ClientConfigureBuilder<ClientTokenAccessor>(services,
-                (httpClient) =>
+            var httpClientHandler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) =>
                 {
-                    httpClient.BaseAddress = new Uri(FinanceBaseAddress);
-                },
-                (httpClient) =>
-                {
-                    httpClient.BaseAddress = new Uri(IdentityBaseAddress);
-                });
+                    return true;
+                }
+            };
+            services.AddHttpClient("finance", (httpClient) => httpClient.BaseAddress = new Uri(FinanceBaseAddress)).ConfigurePrimaryHttpMessageHandler(() => httpClientHandler);
+            services.AddHttpClient("identity", (httpClient) => httpClient.BaseAddress = new Uri(IdentityBaseAddress)).ConfigurePrimaryHttpMessageHandler(() => httpClientHandler);
 
-            var serviceProvider = services.BuildServiceProvider();
+            services.AddTransient(typeof(IUserContextProvider), typeof(UserContextProvider));
+            services.AddTransient<IFinance, FinanceService>();
+            services.AddTransient(typeof(ITokenAccessor), typeof(ClientTokenAccessor));
+            services.AddTransient<ITokenProvider, ClientTokenProvider>();
+
+            var serviceProvider = services.BuildServiceProvider();            
             DependencyResolver.ResolveUsing(type => services.Any(p => p.ServiceType == type) ? serviceProvider.GetService(type) : null);
 
             MainPage = new AppShell();            

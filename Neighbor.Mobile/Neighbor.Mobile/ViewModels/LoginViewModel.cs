@@ -4,6 +4,7 @@ using Neighbor.Core.Application.Requests.Security;
 using Neighbor.Core.Domain.Models.Security;
 using Neighbor.Mobile.Models;
 using Neighbor.Mobile.Views;
+using System;
 using System.IO;
 using System.Text;
 using System.Text.Json;
@@ -13,11 +14,37 @@ namespace Neighbor.Mobile.ViewModels
 {
     public class LoginViewModel : BaseViewModel
     {
+        private string userName;
+        private string password;
+        public string UserName 
+        { 
+            get => userName;
+            set
+            {
+                SetProperty(ref userName, value);
+            }
+        }
+        public string Password 
+        { 
+            get => password;
+            set
+            {
+                SetProperty(ref password, value);
+            }
+        }
+
         public Command LoginCommand { get; }
+        public Command RegisterCommand { get; }
+
+        public event EventHandler OnClickRegister;
 
         public LoginViewModel()
         {
             LoginCommand = new Command(OnLoginClicked);
+            RegisterCommand = new Command(() =>
+            {
+                OnClickRegister?.Invoke(this, null);
+            });
         }
 
         private async void OnLoginClicked(object obj)
@@ -29,8 +56,8 @@ namespace Neighbor.Mobile.ViewModels
             {
                 var request = new RefreshTokenRequest
                 {
-                    Username = "arrakya",
-                    Password = "12345678"
+                    Username = UserName,
+                    Password = Password
                 };
                 var mediator = DependencyService.Resolve<IMediator>();
                 var response = await mediator.Send(request);

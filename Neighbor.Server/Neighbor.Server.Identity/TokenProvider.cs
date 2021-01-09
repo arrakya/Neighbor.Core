@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Neighbor.Core.Domain.Interfaces.Security;
@@ -12,32 +10,30 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
-namespace Neighbor.Core.Infrastructure.Server
+namespace Neighbor.Server.Identity
 {
-    public class ServerTokenProvider : ITokenProvider
+    public class TokenProvider : ITokenProvider
     {
-        protected readonly ILogger<ITokenProvider> logger;
-        protected readonly IHostEnvironment hostEnvironment;
-        protected readonly IServiceProvider serviceProvider;
-
-        public ServerTokenProvider(IServiceProvider serviceProvider)
-        {
-            this.logger = (ILogger<ITokenProvider>)serviceProvider.GetService(typeof(ILogger<ITokenProvider>));
-            this.hostEnvironment = (IHostEnvironment)serviceProvider.GetService(typeof(IHostEnvironment));
-            this.serviceProvider = serviceProvider;
-        }
+        private readonly ILogger<TokenProvider> logger;
+        private readonly IServiceProvider services;
 
         private X509SecurityKey SecurityKey
         {
             get
             {
-                var configure = (IConfiguration)serviceProvider.GetService(typeof(IConfiguration));
+                var configure = (IConfiguration)services.GetService(typeof(IConfiguration));
                 var x509CertificateFilePath = configure.GetSection("Security:CertificatePfxPath").Value;
                 var x509Certfificate = new X509Certificate2(x509CertificateFilePath, "vkiydKN6580");
                 var x509SecurityKey = new X509SecurityKey(x509Certfificate);
 
                 return x509SecurityKey;
             }
+        }
+
+        public TokenProvider(IServiceProvider serviceProvider)
+        {
+            services = serviceProvider;
+            logger = (ILogger<TokenProvider>)services.GetService(typeof(ILogger<TokenProvider>));
         }
 
         private string ExtractUserNameFromClaims(string tokenString)
@@ -53,17 +49,17 @@ namespace Neighbor.Core.Infrastructure.Server
             var userName = token.Claims.SingleOrDefault(p => p.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name" || p.Type == "unique_name")?.Value;
 
             if (string.IsNullOrEmpty(userName))
-            {
-                var logger = (ILogger<ServerTokenProvider>)serviceProvider.GetService(typeof(ILogger<ServerTokenProvider>));
+            {                
                 logger.LogError($"UserName in token not found.");
             }
 
             return userName;
-        }        
+        }
 
+        #region ITokenProvider
         public async Task<TokensModel> CreateToken(string username, string password)
         {
-            var userContext = (IUserContextProvider)serviceProvider.GetService(typeof(IUserContextProvider));
+            var userContext = (IUserContextProvider)services.GetService(typeof(IUserContextProvider));
             var isValidCredential = await userContext.CheckUserCredential(username, password);
 
             if (!isValidCredential)
@@ -81,7 +77,7 @@ namespace Neighbor.Core.Infrastructure.Server
                 { "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name", username }
             };
 
-            var configure = (IConfiguration)serviceProvider.GetService(typeof(IConfiguration));
+            var configure = (IConfiguration)services.GetService(typeof(IConfiguration));
             var tokenLifeTimeInSec = Convert.ToInt32(configure["Token:LifeTimeSecond:RefreshToken"]);
             var tokenLifetime = (DateTime.Now.AddSeconds(tokenLifeTimeInSec) - DateTime.Now).TotalSeconds;
             tokenDesc.Expires = tokenDesc.IssuedAt.Value.AddSeconds(tokenLifetime);
@@ -117,7 +113,7 @@ namespace Neighbor.Core.Infrastructure.Server
                 { "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name", userName }
             };
 
-            var configure = (IConfiguration)serviceProvider.GetService(typeof(IConfiguration));
+            var configure = (IConfiguration)services.GetService(typeof(IConfiguration));
             var tokenLifeTimeInSec = Convert.ToInt32(configure["Token:LifeTimeSecond:AccessToken"]);
             var tokenLifetime = (DateTime.Now.AddSeconds(tokenLifeTimeInSec) - DateTime.Now).TotalSeconds;
             tokenDesc.Expires = tokenDesc.IssuedAt.Value.AddSeconds(tokenLifetime);
@@ -136,7 +132,7 @@ namespace Neighbor.Core.Infrastructure.Server
         {
             var isValid = true;
 
-            var configure = (IConfiguration)serviceProvider.GetService(typeof(IConfiguration));
+            var configure = (IConfiguration)services.GetService(typeof(IConfiguration));
             var x509CertificateFilePath = configure.GetSection("Security:CertificatePath").Value;
 
             var x509Certfificate = new X509Certificate2(x509CertificateFilePath);
@@ -162,12 +158,13 @@ namespace Neighbor.Core.Infrastructure.Server
             {
                 tokenHandler.ValidateToken(tokenString, validateParams, out var securityToken);
             }
-            catch (Exception ex)
+            catch
             {
                 isValid = false;
             }
 
             return await Task.FromResult(isValid);
-        }
+        } 
+        #endregion
     }
 }

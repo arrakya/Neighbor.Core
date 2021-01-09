@@ -7,7 +7,6 @@ namespace Neighbor.Core.Domain.Interfaces.Security
     {
         Task<TokensModel> CreateToken(string name, string password);
         Task<TokensModel> CreateToken(string refreshToken);
-
         Task<bool> Validate(string token);
 
     }

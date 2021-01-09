@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Neighbor.Core.Infrastructure.Server;
 
 namespace Neighbor.Server.Finance.MonthlyBalance.Data
 {
-    public class MonthlyBalanceDbContext : DbContext, IFinanceDbContext
+    public class MonthlyBalanceDbContext : DbContext
     {
         public DbSet<Neighbor.Core.Domain.Models.Finance.MonthlyBalance> MonthlyBalances {get; set;}
 

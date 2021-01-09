@@ -5,7 +5,7 @@ using Xamarin.Forms;
 
 namespace Neighbor.Mobile.Services
 {
-    public class ClientTokenAccessor : IClientTokenAccessor
+    public class ClientTokenAccessor : ITokenAccessor
     {
         public Task<byte[]> GetCertificate()
         {

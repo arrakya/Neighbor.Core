@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Internal;
-using Neighbor.Core.Domain.Models.Finance;
+﻿using Neighbor.Core.Domain.Models.Finance;
 using System;
 using System.ComponentModel;
 using Xamarin.Forms;

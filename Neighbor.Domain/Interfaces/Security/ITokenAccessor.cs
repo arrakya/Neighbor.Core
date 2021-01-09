@@ -2,7 +2,7 @@
 
 namespace Neighbor.Core.Domain.Interfaces.Security
 {
-    public interface IClientTokenAccessor
+    public interface ITokenAccessor
     {
         string GetCurrentRefreshToken();
         string GetCurrentAccessToken();

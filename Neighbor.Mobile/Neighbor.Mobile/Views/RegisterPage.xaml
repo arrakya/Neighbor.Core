@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Neighbor.Mobile.Views.RegisterPage">
+    <ContentPage.Content>
+        <Grid VerticalOptions="Fill"
+              Margin="10,30,10,10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="100*"></RowDefinition>                
+            </Grid.RowDefinitions>
+            <Label Text="Register new user"
+                VerticalOptions="CenterAndExpand" 
+                HorizontalOptions="CenterAndExpand"
+                Margin="0,0,0,20"
+                FontSize="Title"/>
+            
+            <Entry Grid.Row="1" Text="{Binding UserName}" Placeholder="Username"></Entry>
+            <Entry Grid.Row="2" Text="{Binding Password}" Placeholder="Password" IsPassword="True"></Entry>
+            <Entry Grid.Row="3" Text="{Binding RePassword}" Placeholder="Re-Password" IsPassword="True"></Entry>
+            <Entry Grid.Row="4" Text="{Binding Email}" Placeholder="Email"></Entry>
+            <Entry Grid.Row="5" Text="{Binding Phone}" Placeholder="Phone"></Entry>
+            <Entry Grid.Row="6" Text="{Binding HouseNumber}" Placeholder="House Number"></Entry>
+            <StackLayout Grid.Row="7" VerticalOptions="EndAndExpand">
+                <Button Text="Submit" Command="{Binding SubmitCommand}"></Button>
+                <Button Text="Cancel" BackgroundColor="Gray" Command="{Binding CancelCommand}"></Button>
+            </StackLayout>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

@@ -10,29 +10,26 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Neighbor.Core.Application.Client
+namespace Neighbor.Mobile.Services
 {
-    public class FinanceRepository : IFinance
+    public class FinanceProvider : IFinance
     {
         private readonly string baseUri = "/neighbor/finance";
-        private readonly HttpClient _httpClient;
-        private readonly ITokenProvider tokenProvider;
-        private readonly IClientTokenAccessor tokenAccessor;
+        private readonly IServiceProvider services;
 
-        public FinanceRepository(IServiceProvider serviceProvider)
+        public FinanceProvider(IServiceProvider serviceProvider)
         {
-            var httpClientFactory = (IHttpClientFactory)serviceProvider.GetService(typeof(IHttpClientFactory));
-            tokenProvider = (ITokenProvider)serviceProvider.GetService(typeof(ITokenProvider));
-            tokenAccessor = (IClientTokenAccessor)serviceProvider.GetService(typeof(IClientTokenAccessor));
-
-            _httpClient = httpClientFactory.CreateClient("finance");
+            services = serviceProvider;
         }
 
-        public virtual async Task<IEnumerable<MonthlyBalance>> GetMonthlyBalances(int year)
+        public async Task<IEnumerable<MonthlyBalance>> GetMonthlyBalances(int year)
         {
+            var httpClientFactory = (IHttpClientFactory)services.GetService(typeof(IHttpClientFactory));
+            var httpClient = httpClientFactory.CreateClient("finance");
+
+            var tokenAccessor = (ITokenAccessor)services.GetService(typeof(ITokenAccessor));
             var accessToken = tokenAccessor.GetCurrentAccessToken();
             var requestUri = $"{baseUri}/monthlybalance?year={year}";
-            var httpClient = _httpClient;
 
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 

@@ -12,10 +12,30 @@
             <converters:InvertBooleanConverter x:Key="invertBooleanConverter"></converters:InvertBooleanConverter>
         </ResourceDictionary>
     </ContentPage.Resources>
-    
+
     <ContentPage.Content>
-        <StackLayout Padding="10,0,10,0" VerticalOptions="Center">
-            <Button VerticalOptions="Center" IsEnabled="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}" Text="Login" Command="{Binding LoginCommand}" />
-        </StackLayout>
+        <Grid VerticalOptions="Fill"
+              Margin="10,30,10,10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="100*"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <Label Text="Login"
+                VerticalOptions="CenterAndExpand" 
+                HorizontalOptions="CenterAndExpand"
+                Margin="0,0,0,20"
+                FontSize="Title"/>
+
+            <Entry Grid.Row="1" Text="{Binding UserName}" Placeholder="UserName"></Entry>
+            <Entry Grid.Row="2" Text="{Binding Password}" Placeholder="Password" IsPassword="True"></Entry>
+            
+            <StackLayout Grid.Row="3" Padding="10,0,10,0" VerticalOptions="EndAndExpand">
+                <Button VerticalOptions="Center" IsEnabled="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}" Text="Login" Command="{Binding LoginCommand}" />
+                <Button Text="Register" BackgroundColor="Gray" Command="{Binding RegisterCommand}"></Button>
+            </StackLayout>
+        </Grid>
     </ContentPage.Content>
 </ContentPage>

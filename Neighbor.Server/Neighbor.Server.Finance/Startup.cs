@@ -5,13 +5,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MediatR;
 using Neighbor.Core.Application;
-using Neighbor.Core.Infrastructure.Server;
 using Neighbor.Server.Finance.MonthlyBalance.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using Neighbor.Core.Domain.Interfaces.Finance;
 
 namespace Neighbor.Server.Finance.MonthlyBalance
 {
@@ -36,13 +36,11 @@ namespace Neighbor.Server.Finance.MonthlyBalance
             {
                 options.UseSqlServer(defaultConnection);
             });
-
             services.AddAuthentication(config =>
             {
                 config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+            }).AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
                     var x509CertificateFilePath = Configuration.GetSection("Security:CertificatePath").Value;
                     var x509Certfificate = new X509Certificate2(x509CertificateFilePath);
@@ -63,8 +61,7 @@ namespace Neighbor.Server.Finance.MonthlyBalance
                         ClockSkew = TimeSpan.Zero
                     };
                 });            
-
-            services.AddTransient<IFinanceDbContext, MonthlyBalanceDbContext>();
+            services.AddTransient<IFinance, FinanceProvider>();
 
             services.AddControllers();
         }

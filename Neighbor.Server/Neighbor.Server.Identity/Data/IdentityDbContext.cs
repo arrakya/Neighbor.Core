@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Neighbor.Core.Infrastructure.Server;
 using System;
 
 namespace Neighbor.Server.Identity.Data
 {
-    public class IdentityDbContext : Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityDbContext<IdentityUser>, IIdentityDbContext
+    public class IdentityDbContext : Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityDbContext<IdentityUser>
     {
         public IdentityDbContext(DbContextOptions<IdentityDbContext> options) : base(options)
         {
