@@ -6,6 +6,7 @@
              mc:Ignorable="d"
              x:Class="Neighbor.Mobile.Views.LoginPage"             
 			 xmlns:converters="clr-namespace:Neighbor.Mobile.Converters"
+             xmlns:behaviors="clr-namespace:Neighbor.Mobile.Behaviors"
              Shell.NavBarIsVisible="False">
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -29,12 +30,34 @@
                 Margin="0,0,0,20"
                 FontSize="Title"/>
 
-            <Entry Grid.Row="1" Text="{Binding UserName}" Placeholder="UserName"></Entry>
-            <Entry Grid.Row="2" Text="{Binding Password}" Placeholder="Password" IsPassword="True"></Entry>
+            <!-- UserName Entry -->
+            <Entry Grid.Row="1" Text="{Binding UserName.Value}" Placeholder="UserName">
+                <Entry.Behaviors>
+                    <behaviors:EventToCommandBehavior EventName="TextChanged" Command="{Binding ValidateUserNameCommand}"></behaviors:EventToCommandBehavior>
+                </Entry.Behaviors>
+                <Entry.Triggers>
+                    <DataTrigger TargetType="Entry" Binding="{Binding UserName.IsValid}" Value="False">
+                        <Setter Property="TextColor" Value="{StaticResource ErrorColor}"></Setter>
+                    </DataTrigger>
+                </Entry.Triggers>
+            </Entry>            
             
+            <!-- Password Entry -->
+            <Entry Grid.Row="2" Text="{Binding Password.Value}" Placeholder="Password" IsPassword="True">
+                <Entry.Behaviors>
+                    <behaviors:EventToCommandBehavior EventName="TextChanged" Command="{Binding ValidatePasswordCommand}"></behaviors:EventToCommandBehavior>
+                </Entry.Behaviors>
+                <Entry.Triggers>
+                    <DataTrigger TargetType="Entry" Binding="{Binding Password.IsValid}" Value="False">
+                        <Setter Property="TextColor" Value="{StaticResource ErrorColor}"></Setter>
+                    </DataTrigger>
+                </Entry.Triggers>
+            </Entry>
+
             <StackLayout Grid.Row="3" Padding="10,0,10,0" VerticalOptions="EndAndExpand">
-                <Button VerticalOptions="Center" IsEnabled="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}" Text="Login" Command="{Binding LoginCommand}" />
-                <Button Text="Register" BackgroundColor="Gray" Command="{Binding RegisterCommand}"></Button>
+                <Button Text="Login" Command="{Binding LoginCommand}" VerticalOptions="Center" IsVisible="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}" />
+                <ActivityIndicator HorizontalOptions="Center" IsRunning="True" IsVisible="{Binding IsBusy}"></ActivityIndicator>
+                <Button Text="Register" BackgroundColor="Gray" Command="{Binding RegisterCommand}" IsVisible="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}" IsEnabled="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}"></Button>
             </StackLayout>
         </Grid>
     </ContentPage.Content>

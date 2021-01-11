@@ -1,12 +1,9 @@
-﻿using MediatR;
-using Microsoft.AppCenter;
-using Neighbor.Core.Application.Requests.Security;
-using Neighbor.Core.Domain.Models.Security;
-using Neighbor.Mobile.Models;
-using Neighbor.Mobile.Views;
+﻿using Neighbor.Core.Domain.Models.Security;
+using Neighbor.Mobile.Validation;
+using Neighbor.Mobile.ViewModels.Base;
 using System;
-using System.IO;
-using System.Text;
+using System.Collections.Generic;
+using System.Net.Http;
 using System.Text.Json;
 using Xamarin.Forms;
 
@@ -14,9 +11,10 @@ namespace Neighbor.Mobile.ViewModels
 {
     public class LoginViewModel : BaseViewModel
     {
-        private string userName;
-        private string password;
-        public string UserName 
+        private ValidatableObject<string> userName;
+        private ValidatableObject<string> password;
+
+        public ValidatableObject<string> UserName 
         { 
             get => userName;
             set
@@ -24,7 +22,7 @@ namespace Neighbor.Mobile.ViewModels
                 SetProperty(ref userName, value);
             }
         }
-        public string Password 
+        public ValidatableObject<string> Password 
         { 
             get => password;
             set
@@ -33,40 +31,83 @@ namespace Neighbor.Mobile.ViewModels
             }
         }
 
-        public Command LoginCommand { get; }
-        public Command RegisterCommand { get; }
+        public Command LoginCommand { get; set; }
+        public Command RegisterCommand { get; set; }
+        public Command ValidateUserNameCommand { get; set; }
+        public Command ValidatePasswordCommand { get; set; }
 
+        public event EventHandler OnLoginSuccess;
         public event EventHandler OnClickRegister;
+
+        public delegate void LoginErrorHandler(LoginViewModel sender, string errorMessage);
+        public event LoginErrorHandler OnLoginError;
 
         public LoginViewModel()
         {
-            LoginCommand = new Command(OnLoginClicked);
+            LoginCommand = new Command(Login, (args) => Validate());
+            ValidateUserNameCommand = new Command(() => ValidateProperty(userName));
+            ValidatePasswordCommand = new Command(() => ValidateProperty(password));
+
+            const string isNullOrEmptyErrorMessage = "Required";
+
+            userName = new ValidatableObject<string>();
+            password = new ValidatableObject<string>();
+
+            userName.Validations.Add(new IsNotNullOrEmptyRule<string> { ValidationMessage = isNullOrEmptyErrorMessage });
+            userName.Validations.Add(new MinLenghtEntryRule<string>(6) { ValidationMessage = "Too short" });
+            userName.Validations.Add(new MaxLenghtEntryRule<string>(15) { ValidationMessage = "Too large" });
+            userName.Validations.Add(new RegexEntryRule<string>("\\W", false) { ValidationMessage = "Restrict chars" });
+
+            password.Validations.Add(new IsNotNullOrEmptyRule<string> { ValidationMessage = isNullOrEmptyErrorMessage });
+            password.Validations.Add(new MinLenghtEntryRule<string>(6) { ValidationMessage = "Too short" });
+            password.Validations.Add(new MaxLenghtEntryRule<string>(15) { ValidationMessage = "Too large" });
+
             RegisterCommand = new Command(() =>
             {
                 OnClickRegister?.Invoke(this, null);
             });
         }
 
-        private async void OnLoginClicked(object obj)
+        public bool ValidateProperty<T>(ValidatableObject<T> property)
+        {
+            var isValid = property.Validate();
+            LoginCommand.ChangeCanExecute();
+            return isValid;
+        }
+
+        public bool Validate()
+        {
+            var isUserNameValid = userName.Validate();
+            var isPasswordValid = password.Validate();
+
+            var isValid = isUserNameValid && isPasswordValid;
+
+            return isValid;
+        }
+
+        public async void Login(object args)
         {
             IsBusy = true;
-            var tokens = default(TokensModel);
 
-            try
+            var httpClient = GetHttpClient(ClientTypeName.Identity);
+            var request = new FormUrlEncodedContent(new[]
             {
-                var request = new RefreshTokenRequest
-                {
-                    Username = UserName,
-                    Password = Password
-                };
-                var mediator = DependencyService.Resolve<IMediator>();
-                var response = await mediator.Send(request);
-                tokens = response.Tokens;
-            }
-            catch (System.Exception ex)
+                new KeyValuePair<string,string>("grant_type","password"),
+                new KeyValuePair<string,string>(nameof(userName), UserName.Value),
+                new KeyValuePair<string,string>(nameof(password), Password.Value)
+            });
+
+            var response = await httpClient.PostAsync("/user/oauth/token", request);
+
+            if (!response.IsSuccessStatusCode)
             {
-                throw new System.Exception("Refresh Token Request Error" ,ex);             
+                OnLoginError?.Invoke(this, "Login fail");
+                IsBusy = false;
+                return;
             }
+
+            var tokenString = await response.Content.ReadAsStringAsync();
+            var tokens = JsonSerializer.Deserialize<TokensModel>(tokenString);
 
             const string refreshTokenPropertyName = "refresh_token";
             if (Application.Current.Properties.ContainsKey(refreshTokenPropertyName))
@@ -83,10 +124,9 @@ namespace Neighbor.Mobile.ViewModels
             Application.Current.Properties.Add(refreshTokenPropertyName, tokens.refresh_token);
             Application.Current.Properties.Add(accessTokenPropertyName, tokens.access_token);
 
-
             IsBusy = false;
-            // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
-            await Shell.Current.GoToAsync($"//{nameof(MonthlyBalanceListViewPage)}");
+
+            OnLoginSuccess?.Invoke(this, null);
         }
     }
 }

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Input;
-using Neighbor.Mobile.Models;
+﻿using Neighbor.Mobile.Models;
+using Neighbor.Mobile.ViewModels.Base;
+using System;
 using Xamarin.Forms;
 
 namespace Neighbor.Mobile.ViewModels

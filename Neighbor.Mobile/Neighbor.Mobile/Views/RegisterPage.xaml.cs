@@ -1,10 +1,5 @@
 ﻿using Neighbor.Mobile.ViewModels;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -22,11 +17,19 @@ namespace Neighbor.Mobile.Views
             BindingContext = viewModel = new RegisterViewModel();
 
             viewModel.OnClickCancel += ViewModel_OnClickCancel;
-            viewModel.OnClickSubmit += ViewModel_OnClickSubmit;
+            viewModel.OnRegisterSuccess += ViewModel_OnClickSubmit;
+            viewModel.OnRegisterError += ViewModel_OnSubmitError;
         }
 
-        private async void ViewModel_OnClickSubmit(object sender, EventArgs e)
+        private async void ViewModel_OnSubmitError(RegisterViewModel sender, string errorMessage)
         {
+            await DisplayAlert("Error", errorMessage, "Close");
+        }
+            
+        private async void ViewModel_OnClickSubmit(RegisterViewModel sender)
+        {
+            await DisplayAlert("Register succeeded", "Now you can login", "Close");
+
             await Shell.Current.Navigation.PopModalAsync();
         }
 

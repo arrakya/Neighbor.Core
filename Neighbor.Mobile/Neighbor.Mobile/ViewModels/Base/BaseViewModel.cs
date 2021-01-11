@@ -10,8 +10,11 @@ using Neighbor.Mobile.Services;
 using Neighbor.Core.Application.Requests.Security;
 using MediatR;
 using System.Threading.Tasks;
+using System.Net.Http;
+using System.Text;
+using System.Net.Http.Headers;
 
-namespace Neighbor.Mobile.ViewModels
+namespace Neighbor.Mobile.ViewModels.Base
 {
     public class BaseViewModel : INotifyPropertyChanged
     {
@@ -46,7 +49,7 @@ namespace Neighbor.Mobile.ViewModels
             return true;
         }
 
-        #region INotifyPropertyChanged
+#region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
@@ -56,7 +59,7 @@ namespace Neighbor.Mobile.ViewModels
 
             changed.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        #endregion
+#endregion
 
         protected async Task<bool> PrepareAccessToken()
         {
@@ -120,6 +123,24 @@ namespace Neighbor.Mobile.ViewModels
             var response = await mediator.Send(request);
 
             return response;
+        }
+
+        protected enum ClientTypeName
+        {
+            Identity, Finance
+        }
+
+        protected HttpClient GetHttpClient(ClientTypeName clientTypeName)
+        {
+            var clientTypeNameText = clientTypeName.ToString().ToLower();
+
+            var httpClientFactory = DependencyService.Resolve<IHttpClientFactory>(DependencyFetchTarget.NewInstance);
+            var httpClient = httpClientFactory.CreateClient(clientTypeNameText);
+            var clientId = Convert.ToBase64String(Encoding.Default.GetBytes($"neighbor_grooveville:3100601614660"));
+            
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", clientId);
+
+            return httpClient;
         }
     }
 }

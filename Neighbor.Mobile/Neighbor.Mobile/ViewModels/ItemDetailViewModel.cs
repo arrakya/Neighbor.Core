@@ -1,7 +1,6 @@
-﻿using System;
+﻿using Neighbor.Mobile.ViewModels.Base;
+using System;
 using System.Diagnostics;
-using System.Threading.Tasks;
-using Neighbor.Mobile.Models;
 using Xamarin.Forms;
 
 namespace Neighbor.Mobile.ViewModels

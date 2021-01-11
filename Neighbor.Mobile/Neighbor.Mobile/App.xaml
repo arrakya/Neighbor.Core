@@ -1,13 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Application xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:behaviors="clr-namespace:Neighbor.Mobile.Behaviors"
              x:Class="Neighbor.Mobile.App">
     <!--
         Define global resources and styles here, that apply to all pages in your app.
     -->
     <Application.Resources>
         <ResourceDictionary>
-            <Color x:Key="Primary">#2196F3</Color>
+            <!-- COLORS -->
+            <Color x:Key="Primary">#2196F3</Color>            
+            <Color x:Key="ErrorColor">#ff5252</Color>
+           
             <Style TargetType="Button">
                 <Setter Property="TextColor" Value="White"></Setter>
                 <Setter Property="VisualStateManager.VisualStateGroups">
@@ -16,17 +20,26 @@
                             <VisualState x:Name="Normal">
                                 <VisualState.Setters>
                                     <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+                                    <Setter Property="TextColor" Value="Black" />
                                 </VisualState.Setters>
                             </VisualState>
                             <VisualState x:Name="Disabled">
                                 <VisualState.Setters>
                                     <Setter Property="BackgroundColor" Value="#332196F3" />
+                                    <Setter Property="TextColor" Value="Black" />
                                 </VisualState.Setters>
                             </VisualState>
                         </VisualStateGroup>
                     </VisualStateGroupList>
                 </Setter>
             </Style>
-        </ResourceDictionary>        
+            <Style x:Key="ValidationErrorLabelStyle" TargetType="{x:Type Label}">
+                <Setter Property="TextColor" Value="{StaticResource ErrorColor}" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="Margin" Value="0,0,7,0" />
+                <Setter Property="HorizontalOptions" Value="EndAndExpand" />
+            </Style>
+
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

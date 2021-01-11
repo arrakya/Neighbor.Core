@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
+using Neighbor.Mobile.ViewModels.Base;
 
 namespace Neighbor.Mobile.ViewModels
 {
