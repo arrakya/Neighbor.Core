@@ -1,8 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Neighbor.Core.Domain.Interfaces.Security;
-using Neighbor.Core.Domain.Models.Security;
+using Neighbor.Server.Identity.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -12,9 +13,9 @@ using System.Threading.Tasks;
 
 namespace Neighbor.Server.Identity
 {
-    public class TokenProvider : ITokenProvider
+    public class TokenService : ITokenService
     {
-        private readonly ILogger<TokenProvider> logger;
+        private readonly ILogger<TokenService> logger;
         private readonly IServiceProvider services;
 
         private X509SecurityKey SecurityKey
@@ -30,10 +31,10 @@ namespace Neighbor.Server.Identity
             }
         }
 
-        public TokenProvider(IServiceProvider serviceProvider)
+        public TokenService(IServiceProvider serviceProvider)
         {
             services = serviceProvider;
-            logger = (ILogger<TokenProvider>)services.GetService(typeof(ILogger<TokenProvider>));
+            logger = (ILogger<TokenService>)services.GetService(typeof(ILogger<TokenService>));
         }
 
         private string ExtractUserNameFromClaims(string tokenString)
@@ -56,13 +57,12 @@ namespace Neighbor.Server.Identity
             return userName;
         }
 
-        #region ITokenProvider
-        public async Task<TokensModel> CreateToken(string username, string password)
+        public async Task<string> CreateRefreshTokenAsync(string username, string password)
         {
-            var userContext = (IUserContextProvider)services.GetService(typeof(IUserContextProvider));
-            var isValidCredential = await userContext.CheckUserCredential(username, password);
+            var userManager = (UserManager<IdentityUser>)services.GetService(typeof(UserManager<IdentityUser>));
+            var userIdentity = await userManager.FindByNameAsync(username.ToUpper().Normalize());
 
-            if (!isValidCredential)
+            if (userIdentity != null)
             {
                 return default;
             }
@@ -85,16 +85,15 @@ namespace Neighbor.Server.Identity
             tokenDesc.SigningCredentials = new SigningCredentials(SecurityKey, SecurityAlgorithms.RsaSha256Signature);
             var token = tokenHandler.CreateJwtSecurityToken(tokenDesc);
 
-            var tokenString = await Task.FromResult(tokenHandler.WriteToken(token));
+            var tokenString = await Task.FromResult(tokenHandler.WriteToken(token));            
 
-            await userContext.UpdateRefreshTokenInStorage(username, tokenString);
+            await userManager.RemoveAuthenticationTokenAsync(userIdentity, "neighbor", "refresh_token");
+            await userManager.SetAuthenticationTokenAsync(userIdentity, "neighbor", "refresh_token", tokenString);
 
-            var tokens = new TokensModel { refresh_token = tokenString };
-
-            return tokens;
+            return tokenString;
         }
 
-        public async Task<TokensModel> CreateToken(string refreshToken)
+        public async Task<string> CreateAccessTokenAsync(string refreshToken)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var userName = ExtractUserNameFromClaims(refreshToken);
@@ -123,12 +122,10 @@ namespace Neighbor.Server.Identity
 
             var tokenString = await Task.FromResult(tokenHandler.WriteToken(newToken));
 
-            var tokens = new TokensModel { refresh_token = refreshToken, access_token = tokenString };
-
-            return tokens;
+            return tokenString;
         }
 
-        public async Task<bool> Validate(string tokenString)
+        public async Task<bool> ValidateAsync(string tokenString)
         {
             var isValid = true;
 
@@ -165,6 +162,5 @@ namespace Neighbor.Server.Identity
 
             return await Task.FromResult(isValid);
         } 
-        #endregion
     }
 }

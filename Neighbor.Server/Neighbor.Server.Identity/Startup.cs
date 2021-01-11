@@ -1,21 +1,17 @@
-﻿using MediatR;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using Neighbor.Core.Application;
-using Neighbor.Server.Identity.Data;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using System;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using System.Security.Cryptography.X509Certificates;
-using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Neighbor.Core.Domain.Interfaces.Security;
+using Microsoft.IdentityModel.Tokens;
+using Neighbor.Server.Identity.Data;
+using System;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Neighbor.Server.Identity
 {
@@ -31,11 +27,7 @@ namespace Neighbor.Server.Identity
         public IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddTransient<IUserContextProvider, UserContextProvider>();            
-            services.AddTransient<ITokenProvider, TokenProvider>();
-            services.AddMediatR(new[] { typeof(ApplicationStartup).Assembly, typeof(Startup).Assembly });            
-
+        {           
             _connectionString = Configuration.GetConnectionString("DefaultConnection");
 
             services.AddDbContext<IdentityDbContext>(options =>

@@ -1,12 +1,13 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Neighbor.Core.Application.Requests.Identity;
-using Neighbor.Core.Application.Requests.Security;
 using Neighbor.Core.Domain.Models.Identity;
+using Neighbor.Server.Identity.Services.Interfaces;
 using System;
+using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -16,11 +17,11 @@ namespace Neighbor.Server.Identity.Controllers
     [Route("[controller]")]
     public class UserController : Controller
     {
-        private readonly IMediator mediator;
+        private readonly IServiceProvider services;
 
-        public UserController(IMediator mediator)
+        public UserController(IServiceProvider serviceProvider)
         {
-            this.mediator = mediator;
+            this.services = serviceProvider;
         }
 
         [Authorize(AuthenticationSchemes = "Basic", Policy = "Basic")]
@@ -33,6 +34,7 @@ namespace Neighbor.Server.Identity.Controllers
                 return new BadRequestResult();
             }
 
+            var tokenService = (ITokenService)services.GetService(typeof(ITokenService));
             var grantType = form["grant_type"].ToString();
             var refreshToken = string.Empty;
 
@@ -42,13 +44,7 @@ namespace Neighbor.Server.Identity.Controllers
                     var username = form["username"].ToString();
                     var password = form["password"].ToString();
 
-                    var requestRefreshToken = new RefreshTokenRequest
-                    {
-                        Username = username,
-                        Password = password
-                    };
-                    var responseRefreshTokenResponse = await mediator.Send(requestRefreshToken);
-                    refreshToken = responseRefreshTokenResponse.Tokens?.refresh_token;
+                    refreshToken = await tokenService.CreateRefreshTokenAsync(username, password);
 
                     if (string.IsNullOrEmpty(refreshToken))
                     {
@@ -58,26 +54,16 @@ namespace Neighbor.Server.Identity.Controllers
                     break;
                 case "refresh_token":
                     refreshToken = form["refresh_token"].ToString();
+                    var isRefreshTokenAlive = await tokenService.ValidateAsync(refreshToken);
 
-                    var requestValidateRefreshToken = new ValidateTokenRequest
-                    {
-                        Token = refreshToken
-                    };
-                    var validateRefershTokenResponse = await mediator.Send(requestValidateRefreshToken);
-                    var isRefreshTokenAlive = validateRefershTokenResponse.IsValid;
                     if (!isRefreshTokenAlive)
                     {
-                        return new ContentResult { Content = "Invalid Passed Refresh Token", StatusCode = Convert.ToInt16(HttpStatusCode.Unauthorized), ContentType = "text/plain" };                        
+                        return new ContentResult { Content = "Invalid Passed Refresh Token", StatusCode = Convert.ToInt16(HttpStatusCode.Unauthorized), ContentType = "text/plain" };
                     }
                     break;
             }
 
-            var requestAccessToken = new AccessTokenRequest
-            {
-                RefreshToken = refreshToken
-            };
-            var responseAccessToken = await mediator.Send(requestAccessToken);
-
+            var accessToken = await tokenService.CreateAccessTokenAsync(refreshToken);
             var jsonOption = new JsonSerializerOptions
             {
                 PropertyNamingPolicy = null
@@ -86,7 +72,7 @@ namespace Neighbor.Server.Identity.Controllers
             return Json(new
             {
                 refresh_token = refreshToken,
-                access_token = responseAccessToken.Tokens.access_token
+                access_token = accessToken
             }, jsonOption);
         }
 
@@ -101,28 +87,60 @@ namespace Neighbor.Server.Identity.Controllers
             var phone = form["phone"].ToString();
             var houseNumber = form["houseNumber"].ToString();
 
-            var request = new CreateUserRequest
-            {
-                UserName = userName,
-                Password = password,
-                Email = email,
-                Phone = phone,
-                HouseNumber = houseNumber
-            };
-            var response = await mediator.Send(request);
-            var isSuccess = response.IsSuccess;
+            var userManager = (UserManager<IdentityUser>)services.GetService(typeof(UserManager<IdentityUser>));
+            var existedUser = await userManager.FindByNameAsync(userName);
 
-            if (isSuccess)
+            if (existedUser != null)
             {
-                return Ok();
+                return new ContentResult
+                {
+                    StatusCode = Convert.ToInt16(HttpStatusCode.BadRequest),
+                    Content = "UserName has existed",
+                    ContentType = "text/plain"
+                };
             }
 
-            return new ContentResult
+            var identityUser = new IdentityUser
             {
-                StatusCode = Convert.ToInt32(HttpStatusCode.BadRequest),
-                Content = response.ErrorMessage,
-                ContentType = "text/plain"
+                UserName = userName,
+                Email = email,
+                PhoneNumber = phone,
+                NormalizedEmail = email.ToUpper().Normalize(),
+                NormalizedUserName = userName.ToUpper().Normalize()                
             };
+
+            var passwordHashed = new PasswordHasher<IdentityUser>();
+            var hashedPassword = passwordHashed.HashPassword(identityUser, password);
+            identityUser.PasswordHash = hashedPassword;
+
+            var createUserResult = await userManager.CreateAsync(identityUser);
+
+            if (!createUserResult.Succeeded)
+            {
+                return new ContentResult
+                {
+                    StatusCode = Convert.ToInt16(HttpStatusCode.BadRequest),
+                    Content = createUserResult.Errors.FirstOrDefault()?.Description,
+                    ContentType = "text/plain"
+                };
+            }
+
+            var houseNumberClaim = new Claim("HouseNumber", houseNumber);
+            var createClaimResult = await userManager.AddClaimAsync(identityUser, houseNumberClaim);
+
+            if (!createClaimResult.Succeeded)
+            {
+                await userManager.DeleteAsync(identityUser);
+
+                return new ContentResult
+                {
+                    StatusCode = Convert.ToInt16(HttpStatusCode.BadRequest),
+                    Content = createClaimResult.Errors.FirstOrDefault()?.Description,
+                    ContentType = "text/plain"
+                };
+            }
+
+            return Ok();
         }
 
         [Authorize]
@@ -130,16 +148,26 @@ namespace Neighbor.Server.Identity.Controllers
         [Route("context")]
         public async Task<IdentityUserContext> GetContext()
         {
-            var request = new GetUserIdentityRequest
+            var userName = User.Identity.Name;
+            var userManager = (UserManager<IdentityUser>)services.GetService(typeof(UserManager<IdentityUser>));
+            var userIdentity = await userManager.FindByNameAsync(userName.ToUpper().Normalize());
+            var userContext = default(IdentityUserContext);
+
+            if (userIdentity != null)
             {
-                UserName = User.Identity.Name
-            };
-            var response = await mediator.Send(request);
+                userContext = new IdentityUserContext
+                {
+                    Email = userIdentity.Email,
+                    PhoneNumber = userIdentity.PhoneNumber
+                };
 
-            return response.Content;
+                var claims = await userManager.GetClaimsAsync(userIdentity);
+                userContext.FirstName = claims.SingleOrDefault(p => p.Type == "FirstName")?.Value;
+                userContext.LastName = claims.SingleOrDefault(p => p.Type == "LastName")?.Value;
+                userContext.HouseNumber = claims.SingleOrDefault(p => p.Type == "HouseNumber")?.Value;
+            }
+
+            return userContext;
         }
-
-
-
     }
 }

@@ -61,7 +61,6 @@ namespace Neighbor.Server.Finance.MonthlyBalance
                         ClockSkew = TimeSpan.Zero
                     };
                 });            
-            services.AddTransient<IFinance, FinanceProvider>();
 
             services.AddControllers();
         }
