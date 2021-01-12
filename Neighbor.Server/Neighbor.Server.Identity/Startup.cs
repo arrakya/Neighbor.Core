@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Neighbor.Server.Identity.Data;
+using Neighbor.Server.Identity.Services.Interfaces;
 using System;
 using System.Security.Cryptography.X509Certificates;
 
@@ -81,6 +82,8 @@ namespace Neighbor.Server.Identity
                     };
                 })
                 .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("Basic", null);
+
+            services.AddTransient<ITokenService, TokenService>();
 
             services.AddControllers();
         }

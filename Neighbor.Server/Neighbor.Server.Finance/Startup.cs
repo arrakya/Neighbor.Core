@@ -1,17 +1,14 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MediatR;
-using Neighbor.Core.Application;
-using Neighbor.Server.Finance.MonthlyBalance.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using System.Security.Cryptography.X509Certificates;
 using Microsoft.IdentityModel.Tokens;
+using Neighbor.Server.Finance.MonthlyBalance.Data;
 using System;
-using Neighbor.Core.Domain.Interfaces.Finance;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Neighbor.Server.Finance.MonthlyBalance
 {
@@ -27,9 +24,6 @@ namespace Neighbor.Server.Finance.MonthlyBalance
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            ApplicationStartup.ServerConfigureBuilder(services);
-            services.AddMediatR(new[] { typeof(ApplicationStartup).Assembly, typeof(Startup).Assembly });
-
             var defaultConnection = Configuration.GetConnectionString("DefaultConnection");
 
             services.AddDbContext<MonthlyBalanceDbContext>(options =>

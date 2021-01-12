@@ -1,4 +1,5 @@
-﻿using Neighbor.Mobile.ViewModels;
+﻿using Neighbor.Mobile.NativeHelpers;
+using Neighbor.Mobile.ViewModels;
 using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -28,7 +29,8 @@ namespace Neighbor.Mobile.Views
             
         private async void ViewModel_OnClickSubmit(RegisterViewModel sender)
         {
-            await DisplayAlert("Register succeeded", "Now you can login", "Close");
+            var toastHelper = DependencyService.Resolve<IToastHelper>(DependencyFetchTarget.NewInstance);
+            toastHelper.Show("Now you can login");
 
             await Shell.Current.Navigation.PopModalAsync();
         }

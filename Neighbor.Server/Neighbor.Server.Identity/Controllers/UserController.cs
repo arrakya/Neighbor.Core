@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Neighbor.Core.Domain.Models.Identity;
+using Neighbor.Core.Domain.Models.Security;
 using Neighbor.Server.Identity.Services.Interfaces;
 using System;
 using System.Linq;
@@ -69,7 +70,7 @@ namespace Neighbor.Server.Identity.Controllers
                 PropertyNamingPolicy = null
             };
 
-            return Json(new
+            return Json(new TokensModel
             {
                 refresh_token = refreshToken,
                 access_token = accessToken

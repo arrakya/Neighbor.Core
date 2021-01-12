@@ -89,7 +89,7 @@ namespace Neighbor.Mobile.ViewModels
         {
             IsBusy = true;
 
-            var httpClient = GetHttpClient(ClientTypeName.Identity);
+            var httpClient = GetBasicHttpClient(ClientTypeName.Identity);
             var request = new FormUrlEncodedContent(new[]
             {
                 new KeyValuePair<string,string>("grant_type","password"),

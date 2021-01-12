@@ -1,25 +1,27 @@
-﻿using System;
+﻿using Microsoft.IdentityModel.Tokens;
+using Neighbor.Core.Domain.Models.Security;
+using Neighbor.Mobile.Models;
+using Neighbor.Mobile.NativeHelpers;
+using Neighbor.Mobile.Services;
+using Neighbor.Mobile.Shared;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-using Xamarin.Forms;
-
-using Neighbor.Mobile.Models;
-using Neighbor.Mobile.Services;
-using Neighbor.Core.Application.Requests.Security;
-using MediatR;
-using System.Threading.Tasks;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
-using System.Text;
 using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace Neighbor.Mobile.ViewModels.Base
 {
     public class BaseViewModel : INotifyPropertyChanged
     {
-        public event EventHandler AccessTokenExpired;
-
         public IDataStore<Item> DataStore => DependencyService.Get<IDataStore<Item>>();
 
         bool isBusy = false;
@@ -49,7 +51,7 @@ namespace Neighbor.Mobile.ViewModels.Base
             return true;
         }
 
-#region INotifyPropertyChanged
+        #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
@@ -59,88 +61,98 @@ namespace Neighbor.Mobile.ViewModels.Base
 
             changed.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-#endregion
-
-        protected async Task<bool> PrepareAccessToken()
-        {
-            var mediator = DependencyService.Resolve<IMediator>();
-
-            var hasAccessToken = Application.Current.Properties.TryGetValue("access_token", out var accessToken);
-            if (!hasAccessToken)
-            {
-                // No access token
-                return false;
-            }
-
-            var validateTokenRequest = new ValidateTokenRequest { Token = accessToken.ToString() };
-            var validateTokenResponse = await mediator.Send(validateTokenRequest);
-
-            if (validateTokenResponse.IsValid)
-            {
-                // Has access token and valid
-                return true;
-            }
-
-            var hasRefreshToken = Application.Current.Properties.TryGetValue("refresh_token", out var refreshToken);
-            if (!hasRefreshToken)
-            {
-                // No refresh token
-                return false;
-            }
-
-            validateTokenRequest.Token = refreshToken.ToString();
-            validateTokenResponse = await mediator.Send(validateTokenRequest);
-
-            if (!validateTokenResponse.IsValid)
-            {
-                // Has refresh token but not valid
-                return false;
-            }
-
-            var accessTokenRequest = new AccessTokenRequest { RefreshToken = refreshToken.ToString() };
-            var accessTokenResponse = await mediator.Send(accessTokenRequest);
-
-            if (Application.Current.Properties.ContainsKey("access_token"))
-            {
-                Application.Current.Properties.Remove("access_token");
-            }
-
-            Application.Current.Properties.Add("access_token", accessTokenResponse.Tokens.access_token);
-
-            return true;
-        }
-
-        protected async Task<TResponse> Request<TRequest, TResponse>(TRequest request) where TRequest : IRequest<TResponse>
-        {
-            var tokenReady = await PrepareAccessToken();
-            if (!tokenReady)
-            {
-                AccessTokenExpired?.Invoke(this, null);
-                return default;
-            }
-
-            var mediator = DependencyService.Resolve<IMediator>();
-            var response = await mediator.Send(request);
-
-            return response;
-        }
+        #endregion
 
         protected enum ClientTypeName
         {
             Identity, Finance
         }
 
-        protected HttpClient GetHttpClient(ClientTypeName clientTypeName)
+        protected HttpClient GetBasicHttpClient(ClientTypeName clientTypeName)
         {
             var clientTypeNameText = clientTypeName.ToString().ToLower();
 
             var httpClientFactory = DependencyService.Resolve<IHttpClientFactory>(DependencyFetchTarget.NewInstance);
             var httpClient = httpClientFactory.CreateClient(clientTypeNameText);
             var clientId = Convert.ToBase64String(Encoding.Default.GetBytes($"neighbor_grooveville:3100601614660"));
-            
+
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", clientId);
 
             return httpClient;
+        }
+
+        protected async Task<HttpClient> GetOAuthHttpClientAsync(ClientTypeName clientTypeName, CancellationTokenSource cancellationTokenSource)
+        {
+            var clientTypeNameText = clientTypeName.ToString().ToLower();
+            var httpClientFactory = DependencyService.Resolve<IHttpClientFactory>(DependencyFetchTarget.NewInstance);
+            var httpClient = httpClientFactory.CreateClient(clientTypeNameText);
+            var hasRefreshToken = Application.Current.Properties.TryGetValue("refresh_token", out var refreshToken);
+            var hasAccessToken = Application.Current.Properties.TryGetValue("access_token", out var accessToken);
+            var accessTokenValid = await ValidateAsync(accessToken?.ToString() ?? string.Empty);
+            var isRefreshTokenValid = await ValidateAsync(refreshToken?.ToString() ?? string.Empty);
+
+            if (!hasRefreshToken || !isRefreshTokenValid)
+            {
+                MessagingCenter.Send(this, "RefreshTokenExpired");
+                cancellationTokenSource.Cancel();
+            }
+
+            if (!cancellationTokenSource.Token.IsCancellationRequested && (!hasAccessToken || !accessTokenValid))
+            {
+                var requestUri = $"/user/oauth/token";
+                var formContent = new FormUrlEncodedContent(new[]
+                {
+                    new KeyValuePair<string,string>("grant_type","refresh_token"),
+                    new KeyValuePair<string,string>("refresh_token", refreshToken.ToString())
+                });
+
+                var identityHttpClient = GetBasicHttpClient(ClientTypeName.Identity);               
+                var response = await identityHttpClient.PostAsync(requestUri, formContent);
+                var responseTokens = await response.Content.ReadAsStringAsync();
+                var tokens = JsonSerializer.Deserialize<TokensModel>(responseTokens);
+
+                accessToken = tokens.access_token;
+
+                Application.Current.Properties.Remove("access_token");
+                Application.Current.Properties.Add("access_token", accessToken);
+
+                var toastHelper = DependencyService.Resolve<IToastHelper>(DependencyFetchTarget.NewInstance);
+                toastHelper.Show("Request new token.");
+            }
+
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken?.ToString());
+
+            return httpClient;
+        }
+
+        public async Task<bool> ValidateAsync(string tokenString)
+        {
+            var isValid = true;
+            var assetProvider = DependencyService.Resolve<IAssetsProvider>();
+            var x509CertificateBytes = await assetProvider.Get<byte[]>("arrakya.thddns.net.crt");
+            var x509Certfificate = new X509Certificate2(x509CertificateBytes);
+            var x509SecurityKey = new X509SecurityKey(x509Certfificate);
+
+            var validateParams = new TokenValidationParameters()
+            {
+                IssuerSigningKey = x509SecurityKey,
+                ValidateLifetime = true,
+                ValidateAudience = false,
+                ValidateIssuer = false,
+                ClockSkew = TimeSpan.Zero
+            };
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            try
+            {
+                tokenHandler.ValidateToken(tokenString, validateParams, out var _);
+            }
+            catch
+            {
+                isValid = false;
+            }
+
+            return await Task.FromResult(isValid);
         }
     }
 }

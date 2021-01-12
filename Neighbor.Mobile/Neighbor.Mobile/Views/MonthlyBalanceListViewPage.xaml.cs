@@ -16,7 +16,7 @@ namespace Neighbor.Mobile.Views
             InitializeComponent();
 
             BindingContext = _viewModel = new MonthlyBalanceViewModel();
-            _viewModel.AccessTokenExpired += ViewModel_OpenLoginPage;
+            //_viewModel.AccessTokenExpired += ViewModel_OpenLoginPage;
             _viewModel.OpenYearPickerHandler += ViewModel_OpenYearPickerHandler;
             _viewModel.Year = DateTime.Now.Year;
         }

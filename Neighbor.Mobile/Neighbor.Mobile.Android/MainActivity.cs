@@ -7,6 +7,7 @@ using Android.Views;
 using Android.Widget;
 using Android.OS;
 using Android.Content.Res;
+using Android.Content;
 
 namespace Neighbor.Mobile.Droid
 {
@@ -14,6 +15,8 @@ namespace Neighbor.Mobile.Droid
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         public static AssetManager AssetManager { get; private set; }
+
+        public static Context Context => Application.Context;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -25,7 +28,7 @@ namespace Neighbor.Mobile.Droid
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             LoadApplication(new App());
-
+            
             AssetManager = Assets;
         }
 

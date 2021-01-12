@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Neighbor.Server.Finance.MonthlyBalance.Data;
 using Microsoft.EntityFrameworkCore;
+using Neighbor.Server.Finance.MonthlyBalance.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,9 +26,16 @@ namespace Neighbor.Server.Finance.MonthlyBalance.Controllers
         {
             var dbContext = (MonthlyBalanceDbContext)services.GetService(typeof(MonthlyBalanceDbContext));
 
-            var monthlyBalanceCollection = await dbContext.MonthlyBalances.Where(p => p.Year == year).ToListAsync();
+            var orderMonthlyHealthModelCollection = await dbContext.MonthlyBalances.Where(p => p.Year == year).ToListAsync();
 
-            return monthlyBalanceCollection;
+            for (int i = 0; i < orderMonthlyHealthModelCollection.Count; i++)
+            {
+                orderMonthlyHealthModelCollection[i].TotalIncomeAmount += orderMonthlyHealthModelCollection.Take(i + 1).Sum(p => p.IncomeAmount);
+                orderMonthlyHealthModelCollection[i].AverageIncomeAmount = orderMonthlyHealthModelCollection.Take(i + 1).Average(p => p.IncomeAmount);
+                orderMonthlyHealthModelCollection[i].BalanceAmount = orderMonthlyHealthModelCollection[i].IncomeAmount + orderMonthlyHealthModelCollection[i].ExpenseAmount;
+            }
+
+            return orderMonthlyHealthModelCollection.OrderByDescending(p => p.MonthNo);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using Neighbor.Core.Domain.Interfaces.Security;
 using Neighbor.Core.Domain.Models.Security;
+using Neighbor.Mobile.Shared;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -11,6 +12,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace Neighbor.Mobile.Services
 {
@@ -54,7 +56,7 @@ namespace Neighbor.Mobile.Services
 
         public async Task<TokensModel> CreateToken(string refreshToken)
         {
-            var requestUri = $"{baseUri}/user/oauth/token";
+            var requestUri = $"/user/oauth/token";
             var formContent = new FormUrlEncodedContent(new[]
             {
                 new KeyValuePair<string,string>("grant_type","refresh_token"),
@@ -69,11 +71,11 @@ namespace Neighbor.Mobile.Services
             return tokens;
         }
 
-        public async Task<bool> Validate(string tokenString)
+        public async Task<bool> ValidateAsync(string tokenString)
         {
-            var tokenAccessor = (ITokenAccessor)serviceProvider.GetService(typeof(ITokenAccessor));
             var isValid = true;
-            var x509CertificateBytes = await tokenAccessor.GetCertificate();
+            var assetProvider = DependencyService.Resolve<IAssetsProvider>();
+            var x509CertificateBytes = await assetProvider.Get<byte[]>("arrakya.thddns.net.crt");
             var x509Certfificate = new X509Certificate2(x509CertificateBytes);
             var x509SecurityKey = new X509SecurityKey(x509Certfificate);
 

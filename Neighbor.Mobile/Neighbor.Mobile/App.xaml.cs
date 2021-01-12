@@ -1,12 +1,10 @@
-﻿using MediatR;
-using Microsoft.AppCenter;
+﻿using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
-using Neighbor.Core.Application;
-using Neighbor.Core.Domain.Interfaces.Finance;
-using Neighbor.Core.Domain.Interfaces.Security;
+using Neighbor.Mobile.NativeHelpers;
 using Neighbor.Mobile.Services;
+using Neighbor.Mobile.ViewModels.Base;
 using System;
 using System.Linq;
 using System.Net.Http;
@@ -41,8 +39,6 @@ namespace Neighbor.Mobile
             var services = new ServiceCollection();
             DependencyService.Register<MockDataStore>();
 
-            services.AddMediatR(typeof(ApplicationStartup).Assembly);
-
             var httpClientHandler = new HttpClientHandler
             {
                 ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) =>
@@ -53,15 +49,19 @@ namespace Neighbor.Mobile
             services.AddHttpClient("finance", (httpClient) => httpClient.BaseAddress = new Uri(FinanceBaseAddress)).ConfigurePrimaryHttpMessageHandler(() => httpClientHandler);
             services.AddHttpClient("identity", (httpClient) => httpClient.BaseAddress = new Uri(IdentityBaseAddress)).ConfigurePrimaryHttpMessageHandler(() => httpClientHandler);
             
-            services.AddTransient(typeof(IUserContextProvider), typeof(UserContextProvider));
-            services.AddTransient<IFinance, FinanceService>();
-            services.AddTransient(typeof(ITokenAccessor), typeof(ClientTokenAccessor));
-            services.AddTransient<ITokenProvider, ClientTokenProvider>();
-
             var serviceProvider = services.BuildServiceProvider();            
             DependencyResolver.ResolveUsing(type => services.Any(p => p.ServiceType == type) ? serviceProvider.GetService(type) : null);
 
-            MainPage = new AppShell();            
+            MainPage = new AppShell();
+            MessagingCenter.Subscribe<BaseViewModel>(this, "RefreshTokenExpired", async (viewModel) =>
+            {
+                Current.Properties.Remove("refresh_token");
+                Current.Properties.Remove("access_token");
+
+                await Shell.Current.GoToAsync("//LoginPage");
+            });
+
+            
         }
 
         protected override void OnStart()

@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using Neighbor.Core.Domain.Interfaces.Security;
 using Neighbor.Server.Identity.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -62,7 +61,7 @@ namespace Neighbor.Server.Identity
             var userManager = (UserManager<IdentityUser>)services.GetService(typeof(UserManager<IdentityUser>));
             var userIdentity = await userManager.FindByNameAsync(username.ToUpper().Normalize());
 
-            if (userIdentity != null)
+            if (userIdentity == null)
             {
                 return default;
             }
