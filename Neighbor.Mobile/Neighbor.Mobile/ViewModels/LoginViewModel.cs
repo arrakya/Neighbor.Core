@@ -97,7 +97,7 @@ namespace Neighbor.Mobile.ViewModels
                 new KeyValuePair<string,string>(nameof(password), Password.Value)
             });
 
-            var response = await httpClient.PostAsync("/user/oauth/token", request);
+            var response = await httpClient.PostAsync("user/oauth/token", request);
 
             if (!response.IsSuccessStatusCode)
             {

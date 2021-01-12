@@ -122,7 +122,7 @@ namespace Neighbor.Mobile.ViewModels
             email.Validations.Add(new IsNotNullOrEmptyRule<string> { ValidationMessage = isNullOrEmptyErrorMessage });
             email.Validations.Add(new EmailRule<string> { ValidationMessage = "Invalid Email" });
             email.Validations.Add(new MinLenghtEntryRule<string>(6) { ValidationMessage = "Too short" });
-            email.Validations.Add(new MaxLenghtEntryRule<string>(25) { ValidationMessage = "Too large" });
+            email.Validations.Add(new MaxLenghtEntryRule<string>(50) { ValidationMessage = "Too large" });
 
             phone.Validations.Add(new IsNotNullOrEmptyRule<string> { ValidationMessage = isNullOrEmptyErrorMessage });
             phone.Validations.Add(new MinLenghtEntryRule<string>(6) { ValidationMessage = "Too short" });
@@ -167,7 +167,7 @@ namespace Neighbor.Mobile.ViewModels
                 new KeyValuePair<string, string>(nameof(houseNumber), HouseNumber.Value),
             });
 
-            var response = await httpClient.PostAsync("/user/create", request);
+            var response = await httpClient.PostAsync("user/create", request);
 
             IsBusy = false;
 

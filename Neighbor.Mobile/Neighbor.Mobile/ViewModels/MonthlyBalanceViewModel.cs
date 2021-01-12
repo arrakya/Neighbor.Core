@@ -97,7 +97,7 @@ namespace Neighbor.Mobile.ViewModels
             IsBusy = true;
 
             var cancellationTokenSource = new CancellationTokenSource();
-            var requestUri = $"/monthlybalance?year={Year}";
+            var requestUri = $"monthlybalance?year={Year}";
             var httpClient = await GetOAuthHttpClientAsync(ClientTypeName.Finance, cancellationTokenSource);
 
             if(cancellationTokenSource.IsCancellationRequested)

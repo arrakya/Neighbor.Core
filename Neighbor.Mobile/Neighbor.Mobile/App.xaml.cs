@@ -30,8 +30,8 @@ namespace Neighbor.Mobile
             IdentityBaseAddress = $"https://{ServerAddress}:6001";
             FinanceBaseAddress = $"https://{ServerAddress}:5001";
 #else
-            IdentityBaseAddress = $"https://{ServerAddress}/neighbor/identity";
-            FinanceBaseAddress = $"https://{ServerAddress}/neighbor/finance";
+            IdentityBaseAddress = $"https://{ServerAddress}/neighbor/identity/";
+            FinanceBaseAddress = $"https://{ServerAddress}/neighbor/finance/";
 #endif
 
             InitializeComponent();
@@ -59,9 +59,7 @@ namespace Neighbor.Mobile
                 Current.Properties.Remove("access_token");
 
                 await Shell.Current.GoToAsync("//LoginPage");
-            });
-
-            
+            });            
         }
 
         protected override void OnStart()

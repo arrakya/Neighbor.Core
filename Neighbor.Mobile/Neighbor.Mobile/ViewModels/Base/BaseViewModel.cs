@@ -99,7 +99,7 @@ namespace Neighbor.Mobile.ViewModels.Base
 
             if (!cancellationTokenSource.Token.IsCancellationRequested && (!hasAccessToken || !accessTokenValid))
             {
-                var requestUri = $"/user/oauth/token";
+                var requestUri = $"user/oauth/token";
                 var formContent = new FormUrlEncodedContent(new[]
                 {
                     new KeyValuePair<string,string>("grant_type","refresh_token"),
