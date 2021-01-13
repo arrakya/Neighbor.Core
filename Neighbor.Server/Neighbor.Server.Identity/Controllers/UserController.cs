@@ -1,12 +1,14 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Neighbor.Core.Application.Requests.Identity;
-using Neighbor.Core.Application.Requests.Security;
 using Neighbor.Core.Domain.Models.Identity;
+using Neighbor.Core.Domain.Models.Security;
+using Neighbor.Server.Identity.Services.Interfaces;
 using System;
+using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -16,11 +18,11 @@ namespace Neighbor.Server.Identity.Controllers
     [Route("[controller]")]
     public class UserController : Controller
     {
-        private readonly IMediator mediator;
+        private readonly IServiceProvider services;
 
-        public UserController(IMediator mediator)
+        public UserController(IServiceProvider serviceProvider)
         {
-            this.mediator = mediator;
+            this.services = serviceProvider;
         }
 
         [Authorize(AuthenticationSchemes = "Basic", Policy = "Basic")]
@@ -33,7 +35,8 @@ namespace Neighbor.Server.Identity.Controllers
                 return new BadRequestResult();
             }
 
-            var grantType = form["grant_type"].ToString();            
+            var tokenService = (ITokenService)services.GetService(typeof(ITokenService));
+            var grantType = form["grant_type"].ToString();
             var refreshToken = string.Empty;
 
             switch (grantType.ToLower())
@@ -42,46 +45,103 @@ namespace Neighbor.Server.Identity.Controllers
                     var username = form["username"].ToString();
                     var password = form["password"].ToString();
 
-                    var requestRefreshToken = new RefreshTokenRequest
+                    refreshToken = await tokenService.CreateRefreshTokenAsync(username, password);
+
+                    if (string.IsNullOrEmpty(refreshToken))
                     {
-                        Username = username,
-                        Password = password
-                    };
-                    var responseRefreshTokenResponse = await mediator.Send(requestRefreshToken);
-                    refreshToken = responseRefreshTokenResponse.Tokens.refresh_token;
+                        return new ContentResult { Content = "Invalid Credential", StatusCode = Convert.ToInt16(HttpStatusCode.Unauthorized), ContentType = "text/plain" };
+                    }
+
                     break;
                 case "refresh_token":
                     refreshToken = form["refresh_token"].ToString();
+                    var isRefreshTokenAlive = await tokenService.ValidateAsync(refreshToken);
 
-                    var requestValidateRefreshToken = new ValidateTokenRequest
-                    {
-                        Token = refreshToken
-                    };
-                    var validateRefershTokenResponse = await mediator.Send(requestValidateRefreshToken);
-                    var isRefreshTokenAlive = validateRefershTokenResponse.IsValid;
                     if (!isRefreshTokenAlive)
                     {
-                        return new UnauthorizedResult();
+                        return new ContentResult { Content = "Invalid Passed Refresh Token", StatusCode = Convert.ToInt16(HttpStatusCode.Unauthorized), ContentType = "text/plain" };
                     }
                     break;
             }
 
-            var requestAccessToken = new AccessTokenRequest
-            {
-                RefreshToken = refreshToken
-            };
-            var responseAccessToken = await mediator.Send(requestAccessToken);
-
+            var accessToken = await tokenService.CreateAccessTokenAsync(refreshToken);
             var jsonOption = new JsonSerializerOptions
             {
                 PropertyNamingPolicy = null
             };
 
-            return Json(new
+            return Json(new TokensModel
             {
                 refresh_token = refreshToken,
-                access_token = responseAccessToken.Tokens.access_token
+                access_token = accessToken
             }, jsonOption);
+        }
+
+        [Authorize(AuthenticationSchemes = "Basic", Policy = "Basic")]
+        [HttpPost]
+        [Route("create")]
+        public async Task<IActionResult> Create([FromForm] IFormCollection form)
+        {
+            var userName = form["userName"].ToString();
+            var password = form["password"].ToString();
+            var email = form["email"].ToString();
+            var phone = form["phone"].ToString();
+            var houseNumber = form["houseNumber"].ToString();
+
+            var userManager = (UserManager<IdentityUser>)services.GetService(typeof(UserManager<IdentityUser>));
+            var existedUser = await userManager.FindByNameAsync(userName);
+
+            if (existedUser != null)
+            {
+                return new ContentResult
+                {
+                    StatusCode = Convert.ToInt16(HttpStatusCode.BadRequest),
+                    Content = "UserName has existed",
+                    ContentType = "text/plain"
+                };
+            }
+
+            var identityUser = new IdentityUser
+            {
+                UserName = userName,
+                Email = email,
+                PhoneNumber = phone,
+                NormalizedEmail = email.ToUpper().Normalize(),
+                NormalizedUserName = userName.ToUpper().Normalize()                
+            };
+
+            var passwordHashed = new PasswordHasher<IdentityUser>();
+            var hashedPassword = passwordHashed.HashPassword(identityUser, password);
+            identityUser.PasswordHash = hashedPassword;
+
+            var createUserResult = await userManager.CreateAsync(identityUser);
+
+            if (!createUserResult.Succeeded)
+            {
+                return new ContentResult
+                {
+                    StatusCode = Convert.ToInt16(HttpStatusCode.BadRequest),
+                    Content = createUserResult.Errors.FirstOrDefault()?.Description,
+                    ContentType = "text/plain"
+                };
+            }
+
+            var houseNumberClaim = new Claim("HouseNumber", houseNumber);
+            var createClaimResult = await userManager.AddClaimAsync(identityUser, houseNumberClaim);
+
+            if (!createClaimResult.Succeeded)
+            {
+                await userManager.DeleteAsync(identityUser);
+
+                return new ContentResult
+                {
+                    StatusCode = Convert.ToInt16(HttpStatusCode.BadRequest),
+                    Content = createClaimResult.Errors.FirstOrDefault()?.Description,
+                    ContentType = "text/plain"
+                };
+            }
+
+            return Ok();
         }
 
         [Authorize]
@@ -89,13 +149,26 @@ namespace Neighbor.Server.Identity.Controllers
         [Route("context")]
         public async Task<IdentityUserContext> GetContext()
         {
-            var request = new GetUserIdentityRequest
-            {
-                UserName = User.Identity.Name
-            };
-            var response = await mediator.Send(request);
+            var userName = User.Identity.Name;
+            var userManager = (UserManager<IdentityUser>)services.GetService(typeof(UserManager<IdentityUser>));
+            var userIdentity = await userManager.FindByNameAsync(userName.ToUpper().Normalize());
+            var userContext = default(IdentityUserContext);
 
-            return response.Content;
+            if (userIdentity != null)
+            {
+                userContext = new IdentityUserContext
+                {
+                    Email = userIdentity.Email,
+                    PhoneNumber = userIdentity.PhoneNumber
+                };
+
+                var claims = await userManager.GetClaimsAsync(userIdentity);
+                userContext.FirstName = claims.SingleOrDefault(p => p.Type == "FirstName")?.Value;
+                userContext.LastName = claims.SingleOrDefault(p => p.Type == "LastName")?.Value;
+                userContext.HouseNumber = claims.SingleOrDefault(p => p.Type == "HouseNumber")?.Value;
+            }
+
+            return userContext;
         }
     }
 }

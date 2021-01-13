@@ -1,15 +1,15 @@
-﻿using MediatR;
-using Neighbor.Core.Application.Requests.Finance;
-using Neighbor.Core.Application.Requests.Security;
-using Neighbor.Core.Application.Responses.Finance;
+﻿using Neighbor.Core.Domain.Models.Finance;
 using Neighbor.Mobile.Models;
+using Neighbor.Mobile.ViewModels.Base;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net;
+using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace Neighbor.Mobile.ViewModels
@@ -39,7 +39,11 @@ namespace Neighbor.Mobile.ViewModels
             get => _year;
             set
             {
-                SetProperty(ref _year, value, nameof(Year));
+                SetProperty(ref _year, value, nameof(Year), () =>
+                {
+                    LoadItemsCommand.Execute(null);
+                    StoreSelectYear?.Invoke(value);
+                });
             }
         }
 
@@ -57,6 +61,13 @@ namespace Neighbor.Mobile.ViewModels
 
         public ICommand LoadItemsCommand { get; }
 
+        public ICommand OpenYearPickerCommand { get; }
+
+        public event EventHandler OpenYearPickerHandler;
+
+        public delegate void StoreSelectYearHandler(int selectYear);
+        public event StoreSelectYearHandler StoreSelectYear;
+
         private ObservableCollection<MonthlyBalanceModel> items;
         private IEnumerable<MonthlyBalanceModel> content;
 
@@ -71,7 +82,6 @@ namespace Neighbor.Mobile.ViewModels
 
         public MonthlyBalanceViewModel()
         {
-            Year = DateTime.Now.Year;
             LoadItemsCommand = new Command(async (object commandParam) =>
             {
                 IsBusy = true;
@@ -80,19 +90,42 @@ namespace Neighbor.Mobile.ViewModels
 
                 IsBusy = false;
             });
+            OpenYearPickerCommand = new Command(() =>
+            {
+                OpenYearPickerHandler?.Invoke(this, null);
+            });
         }
 
         private async Task LoadItems()
-        {            
-            var request = new MonthlyBalanceRequest { Year = Year };
-            var response = await Request<MonthlyBalanceRequest, MonthlyBalanceResponse>(request);
+        {
+            IsBusy = true;
 
-            if(response?.Content == null)
+            var cancellationTokenSource = new CancellationTokenSource();
+            var requestUri = $"monthlybalance?year={Year}";
+            var httpClient = await GetOAuthHttpClientAsync(ClientTypeName.Finance, cancellationTokenSource);
+
+            if(cancellationTokenSource.IsCancellationRequested)
             {
+                IsBusy = false;
                 return;
             }
 
-            content = response.Content.Select(p => new MonthlyBalanceModel(p, ShowAllIncomeView));
+            var response = await httpClient.GetAsync(requestUri);
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                    // Access Token Expired.
+                    IsBusy = false;
+                    return;
+            }
+
+            var responseContent = await response.Content.ReadAsStreamAsync();
+            var jsonSerializerOptions = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            };
+            var monthlyBalanceCollection = await JsonSerializer.DeserializeAsync<IEnumerable<MonthlyBalance>>(responseContent, jsonSerializerOptions);
+            content = monthlyBalanceCollection.Select(p => new MonthlyBalanceModel(p, ShowAllIncomeView));
 
             if (!IsShowAll)
             {
@@ -102,6 +135,8 @@ namespace Neighbor.Mobile.ViewModels
             {
                 Items = new ObservableCollection<MonthlyBalanceModel>(content.OrderByDescending(p => p.MonthNo));
             }
+
+            IsBusy = false;
         }
     }
 }

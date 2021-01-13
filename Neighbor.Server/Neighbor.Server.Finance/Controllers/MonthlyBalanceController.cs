@@ -1,10 +1,10 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Neighbor.Core.Application.Requests.Finance;
+using Microsoft.EntityFrameworkCore;
+using Neighbor.Server.Finance.MonthlyBalance.Data;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Neighbor.Server.Finance.MonthlyBalance.Controllers
@@ -14,24 +14,28 @@ namespace Neighbor.Server.Finance.MonthlyBalance.Controllers
     [Route("[controller]")]
     public class MonthlyBalanceController : ControllerBase
     {
-        private readonly ILogger<MonthlyBalanceController> _logger;
-        private readonly IMediator _mediator;
+        private readonly IServiceProvider services;
 
-        public MonthlyBalanceController(ILogger<MonthlyBalanceController> logger,
-            IMediator mediator)
+        public MonthlyBalanceController(IServiceProvider serviceProvider)
         {
-            _logger = logger;
-            _mediator = mediator;
+            this.services = serviceProvider;
         }
 
         [HttpGet]
         public async Task<IEnumerable<Neighbor.Core.Domain.Models.Finance.MonthlyBalance>> Get(int year)
         {
-            var request = new MonthlyBalanceRequest { Year = year };
-            var response = await _mediator.Send(request);
-            var monthlyBalanceCollection = response.Content;
-            
-            return monthlyBalanceCollection;
+            var dbContext = (MonthlyBalanceDbContext)services.GetService(typeof(MonthlyBalanceDbContext));
+
+            var orderMonthlyHealthModelCollection = await dbContext.MonthlyBalances.Where(p => p.Year == year).ToListAsync();
+
+            for (int i = 0; i < orderMonthlyHealthModelCollection.Count; i++)
+            {
+                orderMonthlyHealthModelCollection[i].TotalIncomeAmount += orderMonthlyHealthModelCollection.Take(i + 1).Sum(p => p.IncomeAmount);
+                orderMonthlyHealthModelCollection[i].AverageIncomeAmount = orderMonthlyHealthModelCollection.Take(i + 1).Average(p => p.IncomeAmount);
+                orderMonthlyHealthModelCollection[i].BalanceAmount = orderMonthlyHealthModelCollection[i].IncomeAmount + orderMonthlyHealthModelCollection[i].ExpenseAmount;
+            }
+
+            return orderMonthlyHealthModelCollection.OrderByDescending(p => p.MonthNo);
         }
     }
 }

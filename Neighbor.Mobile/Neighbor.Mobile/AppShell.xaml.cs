@@ -1,6 +1,4 @@
-﻿using MediatR;
-using Microsoft.AppCenter.Analytics;
-using Neighbor.Core.Application.Requests.Security;
+﻿using Microsoft.AppCenter.Analytics;
 using Neighbor.Mobile.Views;
 using System;
 using Xamarin.Forms;

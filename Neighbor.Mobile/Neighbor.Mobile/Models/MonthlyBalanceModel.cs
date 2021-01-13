@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore.Internal;
-using Neighbor.Core.Domain.Models.Finance;
+﻿using Neighbor.Core.Domain.Models.Finance;
 using System;
 using System.ComponentModel;
+using System.Globalization;
 using Xamarin.Forms;
 
 namespace Neighbor.Mobile.Models
@@ -66,7 +66,7 @@ namespace Neighbor.Mobile.Models
             this.AverageIncomeAmount = model.AverageIncomeAmount;
             this.BalanceAmount = model.AverageIncomeAmount + model.ExpenseAmount;
             this.ExpenseAmount = model.ExpenseAmount;
-            this.MonthName = model.MonthName;
+            this.MonthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(model.MonthNo);
             this.MonthNo = model.MonthNo;
             this.TotalIncomeAmount = model.TotalIncomeAmount;
             this.Year = model.Year;

@@ -1,10 +1,5 @@
-﻿using MediatR;
-using Neighbor.Core.Application.Requests.Finance;
-using Neighbor.Core.Domain.Models.Finance;
-using Neighbor.Mobile.ViewModels;
+﻿using Neighbor.Mobile.ViewModels;
 using System;
-using System.Collections.ObjectModel;
-using System.Linq;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -21,19 +16,29 @@ namespace Neighbor.Mobile.Views
             InitializeComponent();
 
             BindingContext = _viewModel = new MonthlyBalanceViewModel();
-            _viewModel.AccessTokenExpired += ViewModel_OpenLoginPage;
-
-            this.Appearing += MonthlyBalanceListViewPage_Appearing;
+            _viewModel.OpenYearPickerHandler += ViewModel_OpenYearPickerHandler;
+            _viewModel.StoreSelectYear += StoreMonthlyBalanceSelectYear;
+            _viewModel.Year = DateTime.Now.Year;
+            if (Application.Current.Properties.TryGetValue("MonthBalance_SelectYear", out var selectYear))
+            {
+                _viewModel.Year = Convert.ToInt32(selectYear);
+            }
         }
 
-        private void MonthlyBalanceListViewPage_Appearing(object sender, EventArgs e)
+        private void StoreMonthlyBalanceSelectYear(int selectYear)
         {
-            _viewModel.LoadItemsCommand.Execute(DateTime.Now.Year);
+            Application.Current.Properties.Remove("MonthBalance_SelectYear");
+            Application.Current.Properties["MonthBalance_SelectYear"] = selectYear.ToString();
         }
 
-        private async void ViewModel_OpenLoginPage(object sender, EventArgs e)
+        private async void ViewModel_OpenYearPickerHandler(object sender, EventArgs e)
         {
-            await Shell.Current.GoToAsync("//LoginPage");
+            var yearStr = await DisplayActionSheet("Select Year", string.Empty, string.Empty, new[] { "2020", "2021" });
+            if (string.IsNullOrEmpty(yearStr))
+            {
+                yearStr = _viewModel.Year.ToString();
+            }
+            _viewModel.Year = Convert.ToInt16(yearStr);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Neighbor.Mobile.ViewModels.Base;
 using System.Windows.Input;
 using Xamarin.Essentials;
 using Xamarin.Forms;

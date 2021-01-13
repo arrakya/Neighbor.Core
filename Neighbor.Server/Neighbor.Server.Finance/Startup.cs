@@ -1,17 +1,14 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MediatR;
-using Neighbor.Core.Application;
-using Neighbor.Core.Infrastructure.Server;
-using Neighbor.Server.Finance.MonthlyBalance.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using System.Security.Cryptography.X509Certificates;
 using Microsoft.IdentityModel.Tokens;
+using Neighbor.Server.Finance.MonthlyBalance.Data;
 using System;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Neighbor.Server.Finance.MonthlyBalance
 {
@@ -27,22 +24,17 @@ namespace Neighbor.Server.Finance.MonthlyBalance
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            ApplicationStartup.ServerConfigureBuilder(services);
-            services.AddMediatR(new[] { typeof(ApplicationStartup).Assembly, typeof(Startup).Assembly });
-
             var defaultConnection = Configuration.GetConnectionString("DefaultConnection");
 
             services.AddDbContext<MonthlyBalanceDbContext>(options =>
             {
                 options.UseSqlServer(defaultConnection);
             });
-
             services.AddAuthentication(config =>
             {
                 config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+            }).AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
                     var x509CertificateFilePath = Configuration.GetSection("Security:CertificatePath").Value;
                     var x509Certfificate = new X509Certificate2(x509CertificateFilePath);
@@ -63,8 +55,6 @@ namespace Neighbor.Server.Finance.MonthlyBalance
                         ClockSkew = TimeSpan.Zero
                     };
                 });            
-
-            services.AddTransient<IFinanceDbContext, MonthlyBalanceDbContext>();
 
             services.AddControllers();
         }
