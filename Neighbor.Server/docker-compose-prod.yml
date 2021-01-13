@@ -1,40 +1,48 @@
 version: "3.8"
 services:
     gateway:
-        image: arrak/neighbor.server.api_gateway:prod-latest
+        image: arrak/neighbor.server.api_gateway.prod:latest
         ports:            
             - "443:443"
         container_name: "gateway-prod"
         networks:
-            - neighbor
-    web-identity:
-        image: arrak/neighbor.server.identity:latest
+            - neighbor-prod
+    web-identity:        
+        image: arrak/neighbor.server.identity.prod:latest
         container_name: "web-identity-prod"
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Production
         networks:
-            - neighbor
+            - neighbor-prod
     db-identity:
         image: mcr.microsoft.com/mssql/server:2019-latest
         container_name: "db-identity-prod"
+        ports:            
+            - "1434:1433"
         environment:
             - ACCEPT_EULA=Y 
             - SA_PASSWORD=vkiydKN6580!
             - MSSQL_PID=Express
         networks:
-            - neighbor
+            - neighbor-prod
     web-finance:
-        image: arrak/neighbor.server.finance:prod-latest
+        image: arrak/neighbor.server.finance.prod:latest
         container_name: "web-finance-prod"
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Production
         networks:
-            - neighbor
+            - neighbor-prod
     db-finance:
         image: mcr.microsoft.com/mssql/server:2019-latest
         container_name: "db-finance-prod"
+        ports:            
+            - "1433:1433"
         environment:
             - ACCEPT_EULA=Y 
             - SA_PASSWORD=vkiydKN6580!
             - MSSQL_PID=Express
         networks:
-            - neighbor
+            - neighbor-prod
 networks:
-    neighbor:    
-        name: neighbor
+    neighbor-prod:
+        name: neighbor-prod

@@ -1,0 +1,5 @@
+FROM nginx:latest
+
+COPY ./etc_nginx_confd/default.conf /etc/nginx/conf.d/default.conf
+COPY ./etc_nginx_confd/neighbor-prod.conf /etc/nginx/conf.d/neighbor-prod.conf
+COPY ./etc_ssl/	/etc/ssl/
