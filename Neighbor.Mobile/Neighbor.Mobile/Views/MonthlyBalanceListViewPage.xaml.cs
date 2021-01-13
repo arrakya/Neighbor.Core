@@ -16,9 +16,19 @@ namespace Neighbor.Mobile.Views
             InitializeComponent();
 
             BindingContext = _viewModel = new MonthlyBalanceViewModel();
-            //_viewModel.AccessTokenExpired += ViewModel_OpenLoginPage;
             _viewModel.OpenYearPickerHandler += ViewModel_OpenYearPickerHandler;
+            _viewModel.StoreSelectYear += StoreMonthlyBalanceSelectYear;
             _viewModel.Year = DateTime.Now.Year;
+            if (Application.Current.Properties.TryGetValue("MonthBalance_SelectYear", out var selectYear))
+            {
+                _viewModel.Year = Convert.ToInt32(selectYear);
+            }
+        }
+
+        private void StoreMonthlyBalanceSelectYear(int selectYear)
+        {
+            Application.Current.Properties.Remove("MonthBalance_SelectYear");
+            Application.Current.Properties["MonthBalance_SelectYear"] = selectYear.ToString();
         }
 
         private async void ViewModel_OpenYearPickerHandler(object sender, EventArgs e)
@@ -29,11 +39,6 @@ namespace Neighbor.Mobile.Views
                 yearStr = _viewModel.Year.ToString();
             }
             _viewModel.Year = Convert.ToInt16(yearStr);
-        }
-
-        private async void ViewModel_OpenLoginPage(object sender, EventArgs e)
-        {
-            await Shell.Current.GoToAsync("//LoginPage");
         }
     }
 }

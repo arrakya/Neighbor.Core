@@ -42,6 +42,7 @@ namespace Neighbor.Mobile.ViewModels
                 SetProperty(ref _year, value, nameof(Year), () =>
                 {
                     LoadItemsCommand.Execute(null);
+                    StoreSelectYear?.Invoke(value);
                 });
             }
         }
@@ -63,6 +64,9 @@ namespace Neighbor.Mobile.ViewModels
         public ICommand OpenYearPickerCommand { get; }
 
         public event EventHandler OpenYearPickerHandler;
+
+        public delegate void StoreSelectYearHandler(int selectYear);
+        public event StoreSelectYearHandler StoreSelectYear;
 
         private ObservableCollection<MonthlyBalanceModel> items;
         private IEnumerable<MonthlyBalanceModel> content;
