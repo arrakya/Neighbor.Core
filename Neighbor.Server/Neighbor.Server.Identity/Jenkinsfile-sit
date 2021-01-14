@@ -14,16 +14,6 @@ pipeline {
                 }
             }
         }
-        stage('Start Identity Database'){
-            steps {
-                script {
-                    catchError {
-                        sh 'docker container rm db-identity-sit --force'
-                    }
-                    sh 'docker-compose -f ./Neighbor.Server/docker-compose-sit.yml up -d db-identity'
-                }
-            }
-        }
         stage('Build Identity Image') {
             steps {
                 script {
@@ -37,7 +27,7 @@ pipeline {
                      catchError {
                         sh 'docker container rm web-identity-sit --force'
                     }
-                    sh 'docker-compose -f ./Neighbor.Server/docker-compose-sit.yml up -d web-identity'
+                    sh 'docker-compose -f ./Neighbor.Server/docker-compose.yml up -d web-identity-sit'
                 }
             }
         }

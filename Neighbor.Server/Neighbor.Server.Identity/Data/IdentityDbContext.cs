@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System;
+using Neighbor.Server.Identity.Data.Configures;
 
 namespace Neighbor.Server.Identity.Data
 {
@@ -15,21 +15,13 @@ namespace Neighbor.Server.Identity.Data
         {
             base.OnModelCreating(builder);
 
-            var adminRole = new IdentityRole("Admin")
-            {
-                Id = Guid.NewGuid().ToString(),
-                NormalizedName = "ADMIN"
-            };
-            var memberRole = new IdentityRole("Member")
-            {
-                Id = Guid.NewGuid().ToString(),
-                NormalizedName = "MEMBER"
-            };
-            builder.Entity<IdentityRole>().HasData(new[]
-            {
-                adminRole,
-                memberRole
-            });
+            builder.ApplyConfiguration(new IdentityUserConfigure());
+            builder.ApplyConfiguration(new IdentityUserRoleConfigure());
+            builder.ApplyConfiguration(new IdentityUserLoginConfigure());
+            builder.ApplyConfiguration(new IdentityUserClaimConfigure());
+            builder.ApplyConfiguration(new IdentityUserTokenConfigure());
+            builder.ApplyConfiguration(new IdentityRoleClaimConfigure());
+            builder.ApplyConfiguration(new IdentityRoleConfigure());            
         }
     }
 }

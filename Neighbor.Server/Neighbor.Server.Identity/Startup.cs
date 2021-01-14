@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -33,7 +34,10 @@ namespace Neighbor.Server.Identity
 
             services.AddDbContext<IdentityDbContext>(options =>
             {
-                options.UseSqlServer(_connectionString);
+                options.UseSqlServer(_connectionString, sqlServerOption =>
+                {
+                    sqlServerOption.MigrationsHistoryTable(HistoryRepository.DefaultTableName, "identity");
+                });
             });
             services.AddIdentity<IdentityUser, IdentityRole>(options =>
             {

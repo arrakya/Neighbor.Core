@@ -4,23 +4,13 @@ pipeline {
     stages {
         stage('Code Checkout') {
             steps {
-                checkout([$class: 'GitSCM', branches: [[name: 'master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'GitHub', url: 'https://github.com/arrakya/Neighbor.Core.git']]])
-            }
-        }
-        stage('Start Finance Database'){
-            steps {
-                script {
-                    catchError {
-                        sh 'docker container rm db-finance-prod --force'
-                    }
-                    sh 'docker-compose -f ./Neighbor.Server/docker-compose-prod.yml up -d db-finance'
-                }
+                checkout([$class: 'GitSCM', branches: [[name: 'develop']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'GitHub', url: 'https://github.com/arrakya/Neighbor.Core.git']]])
             }
         }
         stage('Build Finance Image') {
             steps {
                 script {
-                    sh 'docker build -f ./Neighbor.Server/Neighbor.Server.Finance/Dockerfile -t arrak/neighbor.server.finance.prod:latest . --build-arg EnvName=Production --no-cache'
+                    sh 'docker build -f ./Neighbor.Server/Neighbor.Server.Finance/Dockerfile -t arrak/neighbor.server.finance:prod-latest . --build-arg EnvName=Production --no-cache'
                 }
             }
         }
@@ -30,7 +20,7 @@ pipeline {
                      catchError {
                         sh 'docker container rm web-finance-prod --force'
                     }
-                    sh 'docker-compose -f ./Neighbor.Server/docker-compose-prod.yml up -d web-finance'
+                    sh 'docker-compose -f ./Neighbor.Server/docker-compose.yml up -d web-finance-prod'
                 }
             }
         }

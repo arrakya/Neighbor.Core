@@ -17,7 +17,7 @@ namespace Neighbor.Server.Identity.Data.Migrations
             modelBuilder
                 .UseIdentityColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.0");
+                .HasAnnotation("ProductVersion", "5.0.1");
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -43,20 +43,20 @@ namespace Neighbor.Server.Identity.Data.Migrations
                         .HasDatabaseName("RoleNameIndex")
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
-                    b.ToTable("AspNetRoles");
+                    b.ToTable("Role", "identity");
 
                     b.HasData(
                         new
                         {
-                            Id = "6e9d9005-189b-4f28-9353-1399a9d682ec",
-                            ConcurrencyStamp = "53d2df25-b670-4da8-962d-67cb9063babe",
+                            Id = "5dfebc39-5671-4899-bf4f-aad46e906d25",
+                            ConcurrencyStamp = "901cb174-46ce-4b8c-8ff7-dc2eb7c53d89",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "68e31331-e6d1-4ff4-ac98-342bb137ac5d",
-                            ConcurrencyStamp = "06d68ee7-1035-4fc3-a6f0-dce6491d83f1",
+                            Id = "70b01944-2be2-40d0-9f2d-85982b0fca98",
+                            ConcurrencyStamp = "0d986914-a2a2-4549-8e9e-1df4864df027",
                             Name = "Member",
                             NormalizedName = "MEMBER"
                         });
@@ -83,7 +83,7 @@ namespace Neighbor.Server.Identity.Data.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetRoleClaims");
+                    b.ToTable("RoleClaims", "identity");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
@@ -148,7 +148,7 @@ namespace Neighbor.Server.Identity.Data.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.ToTable("AspNetUsers");
+                    b.ToTable("Users", "identity");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -172,7 +172,7 @@ namespace Neighbor.Server.Identity.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserClaims");
+                    b.ToTable("UserClaims", "identity");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
@@ -194,7 +194,7 @@ namespace Neighbor.Server.Identity.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserLogins");
+                    b.ToTable("UserLogin", "identity");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
@@ -209,7 +209,7 @@ namespace Neighbor.Server.Identity.Data.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetUserRoles");
+                    b.ToTable("UserRole", "identity");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -228,7 +228,7 @@ namespace Neighbor.Server.Identity.Data.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("AspNetUserTokens");
+                    b.ToTable("UserTokens", "identity");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

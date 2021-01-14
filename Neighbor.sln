@@ -17,8 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mobile", "Mobile", "{B8E5D4
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{E6842ADC-E320-4E58-AAAD-CE82B3A294DA}"
 	ProjectSection(SolutionItems) = preProject
-		Neighbor.Server\docker-compose-prod.yml = Neighbor.Server\docker-compose-prod.yml
-		Neighbor.Server\docker-compose-sit.yml = Neighbor.Server\docker-compose-sit.yml
+		Neighbor.Server\docker-compose.yml = Neighbor.Server\docker-compose.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neighbor.Server.Finance", "Neighbor.Server\Neighbor.Server.Finance\Neighbor.Server.Finance.csproj", "{8B681420-F10E-4FB4-A5B1-F93F58998CDF}"
@@ -27,7 +26,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neighbor.Server.Identity", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Neighbor.Server.ApiGateway", "Neighbor.Server.ApiGateway", "{EACCAE06-6657-4E51-91CB-80A344BC5855}"
 	ProjectSection(SolutionItems) = preProject
-		Neighbor.Server\Neighbor.Server.ApiGateway\Dockerfile-sit = Neighbor.Server\Neighbor.Server.ApiGateway\Dockerfile-sit
+		Neighbor.Server\Neighbor.Server.ApiGateway\Dockerfile = Neighbor.Server\Neighbor.Server.ApiGateway\Dockerfile
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "etc_nginx_confd", "etc_nginx_confd", "{E5D26263-B789-4812-B104-60772E367F86}"

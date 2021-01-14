@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.Globalization;
 
-namespace Neighbor.Server.Finance.MonthlyBalance.Data
+namespace Neighbor.Server.Finance.MonthlyBalance.Data.Configurations
 {
-    public class MonthlyBalanceEntityConfig : IEntityTypeConfiguration<Neighbor.Core.Domain.Models.Finance.MonthlyBalance>
+    public class MonthlyBalanceConfigure : IEntityTypeConfiguration<Neighbor.Core.Domain.Models.Finance.MonthlyBalance>
     {
         public void Configure(EntityTypeBuilder<Core.Domain.Models.Finance.MonthlyBalance> builder)
         {

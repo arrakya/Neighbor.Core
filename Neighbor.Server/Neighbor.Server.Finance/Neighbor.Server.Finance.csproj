@@ -12,12 +12,6 @@
 	<ItemGroup>
 	  <Compile Remove="Data\20201026143255_Initial.cs" />
 	  <Compile Remove="Data\20201026143255_Initial.Designer.cs" />
-	  <Compile Remove="Data\Migrations\20201026143626_Initial.cs" />
-	  <Compile Remove="Data\Migrations\20201026143626_Initial.Designer.cs" />
-	  <Compile Remove="Data\Migrations\20201027034002_Add table MonthlyBalance.cs" />
-	  <Compile Remove="Data\Migrations\20201027034002_Add table MonthlyBalance.Designer.cs" />
-	  <Compile Remove="Data\Migrations\20201027034108_Add table MonthlyBalance.cs" />
-	  <Compile Remove="Data\Migrations\20201027034108_Add table MonthlyBalance.Designer.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -31,12 +25,7 @@
 	</ItemGroup>	
 	
 	<ItemGroup>
-		<ProjectReference Include="..\..\Neighbor.Application\Neighbor.Core.Application.csproj" />
 		<ProjectReference Include="..\..\Neighbor.Domain\Neighbor.Core.Domain.csproj" />
-	</ItemGroup>	
-	
-	<ItemGroup>
-	  <Folder Include="Data\Migrations\" />
 	</ItemGroup>
 
 </Project>
