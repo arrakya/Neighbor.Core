@@ -1,4 +1,5 @@
 ﻿using Neighbor.Core.Domain.Models.Security;
+using Neighbor.Mobile.NativeHelpers;
 using Neighbor.Mobile.Validation;
 using Neighbor.Mobile.ViewModels.Base;
 using System;
@@ -13,6 +14,15 @@ namespace Neighbor.Mobile.ViewModels
     {
         private ValidatableObject<string> userName;
         private ValidatableObject<string> password;
+
+        public string AppVersionName
+        {
+            get
+            {
+                var appVersionHelper = DependencyService.Resolve<IAppVersionHelper>(DependencyFetchTarget.NewInstance);
+                return appVersionHelper.AppVersion;
+            }
+        }
 
         public ValidatableObject<string> UserName
         {
