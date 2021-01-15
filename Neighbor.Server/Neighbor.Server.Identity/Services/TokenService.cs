@@ -69,7 +69,7 @@ namespace Neighbor.Server.Identity
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenDesc = new SecurityTokenDescriptor
             {
-                IssuedAt = DateTime.Now
+                IssuedAt = DateTime.Now.AddSeconds(-60)
             };
             tokenDesc.Claims = new Dictionary<string, object>
             {

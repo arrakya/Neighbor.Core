@@ -113,20 +113,8 @@ namespace Neighbor.Mobile.ViewModels
             var tokenString = await response.Content.ReadAsStringAsync();
             var tokens = JsonSerializer.Deserialize<TokensModel>(tokenString);
 
-            const string refreshTokenPropertyName = "refresh_token";
-            if (Application.Current.Properties.ContainsKey(refreshTokenPropertyName))
-            {
-                Application.Current.Properties.Remove(refreshTokenPropertyName);
-            }
-
-            const string accessTokenPropertyName = "access_token";
-            if (Application.Current.Properties.ContainsKey(accessTokenPropertyName))
-            {
-                Application.Current.Properties.Remove(accessTokenPropertyName);
-            }
-
-            Application.Current.Properties.Add(refreshTokenPropertyName, tokens.refresh_token);
-            Application.Current.Properties.Add(accessTokenPropertyName, tokens.access_token);
+            App.RefreshToken = tokens.refresh_token;
+            App.AccessToken = tokens.access_token;
 
             IsBusy = false;
 

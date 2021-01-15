@@ -16,6 +16,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace Neighbor.Mobile.ViewModels.Base
@@ -86,10 +87,10 @@ namespace Neighbor.Mobile.ViewModels.Base
             var clientTypeNameText = clientTypeName.ToString().ToLower();
             var httpClientFactory = DependencyService.Resolve<IHttpClientFactory>(DependencyFetchTarget.NewInstance);
             var httpClient = httpClientFactory.CreateClient(clientTypeNameText);
-            var hasRefreshToken = Application.Current.Properties.TryGetValue("refresh_token", out var refreshToken);
-            var hasAccessToken = Application.Current.Properties.TryGetValue("access_token", out var accessToken);
-            var accessTokenValid = await ValidateAsync(accessToken?.ToString() ?? string.Empty);
-            var isRefreshTokenValid = await ValidateAsync(refreshToken?.ToString() ?? string.Empty);
+            var hasRefreshToken = Preferences.ContainsKey("RefreshToken");
+            var hasAccessToken = Preferences.ContainsKey("AccessToken");
+            var isAccessTokenValid = await ValidateAsync(App.AccessToken);
+            var isRefreshTokenValid = await ValidateAsync(App.RefreshToken);
 
             if (!hasRefreshToken || !isRefreshTokenValid)
             {
@@ -97,13 +98,13 @@ namespace Neighbor.Mobile.ViewModels.Base
                 cancellationTokenSource.Cancel();
             }
 
-            if (!cancellationTokenSource.Token.IsCancellationRequested && (!hasAccessToken || !accessTokenValid))
+            if (!cancellationTokenSource.Token.IsCancellationRequested && (!hasAccessToken || !isAccessTokenValid))
             {
                 var requestUri = $"user/oauth/token";
                 var formContent = new FormUrlEncodedContent(new[]
                 {
                     new KeyValuePair<string,string>("grant_type","refresh_token"),
-                    new KeyValuePair<string,string>("refresh_token", refreshToken.ToString())
+                    new KeyValuePair<string,string>("refresh_token", App.RefreshToken)
                 });
 
                 var identityHttpClient = GetBasicHttpClient(ClientTypeName.Identity);               
@@ -111,16 +112,13 @@ namespace Neighbor.Mobile.ViewModels.Base
                 var responseTokens = await response.Content.ReadAsStringAsync();
                 var tokens = JsonSerializer.Deserialize<TokensModel>(responseTokens);
 
-                accessToken = tokens.access_token;
-
-                Application.Current.Properties.Remove("access_token");
-                Application.Current.Properties.Add("access_token", accessToken);
+                App.AccessToken = tokens.access_token;
 
                 var toastHelper = DependencyService.Resolve<IToastHelper>(DependencyFetchTarget.NewInstance);
                 toastHelper.Show("Request new token.");
             }
 
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken?.ToString());
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", App.AccessToken);
 
             return httpClient;
         }

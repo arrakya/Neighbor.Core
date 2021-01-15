@@ -1,5 +1,5 @@
 ﻿using Neighbor.Mobile.ViewModels;
-
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -17,17 +17,15 @@ namespace Neighbor.Mobile.Views
             BindingContext = viewModel = new SelectEnvironmentViewModel();
             viewModel.SaveSelectEnvironment += ViewModels_SaveSelectEnvironment;
 
-            Application.Current.Properties.TryGetValue("ReleaseVersion", out var releaseVersion);
-            viewModel.SelectedEnvironment = releaseVersion?.ToString();
+            viewModel.SelectedEnvironment = App.ReleaseVersion;
         }
 
         private async void ViewModels_SaveSelectEnvironment(string selectEnvironment)
         {
-            Application.Current.Properties.Remove("ReleaseVersion");
-            Application.Current.Properties["ReleaseVersion"] = selectEnvironment;
+            App.ReleaseVersion = selectEnvironment;
 
-            Application.Current.Properties.Remove("refresh_token");
-            Application.Current.Properties.Remove("access_token");
+            Preferences.Remove("RefreshToken");
+            Preferences.Remove("AccessToken");
 
             await Shell.Current.GoToAsync("//LoginPage");
         }

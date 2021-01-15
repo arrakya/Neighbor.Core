@@ -1,6 +1,7 @@
 ﻿using Microsoft.AppCenter.Analytics;
 using Neighbor.Mobile.Views;
 using System;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace Neighbor.Mobile
@@ -23,8 +24,9 @@ namespace Neighbor.Mobile
 
         private async void OnLogoutClicked(object sender, EventArgs e)
         {
-            Application.Current.Properties.Remove("refresh_token");
-            Application.Current.Properties.Remove("access_token");
+            Preferences.Remove("RefreshToken");
+            Preferences.Remove("AccessToken");
+
             await Current.GoToAsync("//LoginPage");
         }
 

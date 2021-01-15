@@ -7,6 +7,7 @@ using Neighbor.Mobile.ViewModels.Base;
 using System;
 using System.Linq;
 using System.Net.Http;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
 
@@ -14,18 +15,40 @@ namespace Neighbor.Mobile
 {
     public partial class App : Xamarin.Forms.Application
     {
+        public static string ReleaseVersion
+        {
+            get => Preferences.Get("ReleaseVersion", "Production");
+            set
+            {
+                Preferences.Set("ReleaseVersion", value);
+            }
+        }
+
+        public static string RefreshToken
+        {
+            get => Preferences.Get("RefreshToken", string.Empty);
+            set
+            {
+                Preferences.Set("RefreshToken", value);
+            }
+        }
+
+        public static string AccessToken
+        {
+            get => Preferences.Get("AccessToken", string.Empty);
+            set
+            {
+                Preferences.Set("AccessToken", value);
+            }
+        }
+
         public App()
-        {            
+        {
             var serverAddress = "10.0.2.2";
             var IdentityBaseAddress = $"https://{serverAddress}:6001";
-            var FinanceBaseAddress = $"https://{serverAddress}:5001";
+            var FinanceBaseAddress = $"https://{serverAddress}:5001";           
 
-            if(!Properties.TryGetValue("ReleaseVersion", out var releaseVersion))
-            {
-                releaseVersion = "Production";
-            }
-
-            switch (releaseVersion)
+            switch (ReleaseVersion)
             {
                 case "SIT":
                     serverAddress = "arrakya.thddns.net:4431";
@@ -37,7 +60,6 @@ namespace Neighbor.Mobile
                     IdentityBaseAddress = $"https://{serverAddress}/neighbor/identity/";
                     FinanceBaseAddress = $"https://{serverAddress}/neighbor/finance/";
                     break;
-
             }
 
             InitializeComponent();
@@ -61,8 +83,8 @@ namespace Neighbor.Mobile
             MainPage = new AppShell();
             MessagingCenter.Subscribe<BaseViewModel>(this, "RefreshTokenExpired", async (viewModel) =>
             {
-                Current.Properties.Remove("refresh_token");
-                Current.Properties.Remove("access_token");
+                Preferences.Remove("RefreshToken");
+                Preferences.Remove("AccessToken");
 
                 await Shell.Current.GoToAsync("//LoginPage");
             });
