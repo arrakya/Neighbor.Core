@@ -129,6 +129,8 @@ namespace Neighbor.Server.Identity.Controllers
             var houseNumberClaim = new Claim("HouseNumber", houseNumber);
             var createClaimResult = await userManager.AddClaimAsync(identityUser, houseNumberClaim);
 
+            await userManager.AddToRoleAsync(identityUser, "MEMBER");
+
             if (!createClaimResult.Succeeded)
             {
                 await userManager.DeleteAsync(identityUser);

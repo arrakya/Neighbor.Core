@@ -21,6 +21,9 @@ namespace Neighbor.Mobile
             set
             {
                 Preferences.Set("ReleaseVersion", value);
+
+                ServerAddress = "10.0.2.2";
+
                 switch (value)
                 {
                     case "SIT":
