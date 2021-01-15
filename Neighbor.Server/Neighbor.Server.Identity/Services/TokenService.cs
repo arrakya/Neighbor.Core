@@ -66,6 +66,12 @@ namespace Neighbor.Server.Identity
                 return default;
             }
 
+            var isPasswordValid = await userManager.CheckPasswordAsync(userIdentity, password);
+            if (!isPasswordValid || !userIdentity.EmailConfirmed)
+            {
+                return default;
+            }
+
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenDesc = new SecurityTokenDescriptor
             {
