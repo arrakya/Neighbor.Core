@@ -27,5 +27,10 @@ namespace Neighbor.Mobile
             Application.Current.Properties.Remove("access_token");
             await Current.GoToAsync("//LoginPage");
         }
+
+        private async void OnEnvironmentClicked(object sender, EventArgs e)
+        {
+            await Current.GoToAsync("//Environment");
+        }
     }
 }

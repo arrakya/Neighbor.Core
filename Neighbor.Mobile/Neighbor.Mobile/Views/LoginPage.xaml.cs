@@ -18,6 +18,12 @@ namespace Neighbor.Mobile.Views
             viewModel.OnClickRegister += ViewModel_OnClickRegister;
             viewModel.OnLoginError += ViewModel_OnLoginError;
             viewModel.OnLoginSuccess += ViewModel_OnLoginSuccess;
+            viewModel.OnTapLoginLabel += ViewModel_OnTapLoginLabel;
+        }
+
+        private async void ViewModel_OnTapLoginLabel(object sender, System.EventArgs e)
+        {
+            await Shell.Current.GoToAsync("//Environment");
         }
 
         private void ViewModel_OnLoginError(LoginViewModel sender, string errorMessage)

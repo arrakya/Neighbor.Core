@@ -28,7 +28,11 @@
                 VerticalOptions="CenterAndExpand" 
                 HorizontalOptions="CenterAndExpand"
                 Margin="0,0,0,20"
-                FontSize="Title"/>
+                FontSize="Title">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding TapLoginLabelCommand}"></TapGestureRecognizer>
+                </Label.GestureRecognizers>
+            </Label>
 
             <!-- UserName Entry -->
             <Entry Grid.Row="1" Text="{Binding UserName.Value}" Placeholder="UserName" IsEnabled="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}">

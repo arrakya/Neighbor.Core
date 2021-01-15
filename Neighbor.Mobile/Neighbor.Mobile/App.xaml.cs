@@ -2,7 +2,6 @@
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
-using Neighbor.Mobile.NativeHelpers;
 using Neighbor.Mobile.Services;
 using Neighbor.Mobile.ViewModels.Base;
 using System;
@@ -15,24 +14,31 @@ namespace Neighbor.Mobile
 {
     public partial class App : Xamarin.Forms.Application
     {
-#if DEBUG
-        public readonly string ServerAddress = "10.0.2.2";
-#else
-        public readonly string ServerAddress = "arrakya.thddns.net:4431";
-#endif
-
-        public readonly string IdentityBaseAddress;
-        public readonly string FinanceBaseAddress;
-
         public App()
-        {
-#if DEBUG
-            IdentityBaseAddress = $"https://{ServerAddress}:6001";
-            FinanceBaseAddress = $"https://{ServerAddress}:5001";
-#else
-            IdentityBaseAddress = $"https://{ServerAddress}/neighbor/identity/";
-            FinanceBaseAddress = $"https://{ServerAddress}/neighbor/finance/";
-#endif
+        {            
+            var serverAddress = "10.0.2.2";
+            var IdentityBaseAddress = $"https://{serverAddress}:6001";
+            var FinanceBaseAddress = $"https://{serverAddress}:5001";
+
+            if(!Properties.TryGetValue("ReleaseVersion", out var releaseVersion))
+            {
+                releaseVersion = "Production";
+            }
+
+            switch (releaseVersion)
+            {
+                case "SIT":
+                    serverAddress = "arrakya.thddns.net:4431";
+                    IdentityBaseAddress = $"https://{serverAddress}/neighbor/identity/";
+                    FinanceBaseAddress = $"https://{serverAddress}/neighbor/finance/";
+                    break;
+                case "Production":
+                    serverAddress = "arrakya.thddns.net:443";
+                    IdentityBaseAddress = $"https://{serverAddress}/neighbor/identity/";
+                    FinanceBaseAddress = $"https://{serverAddress}/neighbor/finance/";
+                    break;
+
+            }
 
             InitializeComponent();
 
@@ -48,8 +54,8 @@ namespace Neighbor.Mobile
             };
             services.AddHttpClient("finance", (httpClient) => httpClient.BaseAddress = new Uri(FinanceBaseAddress)).ConfigurePrimaryHttpMessageHandler(() => httpClientHandler);
             services.AddHttpClient("identity", (httpClient) => httpClient.BaseAddress = new Uri(IdentityBaseAddress)).ConfigurePrimaryHttpMessageHandler(() => httpClientHandler);
-            
-            var serviceProvider = services.BuildServiceProvider();            
+
+            var serviceProvider = services.BuildServiceProvider();
             DependencyResolver.ResolveUsing(type => services.Any(p => p.ServiceType == type) ? serviceProvider.GetService(type) : null);
 
             MainPage = new AppShell();
@@ -59,13 +65,13 @@ namespace Neighbor.Mobile
                 Current.Properties.Remove("access_token");
 
                 await Shell.Current.GoToAsync("//LoginPage");
-            });            
+            });
         }
 
         protected override void OnStart()
         {
             AppCenter.Start("27f68fc7-587a-48b6-aa5f-48fcdc59e28c", typeof(Analytics), typeof(Crashes));
-        }        
+        }
 
         protected override void OnSleep()
         {

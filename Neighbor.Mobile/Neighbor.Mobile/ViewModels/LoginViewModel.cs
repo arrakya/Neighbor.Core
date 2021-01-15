@@ -14,16 +14,16 @@ namespace Neighbor.Mobile.ViewModels
         private ValidatableObject<string> userName;
         private ValidatableObject<string> password;
 
-        public ValidatableObject<string> UserName 
-        { 
+        public ValidatableObject<string> UserName
+        {
             get => userName;
             set
             {
                 SetProperty(ref userName, value);
             }
         }
-        public ValidatableObject<string> Password 
-        { 
+        public ValidatableObject<string> Password
+        {
             get => password;
             set
             {
@@ -35,8 +35,10 @@ namespace Neighbor.Mobile.ViewModels
         public Command RegisterCommand { get; set; }
         public Command ValidateUserNameCommand { get; set; }
         public Command ValidatePasswordCommand { get; set; }
+        public Command TapLoginLabelCommand { get; set; }
 
         public event EventHandler OnLoginSuccess;
+        public event EventHandler OnTapLoginLabel;
         public event EventHandler OnClickRegister;
 
         public delegate void LoginErrorHandler(LoginViewModel sender, string errorMessage);
@@ -66,6 +68,8 @@ namespace Neighbor.Mobile.ViewModels
             {
                 OnClickRegister?.Invoke(this, null);
             });
+
+            TapLoginLabelCommand = new Command(() => OnTapLoginLabel?.Invoke(this, null));
         }
 
         public bool ValidateProperty<T>(ValidatableObject<T> property)
