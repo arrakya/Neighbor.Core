@@ -23,7 +23,7 @@ namespace Neighbor.Mobile.Views
 
         private async void ViewModel_OnTapLoginLabel(object sender, System.EventArgs e)
         {
-            await Shell.Current.GoToAsync("//Environment");
+            await Shell.Current.Navigation.PushModalAsync(new SelectEnvironmentPage());
         }
 
         private void ViewModel_OnLoginError(LoginViewModel sender, string errorMessage)

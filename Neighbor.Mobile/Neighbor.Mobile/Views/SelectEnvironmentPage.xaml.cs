@@ -16,8 +16,13 @@ namespace Neighbor.Mobile.Views
 
             BindingContext = viewModel = new SelectEnvironmentViewModel();
             viewModel.SaveSelectEnvironment += ViewModels_SaveSelectEnvironment;
-
+            viewModel.CancelSelectEnvironment += ViewModel_CancelSelectEnvironment;
             viewModel.SelectedEnvironment = App.ReleaseVersion;
+        }
+
+        private async void ViewModel_CancelSelectEnvironment(object sender, System.EventArgs e)
+        {
+            await Shell.Current.Navigation.PopModalAsync();
         }
 
         private async void ViewModels_SaveSelectEnvironment(string selectEnvironment)

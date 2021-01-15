@@ -21,6 +21,8 @@
                     <x:String>Development</x:String>
                 </Picker.Items>
             </Picker>
+            <Button Text="Save" Command="{Binding SaveSelectEnvironmentCommand}"></Button>
+            <Button Text="Cancel" Command="{Binding CancelSelectEnvironmentCommand}" BackgroundColor="Gray"></Button>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

@@ -17,10 +17,19 @@ namespace Neighbor.Mobile
     {
         public static string ReleaseVersion
         {
-            get => Preferences.Get("ReleaseVersion", "Production");
+            get => Preferences.Get("ReleaseVersion", "SIT");
             set
             {
                 Preferences.Set("ReleaseVersion", value);
+                switch (value)
+                {
+                    case "SIT":
+                        ServerAddress = "arrakya.thddns.net:4431";
+                        break;
+                    case "Production":
+                        ServerAddress = "arrakya.thddns.net:443";
+                        break;
+                }
             }
         }
 
@@ -42,23 +51,62 @@ namespace Neighbor.Mobile
             }
         }
 
+        public static string ServerAddress
+        {
+            get => Preferences.Get("ServerAddress", string.Empty);
+            set
+            {
+                Preferences.Set("ServerAddress", value);
+            }
+        }
+
+        public static string IdentityBaseAddress
+        {
+            get
+            {
+                var identityBaseAddress = $"https://{ServerAddress}:6001";
+                switch (ReleaseVersion)
+                {
+                    case "SIT":
+                        identityBaseAddress = $"https://{ServerAddress}/neighbor/identity/";
+                        break;
+                    case "Production":
+                        identityBaseAddress = $"https://{ServerAddress}/neighbor/identity/";
+                        break;
+                }
+                return identityBaseAddress;
+            }
+        }
+
+        public static string FinanceBaseAddress
+        {
+            get
+            {
+                var financeBaseAddress = $"https://{ServerAddress}:5001";
+                switch (ReleaseVersion)
+                {
+                    case "SIT":
+                        financeBaseAddress = $"https://{ServerAddress}/neighbor/finance/";
+                        break;
+                    case "Production":
+                        financeBaseAddress = $"https://{ServerAddress}/neighbor/finance/";
+                        break;
+                }
+                return financeBaseAddress;
+            }           
+        }
+
         public App()
         {
-            var serverAddress = "10.0.2.2";
-            var IdentityBaseAddress = $"https://{serverAddress}:6001";
-            var FinanceBaseAddress = $"https://{serverAddress}:5001";           
+            ServerAddress = "10.0.2.2";
 
             switch (ReleaseVersion)
             {
                 case "SIT":
-                    serverAddress = "arrakya.thddns.net:4431";
-                    IdentityBaseAddress = $"https://{serverAddress}/neighbor/identity/";
-                    FinanceBaseAddress = $"https://{serverAddress}/neighbor/finance/";
+                    ServerAddress = "arrakya.thddns.net:4431";
                     break;
                 case "Production":
-                    serverAddress = "arrakya.thddns.net:443";
-                    IdentityBaseAddress = $"https://{serverAddress}/neighbor/identity/";
-                    FinanceBaseAddress = $"https://{serverAddress}/neighbor/finance/";
+                    ServerAddress = "arrakya.thddns.net:443";
                     break;
             }
 
