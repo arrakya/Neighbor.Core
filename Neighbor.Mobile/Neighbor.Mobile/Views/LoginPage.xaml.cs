@@ -23,6 +23,10 @@ namespace Neighbor.Mobile.Views
 
         private async void ViewModel_OnTapLoginLabel(object sender, System.EventArgs e)
         {
+            if (App.IsProductionVersion)
+            {
+                return;
+            }
             await Shell.Current.Navigation.PushModalAsync(new SelectEnvironmentPage());
         }
 
@@ -37,11 +41,7 @@ namespace Neighbor.Mobile.Views
         }
 
         private async void ViewModel_OnClickRegister(object sender, System.EventArgs e)
-        {
-            if (App.IsProductionVersion)
-            {
-                return;
-            }
+        {            
             await Shell.Current.Navigation.PushModalAsync(new RegisterPage());
         }
     }
