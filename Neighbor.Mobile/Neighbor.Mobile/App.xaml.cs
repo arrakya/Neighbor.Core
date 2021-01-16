@@ -2,6 +2,7 @@
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
+using Neighbor.Mobile.NativeHelpers;
 using Neighbor.Mobile.Services;
 using Neighbor.Mobile.ViewModels.Base;
 using System;
@@ -15,9 +16,29 @@ namespace Neighbor.Mobile
 {
     public partial class App : Xamarin.Forms.Application
     {
+        public static bool IsProductionVersion
+        {
+            get
+            {
+                var appVersionHelper = DependencyService.Resolve<IAppVersionHelper>(DependencyFetchTarget.NewInstance);
+
+                return appVersionHelper.AppVersion.ToLower().Contains("master");
+            }
+        }
+
         public static string ReleaseVersion
         {
-            get => Preferences.Get("ReleaseVersion", "SIT");
+            get
+            {
+                var releaseVersion = Preferences.Get("ReleaseVersion", "SIT");
+
+                if (IsProductionVersion)
+                {
+                    return "Production";
+                }
+
+                return releaseVersion;
+            }
             set
             {
                 Preferences.Set("ReleaseVersion", value);

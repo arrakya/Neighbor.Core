@@ -38,6 +38,10 @@ namespace Neighbor.Mobile.Views
 
         private async void ViewModel_OnClickRegister(object sender, System.EventArgs e)
         {
+            if (App.IsProductionVersion)
+            {
+                return;
+            }
             await Shell.Current.Navigation.PushModalAsync(new RegisterPage());
         }
     }
