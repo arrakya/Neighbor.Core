@@ -16,24 +16,38 @@
 
     <ContentPage.Content>
         <Grid VerticalOptions="Fill"
-              Margin="10,30,10,10">
+              Margin="0,0,0,0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="auto"></RowDefinition>
-                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="50*"></RowDefinition>
                 <RowDefinition Height="auto"></RowDefinition>
                 <RowDefinition Height="auto"></RowDefinition>
                 <RowDefinition Height="100*"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
             </Grid.RowDefinitions>
 
-            <Label Text="Login"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand"
-                Margin="0,0,0,20"
-                FontSize="Title">
-            </Label>
+            <Frame BackgroundColor="{StaticResource Primary}" CornerRadius="0">
+                <StackLayout VerticalOptions="CenterAndExpand">
+                    <Label Text="Groove Ville"
+                       VerticalOptions="CenterAndExpand" 
+                       HorizontalOptions="CenterAndExpand"
+                       Margin="0,0,0,0"
+                       FontSize="Title"
+                       FontAttributes="Bold"
+                       TextColor="White">
+                    </Label>
+                    <Label Text="Neighbor"
+                       VerticalOptions="CenterAndExpand" 
+                       HorizontalOptions="CenterAndExpand"
+                       Margin="0,0,0,0"
+                       FontSize="Subtitle"
+                       FontAttributes="None"
+                       TextColor="White">
+                    </Label>
+                </StackLayout>
+            </Frame>
 
             <!-- UserName Entry -->
-            <Entry Grid.Row="1" Text="{Binding UserName.Value}" Placeholder="UserName" IsEnabled="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}">
+            <Entry Grid.Row="1" Margin="20,40,20,20" Text="{Binding UserName.Value}" Placeholder="UserName" IsEnabled="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}">
                 <Entry.Behaviors>
                     <behaviors:EventToCommandBehavior EventName="TextChanged" Command="{Binding ValidateUserNameCommand}"></behaviors:EventToCommandBehavior>
                 </Entry.Behaviors>
@@ -42,10 +56,10 @@
                         <Setter Property="TextColor" Value="{StaticResource ErrorColor}"></Setter>
                     </DataTrigger>
                 </Entry.Triggers>
-            </Entry>            
-            
+            </Entry>
+
             <!-- Password Entry -->
-            <Entry Grid.Row="2" Text="{Binding Password.Value}" Placeholder="Password" IsPassword="True" IsEnabled="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}">
+            <Entry Grid.Row="2" Margin="20,10,20,20" Text="{Binding Password.Value}" Placeholder="Password" IsPassword="True" IsEnabled="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}">
                 <Entry.Behaviors>
                     <behaviors:EventToCommandBehavior EventName="TextChanged" Command="{Binding ValidatePasswordCommand}"></behaviors:EventToCommandBehavior>
                 </Entry.Behaviors>
@@ -55,17 +69,28 @@
                     </DataTrigger>
                 </Entry.Triggers>
             </Entry>
-            <Label Grid.Row="3" HorizontalOptions="Center" Text="{Binding AppVersionName}" FontSize="Small" d:Text="1.61-develop">
+
+
+            <StackLayout Grid.Row="3" Padding="20,0,20,0" VerticalOptions="StartAndExpand">
+                <Button Text="Login" Margin="0,10,0,20" Command="{Binding LoginCommand}" VerticalOptions="Center" IsVisible="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}" />
+                <ActivityIndicator HorizontalOptions="Center" IsRunning="True" IsVisible="{Binding IsBusy}"></ActivityIndicator>
+                <Label Style="{StaticResource NavLink}" HorizontalOptions="Center" Text="Register" Margin="0,10">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding RegisterCommand}"></TapGestureRecognizer>
+                    </Label.GestureRecognizers>
+                </Label>
+                <Label Style="{StaticResource NavLink}" HorizontalOptions="Center" Text="Forget Password" Margin="0,10">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding RegisterCommand}"></TapGestureRecognizer>
+                    </Label.GestureRecognizers>
+                </Label>
+            </StackLayout>
+
+            <Label Style="{StaticResource NavLink}" Margin="0,0,0,10" Grid.Row="4" HorizontalOptions="Center" Text="{Binding AppVersionName, StringFormat='Version : {0}'}" FontSize="Small" d:Text="1.61-develop">
                 <Label.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding TapLoginLabelCommand}"></TapGestureRecognizer>
                 </Label.GestureRecognizers>
             </Label>
-
-            <StackLayout Grid.Row="4" Padding="10,0,10,0" VerticalOptions="EndAndExpand">
-                <Button Text="Login" Command="{Binding LoginCommand}" VerticalOptions="Center" IsVisible="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}" />
-                <ActivityIndicator HorizontalOptions="Center" IsRunning="True" IsVisible="{Binding IsBusy}"></ActivityIndicator>
-                <Button Text="Register" BackgroundColor="Gray" Command="{Binding RegisterCommand}" IsVisible="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}" IsEnabled="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}"></Button>
-            </StackLayout>
         </Grid>
     </ContentPage.Content>
 </ContentPage>

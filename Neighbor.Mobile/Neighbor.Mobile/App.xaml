@@ -9,9 +9,20 @@
     <Application.Resources>
         <ResourceDictionary>
             <!-- COLORS -->
-            <Color x:Key="Primary">#2196F3</Color>            
+            <Color x:Key="Primary">#0B1D51</Color>
+            <Color x:Key="Secondary">#797596</Color>
             <Color x:Key="ErrorColor">#ff5252</Color>
-           
+
+            <Style x:Key="Title" TargetType="Label">
+                <Setter Property="FontSize" Value="Title"></Setter>
+                <Setter Property="FontAttributes" Value="Bold"></Setter>
+                <Setter Property="TextColor" Value="{StaticResource Primary}"></Setter>
+            </Style>
+
+            <Style TargetType="NavigationPage">
+                <Setter Property="BarBackgroundColor" Value="{StaticResource Primary}"></Setter>
+            </Style>
+            
             <Style TargetType="Button">
                 <Setter Property="TextColor" Value="White"></Setter>
                 <Setter Property="VisualStateManager.VisualStateGroups">
@@ -20,12 +31,12 @@
                             <VisualState x:Name="Normal">
                                 <VisualState.Setters>
                                     <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
-                                    <Setter Property="TextColor" Value="Black" />
+                                    <Setter Property="TextColor" Value="White" />
                                 </VisualState.Setters>
                             </VisualState>
                             <VisualState x:Name="Disabled">
                                 <VisualState.Setters>
-                                    <Setter Property="BackgroundColor" Value="#332196F3" />
+                                    <Setter Property="BackgroundColor" Value="{StaticResource Secondary}" />
                                     <Setter Property="TextColor" Value="Black" />
                                 </VisualState.Setters>
                             </VisualState>
@@ -33,6 +44,26 @@
                     </VisualStateGroupList>
                 </Setter>
             </Style>
+
+            <Style x:Key="NavLink" TargetType="Label">
+                <Setter Property="VisualStateManager.VisualStateGroups">
+                    <VisualStateGroupList>
+                        <VisualStateGroup x:Name="CommonStates">
+                            <VisualState x:Name="Normal">
+                                <VisualState.Setters>
+                                    <Setter Property="TextColor" Value="{StaticResource Primary}" />
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="Disabled">
+                                <VisualState.Setters>
+                                    <Setter Property="TextColor" Value="Gray" />
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateGroupList>
+                </Setter>
+            </Style>
+
             <Style x:Key="ValidationErrorLabelStyle" TargetType="{x:Type Label}">
                 <Setter Property="TextColor" Value="{StaticResource ErrorColor}" />
                 <Setter Property="FontSize" Value="14" />
