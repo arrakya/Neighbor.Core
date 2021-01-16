@@ -81,6 +81,9 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\arrakya.thddns.net.crt" />
+    <AndroidAsset Include="Assets\FontAwesome5BrandsRegular400.otf" />
+    <AndroidAsset Include="Assets\FontAwesome5FreeRegular400.otf" />
+    <AndroidAsset Include="Assets\FontAwesome5FreeSolid900.otf" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
     <None Include="Properties\AndroidManifest.xml" />

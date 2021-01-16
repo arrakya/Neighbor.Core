@@ -13,6 +13,21 @@
             <Color x:Key="Secondary">#797596</Color>
             <Color x:Key="ErrorColor">#ff5252</Color>
 
+            <!--Fonts-->
+            <OnPlatform x:TypeArguments="x:String"
+                        x:Key="FontAwesomeBand">
+                <On Platform="Android" Value="FontAwesome5BrandsRegular400.otf#Regular" />
+            </OnPlatform>
+            <OnPlatform x:TypeArguments="x:String"
+                        x:Key="FontAwesomeSolid">
+                <On Platform="Android" Value="FontAwesome5FreeSolid900.otf#Regular" />
+            </OnPlatform>
+            <OnPlatform x:TypeArguments="x:String"
+                        x:Key="FontAwesomeRegular">
+                <On Platform="Android" Value="FontAwesome5FreeRegular400.otf#Regular" />
+            </OnPlatform>
+            
+            <!--Styles-->
             <Style x:Key="Title" TargetType="Label">
                 <Setter Property="FontSize" Value="Title"></Setter>
                 <Setter Property="FontAttributes" Value="Bold"></Setter>
@@ -37,7 +52,7 @@
                             <VisualState x:Name="Disabled">
                                 <VisualState.Setters>
                                     <Setter Property="BackgroundColor" Value="{StaticResource Secondary}" />
-                                    <Setter Property="TextColor" Value="Black" />
+                                    <Setter Property="TextColor" Value="White" />
                                 </VisualState.Setters>
                             </VisualState>
                         </VisualStateGroup>
@@ -70,7 +85,7 @@
                 <Setter Property="Margin" Value="0,0,7,0" />
                 <Setter Property="HorizontalOptions" Value="EndAndExpand" />
             </Style>
-
+            
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -7,6 +7,7 @@
              x:Class="Neighbor.Mobile.Views.LoginPage"             
 			 xmlns:converters="clr-namespace:Neighbor.Mobile.Converters"
              xmlns:behaviors="clr-namespace:Neighbor.Mobile.Behaviors"
+             xmlns:services="clr-namespace:Neighbor.Mobile.Services"
              Shell.NavBarIsVisible="False">
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -26,49 +27,93 @@
             </Grid.RowDefinitions>
 
             <Frame BackgroundColor="{StaticResource Primary}" CornerRadius="0">
-                <StackLayout VerticalOptions="CenterAndExpand">
-                    <Label Text="Groove Ville"
-                       VerticalOptions="CenterAndExpand" 
-                       HorizontalOptions="CenterAndExpand"
-                       Margin="0,0,0,0"
-                       FontSize="Title"
-                       FontAttributes="Bold"
-                       TextColor="White">
+                <Grid VerticalOptions="CenterAndExpand"
+                      HorizontalOptions="CenterAndExpand">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="40"></ColumnDefinition>
+                        <ColumnDefinition Width="100*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"></RowDefinition>
+                        <RowDefinition Height="auto"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Label HorizontalOptions="StartAndExpand"
+                           VerticalOptions="Center"
+                           FontSize="Large"
+                           TextColor="White"
+                           Text="{Static services:FontAwesomeIcons.Home}"                   
+                           FontFamily="{StaticResource FontAwesomeSolid}" />
+                    <Label Grid.Column="1"
+                           Text="Groove Ville"
+                           VerticalOptions="CenterAndExpand" 
+                           HorizontalOptions="StartAndExpand"
+                           Margin="0,0,0,0"
+                           FontSize="Title"
+                           FontAttributes="Bold"
+                           TextColor="White">
                     </Label>
-                    <Label Text="Neighbor"
-                       VerticalOptions="CenterAndExpand" 
-                       HorizontalOptions="CenterAndExpand"
-                       Margin="0,0,0,0"
-                       FontSize="Subtitle"
-                       FontAttributes="None"
-                       TextColor="White">
+                    <Label Grid.Row="1"
+                           Grid.ColumnSpan="2"
+                           Text="Neighbor"
+                           VerticalOptions="CenterAndExpand" 
+                           HorizontalOptions="CenterAndExpand"
+                           Margin="0,0,0,0"
+                           FontSize="Subtitle"
+                           FontAttributes="None"
+                           TextColor="White">
                     </Label>
-                </StackLayout>
+                </Grid>
             </Frame>
 
             <!-- UserName Entry -->
-            <Entry Grid.Row="1" Margin="20,40,20,20" Text="{Binding UserName.Value}" Placeholder="UserName" IsEnabled="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}">
-                <Entry.Behaviors>
-                    <behaviors:EventToCommandBehavior EventName="TextChanged" Command="{Binding ValidateUserNameCommand}"></behaviors:EventToCommandBehavior>
-                </Entry.Behaviors>
-                <Entry.Triggers>
-                    <DataTrigger TargetType="Entry" Binding="{Binding UserName.IsValid}" Value="False">
-                        <Setter Property="TextColor" Value="{StaticResource ErrorColor}"></Setter>
-                    </DataTrigger>
-                </Entry.Triggers>
-            </Entry>
+            <Grid Grid.Row="1" 
+                  HorizontalOptions="Fill"
+                  Margin="20,40,20,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30"></ColumnDefinition>
+                    <ColumnDefinition Width="100*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Label HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       FontSize="Large"
+                       Text="{Static services:FontAwesomeIcons.User}"
+                       FontFamily="{StaticResource FontAwesomeSolid}" />
+                <Entry Grid.Column="1" HorizontalOptions="Fill" Text="{Binding UserName.Value}" Placeholder="UserName" IsEnabled="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}">
+                    <Entry.Behaviors>
+                        <behaviors:EventToCommandBehavior EventName="TextChanged" Command="{Binding ValidateUserNameCommand}"></behaviors:EventToCommandBehavior>
+                    </Entry.Behaviors>
+                    <Entry.Triggers>
+                        <DataTrigger TargetType="Entry" Binding="{Binding UserName.IsValid}" Value="False">
+                            <Setter Property="TextColor" Value="{StaticResource ErrorColor}"></Setter>
+                        </DataTrigger>
+                    </Entry.Triggers>
+                </Entry>
+            </Grid>
 
             <!-- Password Entry -->
-            <Entry Grid.Row="2" Margin="20,10,20,20" Text="{Binding Password.Value}" Placeholder="Password" IsPassword="True" IsEnabled="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}">
-                <Entry.Behaviors>
-                    <behaviors:EventToCommandBehavior EventName="TextChanged" Command="{Binding ValidatePasswordCommand}"></behaviors:EventToCommandBehavior>
-                </Entry.Behaviors>
-                <Entry.Triggers>
-                    <DataTrigger TargetType="Entry" Binding="{Binding Password.IsValid}" Value="False">
-                        <Setter Property="TextColor" Value="{StaticResource ErrorColor}"></Setter>
-                    </DataTrigger>
-                </Entry.Triggers>
-            </Entry>
+            <Grid Grid.Row="2" 
+                  HorizontalOptions="Fill"
+                  Margin="20,10,20,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30"></ColumnDefinition>
+                    <ColumnDefinition Width="100*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Label HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       FontSize="Large"
+                       Text="{Static services:FontAwesomeIcons.Key}"                   
+                       FontFamily="{StaticResource FontAwesomeSolid}" />
+                <Entry Grid.Column="1" Text="{Binding Password.Value}" Placeholder="Password" IsPassword="True" IsEnabled="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}">
+                    <Entry.Behaviors>
+                        <behaviors:EventToCommandBehavior EventName="TextChanged" Command="{Binding ValidatePasswordCommand}"></behaviors:EventToCommandBehavior>
+                    </Entry.Behaviors>
+                    <Entry.Triggers>
+                        <DataTrigger TargetType="Entry" Binding="{Binding Password.IsValid}" Value="False">
+                            <Setter Property="TextColor" Value="{StaticResource ErrorColor}"></Setter>
+                        </DataTrigger>
+                    </Entry.Triggers>
+                </Entry>
+            </Grid>
 
 
             <StackLayout Grid.Row="3" Padding="20,0,20,0" VerticalOptions="StartAndExpand">
