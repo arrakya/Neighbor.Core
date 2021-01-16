@@ -1,0 +1,55 @@
+version: "3.8"
+services:
+    gateway-prod:
+        image: arrak/neighbor.server.api_gateway:prod-latest
+        ports:            
+            - "443:443"
+        container_name: "gateway-prod"
+        networks:
+            - neighbor-prod
+    web-identity-prod:        
+        image: arrak/neighbor.server.identity:prod-latest
+        container_name: "web-identity-prod"
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Production
+        networks:
+            - neighbor
+            - neighbor-prod
+    web-finance-prod:
+        image: arrak/neighbor.server.finance:prod-latest
+        container_name: "web-finance-prod"
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Production
+        networks:
+            - neighbor
+            - neighbor-prod
+    gateway-sit:
+        image: arrak/neighbor.server.api_gateway:sit-latest
+        ports:            
+            - "4431:443"
+        container_name: "gateway-sit"
+        networks:
+            - neighbor-sit
+    web-identity-sit:        
+        image: arrak/neighbor.server.identity:sit-latest
+        container_name: "web-identity-sit"
+        environment:
+            - ASPNETCORE_ENVIRONMENT=SIT
+        networks:
+            - neighbor
+            - neighbor-sit    
+    web-finance-sit:
+        image: arrak/neighbor.server.finance:sit-latest
+        container_name: "web-finance-sit"
+        environment:
+            - ASPNETCORE_ENVIRONMENT=SIT
+        networks:
+            - neighbor
+            - neighbor-sit
+networks:
+    neighbor:
+        name: neighbor
+    neighbor-prod:
+        name: neighbor-prod
+    neighbor-sit:
+        name: neighbor-sit

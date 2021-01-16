@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Neighbor.Server.Finance.MonthlyBalance.Data;
 
-namespace Neighbor.Server.Finance.MonthlyBalance.Data.Migrations
+namespace Neighbor.Server.Finance.Data.Migrations
 {
     [DbContext(typeof(MonthlyBalanceDbContext))]
     partial class MonthlyBalanceDbContextModelSnapshot : ModelSnapshot
@@ -14,9 +14,9 @@ namespace Neighbor.Server.Finance.MonthlyBalance.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.9")
+                .UseIdentityColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "5.0.1");
 
             modelBuilder.Entity("Neighbor.Core.Domain.Models.Finance.MonthlyBalance", b =>
                 {
@@ -34,7 +34,7 @@ namespace Neighbor.Server.Finance.MonthlyBalance.Data.Migrations
 
                     b.HasKey("Year", "MonthNo");
 
-                    b.ToTable("MonthlyBalance","Finance");
+                    b.ToTable("MonthlyBalance", "Finance");
 
                     b.HasData(
                         new

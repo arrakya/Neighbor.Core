@@ -1,7 +1,6 @@
 ﻿using Neighbor.Core.Domain.Models.Finance;
 using System;
 using System.ComponentModel;
-using System.Globalization;
 using Xamarin.Forms;
 
 namespace Neighbor.Mobile.Models
@@ -18,7 +17,7 @@ namespace Neighbor.Mobile.Models
             get => _turnOnIncomeView;
             set
             {
-                if(_turnOnIncomeView == value)
+                if (_turnOnIncomeView == value)
                 {
                     return;
                 }
@@ -35,7 +34,7 @@ namespace Neighbor.Mobile.Models
                     this.BalanceAmount = _model.AverageIncomeAmount + _model.ExpenseAmount;
                 }
 
-                if(BalanceAmount >= 0)
+                if (BalanceAmount >= 0)
                 {
                     BalanceAmountColor = Color.Green;
                 }
@@ -61,12 +60,14 @@ namespace Neighbor.Mobile.Models
 
             var colorRandom = new Random();
 
+            var monthNames = new[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+
             this.Color = colors[colorRandom.Next(0, colors.Length)];
             this.IncomeAmount = model.IncomeAmount;
             this.AverageIncomeAmount = model.AverageIncomeAmount;
             this.BalanceAmount = model.AverageIncomeAmount + model.ExpenseAmount;
             this.ExpenseAmount = model.ExpenseAmount;
-            this.MonthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(model.MonthNo);
+            this.MonthName = monthNames[model.MonthNo - 1];
             this.MonthNo = model.MonthNo;
             this.TotalIncomeAmount = model.TotalIncomeAmount;
             this.Year = model.Year;

@@ -21,7 +21,6 @@ RUN mkdir app
 COPY --from=build /app/Neighbor.Server/Neighbor.Server.Identity/output /app/
 
 WORKDIR /app
-RUN ls -lah
 ENV ASPNETCORE_URLS http://*:6000
 
 ENTRYPOINT [ "dotnet", "./Neighbor.Server.Identity.dll" ]

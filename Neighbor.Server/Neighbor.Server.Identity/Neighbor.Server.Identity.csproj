@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>net5.0</TargetFramework>
 		<RuntimeIdentifiers>win-x64;linux-x64;linux-musl-x64</RuntimeIdentifiers>
+		<Configurations>Debug;Release</Configurations>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -27,6 +28,10 @@
 
 	<ItemGroup>
 	  <Resource Include="arrakya.thddns.net.crt" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Data\Migrations\" />
 	</ItemGroup>
 
 </Project>

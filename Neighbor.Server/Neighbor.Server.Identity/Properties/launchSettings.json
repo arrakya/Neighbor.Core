@@ -19,7 +19,6 @@
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
-        "NEIGHBOR_IDENTITY_KEY": "310060161466031006016146603100601614660",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "applicationUrl": "https://localhost:6001;http://localhost:6000"

@@ -13,21 +13,11 @@ pipeline {
                     sh 'cp /etc/ssl/arrakya.thddns.net.pfx ./Neighbor.Certificates/'
                 }
             }
-        }
-        stage('Start Identity Database'){
-            steps {
-                script {
-                    catchError {
-                        sh 'docker container rm db-identity-sit --force'
-                    }
-                    sh 'docker-compose -f ./Neighbor.Server/docker-compose-sit.yml up -d db-identity'
-                }
-            }
-        }
+        }        
         stage('Build Identity Image') {
             steps {
                 script {
-                    sh 'docker build -f ./Neighbor.Server/Neighbor.Server.Identity/Dockerfile -t arrak/neighbor.server.identity:sit-latest . --build-arg EnvName=SIT --no-cache'
+                    sh 'docker build -f ./Neighbor.Server/Neighbor.Server.Identity/Dockerfile -t arrak/neighbor.server.identity:prod-latest . --build-arg EnvName=Production --no-cache'
                 }
             }
         }
@@ -35,9 +25,9 @@ pipeline {
             steps {
                 script {
                      catchError {
-                        sh 'docker container rm web-identity-sit --force'
+                        sh 'docker container rm web-identity-prod --force'
                     }
-                    sh 'docker-compose -f ./Neighbor.Server/docker-compose-sit.yml up -d web-identity'
+                    sh 'docker-compose -f ./Neighbor.Server/docker-compose.yml up -d web-identity-prod'
                 }
             }
         }

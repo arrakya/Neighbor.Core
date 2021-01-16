@@ -1,0 +1,42 @@
+def DOCKER_TAG = 'arrak/neighbor.server.api_gateway:prod-latest'
+
+properties(
+    [
+        buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '5')), 
+        parameters(
+            [stringParam(defaultValue: 'develop', description: 'Branch', name: 'BRANCH')]
+        )
+    ]
+)
+pipeline {
+    agent any
+
+    stages {
+        stage('Code Checkout') {
+            steps {
+                git branch: "${BRANCH}", credentialsId: 'ArrakGit', url: 'https://github.com/arrakya/Neighbor.Core.git'
+            }
+        }
+        stage('Docker Build') {
+            steps {
+                script {
+                    dir('Neighbor.Server/Neighbor.Server.ApiGateway'){
+                        sh "docker build -f Dockerfile -t ${DOCKER_TAG} --build-arg EnvName=prod --no-cache ."
+                    }
+                }
+            }
+        }
+        stage('Docker Deploy') {
+            steps {
+                script {
+                    dir('Neighbor.Server'){
+                        catchError(buildResult: 'SUCCESS') {
+                            sh "docker container rm gateway-prod --force"
+                        }
+                        sh "docker-compose -f docker-compose.yml up -d gateway-prod"
+                    }
+                }
+            }
+        }
+    }
+}

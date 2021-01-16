@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -28,7 +29,10 @@ namespace Neighbor.Server.Finance.MonthlyBalance
 
             services.AddDbContext<MonthlyBalanceDbContext>(options =>
             {
-                options.UseSqlServer(defaultConnection);
+                options.UseSqlServer(defaultConnection, sqlServerOption =>
+                {
+                    sqlServerOption.MigrationsHistoryTable(HistoryRepository.DefaultTableName, "finance");
+                });
             });
             services.AddAuthentication(config =>
             {

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Neighbor.Server.Finance.MonthlyBalance.Data.Configurations;
 
 namespace Neighbor.Server.Finance.MonthlyBalance.Data
 {
@@ -15,7 +16,7 @@ namespace Neighbor.Server.Finance.MonthlyBalance.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.ApplyConfiguration(new MonthlyBalanceEntityConfig());
+            modelBuilder.ApplyConfiguration(new MonthlyBalanceConfigure());
         }
     }
 }

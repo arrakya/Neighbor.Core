@@ -18,6 +18,12 @@ namespace Neighbor.Mobile.Views
             viewModel.OnClickRegister += ViewModel_OnClickRegister;
             viewModel.OnLoginError += ViewModel_OnLoginError;
             viewModel.OnLoginSuccess += ViewModel_OnLoginSuccess;
+            viewModel.OnTapLoginLabel += ViewModel_OnTapLoginLabel;
+        }
+
+        private async void ViewModel_OnTapLoginLabel(object sender, System.EventArgs e)
+        {
+            await Shell.Current.Navigation.PushModalAsync(new SelectEnvironmentPage());
         }
 
         private void ViewModel_OnLoginError(LoginViewModel sender, string errorMessage)
@@ -32,6 +38,10 @@ namespace Neighbor.Mobile.Views
 
         private async void ViewModel_OnClickRegister(object sender, System.EventArgs e)
         {
+            if (App.IsProductionVersion)
+            {
+                return;
+            }
             await Shell.Current.Navigation.PushModalAsync(new RegisterPage());
         }
     }

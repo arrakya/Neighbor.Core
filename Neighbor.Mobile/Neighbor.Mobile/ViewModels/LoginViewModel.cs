@@ -1,4 +1,5 @@
 ﻿using Neighbor.Core.Domain.Models.Security;
+using Neighbor.Mobile.NativeHelpers;
 using Neighbor.Mobile.Validation;
 using Neighbor.Mobile.ViewModels.Base;
 using System;
@@ -14,16 +15,25 @@ namespace Neighbor.Mobile.ViewModels
         private ValidatableObject<string> userName;
         private ValidatableObject<string> password;
 
-        public ValidatableObject<string> UserName 
-        { 
+        public string AppVersionName
+        {
+            get
+            {
+                var appVersionHelper = DependencyService.Resolve<IAppVersionHelper>(DependencyFetchTarget.NewInstance);
+                return appVersionHelper.AppVersion;
+            }
+        }
+
+        public ValidatableObject<string> UserName
+        {
             get => userName;
             set
             {
                 SetProperty(ref userName, value);
             }
         }
-        public ValidatableObject<string> Password 
-        { 
+        public ValidatableObject<string> Password
+        {
             get => password;
             set
             {
@@ -35,8 +45,10 @@ namespace Neighbor.Mobile.ViewModels
         public Command RegisterCommand { get; set; }
         public Command ValidateUserNameCommand { get; set; }
         public Command ValidatePasswordCommand { get; set; }
+        public Command TapLoginLabelCommand { get; set; }
 
         public event EventHandler OnLoginSuccess;
+        public event EventHandler OnTapLoginLabel;
         public event EventHandler OnClickRegister;
 
         public delegate void LoginErrorHandler(LoginViewModel sender, string errorMessage);
@@ -66,6 +78,8 @@ namespace Neighbor.Mobile.ViewModels
             {
                 OnClickRegister?.Invoke(this, null);
             });
+
+            TapLoginLabelCommand = new Command(() => OnTapLoginLabel?.Invoke(this, null));
         }
 
         public bool ValidateProperty<T>(ValidatableObject<T> property)
@@ -109,20 +123,8 @@ namespace Neighbor.Mobile.ViewModels
             var tokenString = await response.Content.ReadAsStringAsync();
             var tokens = JsonSerializer.Deserialize<TokensModel>(tokenString);
 
-            const string refreshTokenPropertyName = "refresh_token";
-            if (Application.Current.Properties.ContainsKey(refreshTokenPropertyName))
-            {
-                Application.Current.Properties.Remove(refreshTokenPropertyName);
-            }
-
-            const string accessTokenPropertyName = "access_token";
-            if (Application.Current.Properties.ContainsKey(accessTokenPropertyName))
-            {
-                Application.Current.Properties.Remove(accessTokenPropertyName);
-            }
-
-            Application.Current.Properties.Add(refreshTokenPropertyName, tokens.refresh_token);
-            Application.Current.Properties.Add(accessTokenPropertyName, tokens.access_token);
+            App.RefreshToken = tokens.refresh_token;
+            App.AccessToken = tokens.access_token;
 
             IsBusy = false;
 

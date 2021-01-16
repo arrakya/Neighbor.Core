@@ -14,7 +14,6 @@ RUN mkdir app
 COPY --from=build /app/Neighbor.Server/Neighbor.Server.Finance/output /app/
 
 WORKDIR /app
-RUN ls -lah
 ENV ASPNETCORE_URLS http://*:5000
 
 ENTRYPOINT [ "dotnet", "./Neighbor.Server.Finance.dll" ]

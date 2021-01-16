@@ -49,7 +49,7 @@ namespace Neighbor.Server.Identity
             var userName = token.Claims.SingleOrDefault(p => p.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name" || p.Type == "unique_name")?.Value;
 
             if (string.IsNullOrEmpty(userName))
-            {                
+            {
                 logger.LogError($"UserName in token not found.");
             }
 
@@ -66,10 +66,16 @@ namespace Neighbor.Server.Identity
                 return default;
             }
 
+            var isPasswordValid = await userManager.CheckPasswordAsync(userIdentity, password);
+            if (!isPasswordValid || !userIdentity.EmailConfirmed)
+            {
+                return default;
+            }
+
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenDesc = new SecurityTokenDescriptor
             {
-                IssuedAt = DateTime.Now
+                IssuedAt = DateTime.Now.AddSeconds(-60)
             };
             tokenDesc.Claims = new Dictionary<string, object>
             {
@@ -84,7 +90,7 @@ namespace Neighbor.Server.Identity
             tokenDesc.SigningCredentials = new SigningCredentials(SecurityKey, SecurityAlgorithms.RsaSha256Signature);
             var token = tokenHandler.CreateJwtSecurityToken(tokenDesc);
 
-            var tokenString = await Task.FromResult(tokenHandler.WriteToken(token));            
+            var tokenString = await Task.FromResult(tokenHandler.WriteToken(token));
 
             await userManager.RemoveAuthenticationTokenAsync(userIdentity, "neighbor", "refresh_token");
             await userManager.SetAuthenticationTokenAsync(userIdentity, "neighbor", "refresh_token", tokenString);
@@ -106,9 +112,17 @@ namespace Neighbor.Server.Identity
             {
                 IssuedAt = DateTime.Now
             };
+
+            var userManager = (UserManager<IdentityUser>)services.GetService(typeof(UserManager<IdentityUser>));
+            var identityUser = await userManager.FindByNameAsync(userName);
+            var identityRoles = await userManager.GetRolesAsync(identityUser);
+            var roleNames = string.Join("|", identityRoles.Select(p => p.Normalize()));
+
+            //https://docs.microsoft.com/en-us/windows-server/identity/ad-fs/technical-reference/the-role-of-claims
             tokenDesc.Claims = new Dictionary<string, object>
             {
-                { "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name", userName }
+                { "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name", userName },
+                { "http://schemas.microsoft.com/ws/2008/06/identity/claims/role", roleNames }
             };
 
             var configure = (IConfiguration)services.GetService(typeof(IConfiguration));
@@ -160,6 +174,6 @@ namespace Neighbor.Server.Identity
             }
 
             return await Task.FromResult(isValid);
-        } 
+        }
     }
 }
