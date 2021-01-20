@@ -30,8 +30,4 @@
 	  <Resource Include="arrakya.thddns.net.crt" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Data\Migrations\" />
-	</ItemGroup>
-
 </Project>

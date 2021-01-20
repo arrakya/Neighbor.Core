@@ -1,11 +1,14 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Neighbor.Server.Identity.Data.Configures;
+using Neighbor.Server.Identity.Data.Entity;
 
 namespace Neighbor.Server.Identity.Data
 {
     public class IdentityDbContext : Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityDbContext<IdentityUser>
     {
+        public DbSet<UserPINEntity> UserPINs { get; set; }
+
         public IdentityDbContext(DbContextOptions<IdentityDbContext> options) : base(options)
         {
 
@@ -22,6 +25,7 @@ namespace Neighbor.Server.Identity.Data
             builder.ApplyConfiguration(new IdentityUserTokenConfigure());
             builder.ApplyConfiguration(new IdentityRoleClaimConfigure());
             builder.ApplyConfiguration(new IdentityRoleConfigure());            
+            builder.ApplyConfiguration(new UserPINConfigure());            
         }
     }
 }

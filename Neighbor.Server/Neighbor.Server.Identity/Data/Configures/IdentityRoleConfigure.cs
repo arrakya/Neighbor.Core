@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
 
 namespace Neighbor.Server.Identity.Data.Configures
 {
@@ -12,13 +11,15 @@ namespace Neighbor.Server.Identity.Data.Configures
             builder.ToTable("Role","identity");
             var adminRole = new IdentityRole("Admin")
             {
-                Id = Guid.NewGuid().ToString(),
-                NormalizedName = "ADMIN"
+                Id = "5dfebc39-5671-4899-bf4f-aad46e906d25",
+                NormalizedName = "ADMIN",
+                ConcurrencyStamp = "901cb174-46ce-4b8c-8ff7-dc2eb7c53d89"
             };
             var memberRole = new IdentityRole("Member")
             {
-                Id = Guid.NewGuid().ToString(),
-                NormalizedName = "MEMBER"
+                Id = "70b01944-2be2-40d0-9f2d-85982b0fca98",
+                NormalizedName = "MEMBER",
+                ConcurrencyStamp = "0d986914-a2a2-4549-8e9e-1df4864df027"
             };
             builder.HasData(new[]
             {

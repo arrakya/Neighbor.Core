@@ -126,7 +126,7 @@
                 </Label>
                 <Label Style="{StaticResource NavLink}" HorizontalOptions="Center" Text="Forget Password" Margin="0,10" IsVisible="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}">
                     <Label.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding RegisterCommand}"></TapGestureRecognizer>
+                        <TapGestureRecognizer Command="{Binding ForgetPasswordCommand}"></TapGestureRecognizer>
                     </Label.GestureRecognizers>
                 </Label>
             </StackLayout>

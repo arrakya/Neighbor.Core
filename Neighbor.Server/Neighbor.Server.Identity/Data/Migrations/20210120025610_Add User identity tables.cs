@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Neighbor.Server.Identity.Data.Migrations
 {
-    public partial class Addidentitytables : Migration
+    public partial class AddUseridentitytables : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -120,6 +120,36 @@ namespace Neighbor.Server.Identity.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserPINs",
+                schema: "identity",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PIN = table.Column<string>(type: "nvarchar(6)", maxLength: 6, nullable: false),
+                    Reference = table.Column<string>(type: "nvarchar(6)", maxLength: 6, nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EnterOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    InvalidAttempt = table.Column<int>(type: "int", nullable: false),
+                    ChannelType = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    ChannelAddress = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    ChannelSendOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsEnable = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserPINs", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserPINs_Users_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserRole",
                 schema: "identity",
                 columns: table => new
@@ -207,6 +237,12 @@ namespace Neighbor.Server.Identity.Data.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserPINs_UserId",
+                schema: "identity",
+                table: "UserPINs",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserRole_RoleId",
                 schema: "identity",
                 table: "UserRole",
@@ -239,6 +275,10 @@ namespace Neighbor.Server.Identity.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserLogin",
+                schema: "identity");
+
+            migrationBuilder.DropTable(
+                name: "UserPINs",
                 schema: "identity");
 
             migrationBuilder.DropTable(

@@ -46,10 +46,12 @@ namespace Neighbor.Mobile.ViewModels
         public Command ValidateUserNameCommand { get; set; }
         public Command ValidatePasswordCommand { get; set; }
         public Command TapLoginLabelCommand { get; set; }
+        public Command ForgetPasswordCommand { get; set; }
 
         public event EventHandler OnLoginSuccess;
         public event EventHandler OnTapLoginLabel;
         public event EventHandler OnClickRegister;
+        public event EventHandler OnForgetPassword;
 
         public delegate void LoginErrorHandler(LoginViewModel sender, string errorMessage);
         public event LoginErrorHandler OnLoginError;
@@ -80,6 +82,7 @@ namespace Neighbor.Mobile.ViewModels
             });
 
             TapLoginLabelCommand = new Command(() => OnTapLoginLabel?.Invoke(this, null));
+            ForgetPasswordCommand = new Command(() => OnForgetPassword?.Invoke(this, null));
         }
 
         public bool ValidateProperty<T>(ValidatableObject<T> property)

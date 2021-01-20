@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Neighbor.Mobile.Views.EnterPinPage">
+    <ContentPage.Content>
+        <StackLayout VerticalOptions="Start" Margin="20">
+            <Label Text="{Binding Message}"
+                   Margin="0,20,0,10"
+                   VerticalOptions="CenterAndExpand" 
+                   HorizontalOptions="CenterAndExpand" />
+            <Entry MaxLength="6"
+                   Margin="0, 20, 0, 0"
+                   HorizontalTextAlignment="Center"></Entry>
+            
+            <Label Text="{Binding Refer}"
+                   Margin="0,0,0,30"
+                   HorizontalOptions="EndAndExpand"></Label>
+            
+            <Button Text="Save" Command="{Binding SubmitPINCommand}"></Button>
+            <Button Text="Cancel" Command="{Binding CancelSubmitPINCommand}" BackgroundColor="Gray"></Button>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
