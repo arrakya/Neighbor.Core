@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -28,6 +29,16 @@ namespace Neighbor.Server.Identity.Controllers
         [Route("Generate/{phoneNumber}")]
         public async Task<GeneratePINResultModel> Generate(string phoneNumber, CancellationToken cancellationToken)
         {
+            var environment = (IWebHostEnvironment)services.GetService(typeof(IWebHostEnvironment));
+            if (environment.EnvironmentName.ToLower() == "sit")
+            {
+                return new GeneratePINResultModel
+                {
+                    IsSuccess = true,
+                    Reference = "SITPIN"
+                };
+            }
+
             var userManager = (UserManager<IdentityUser>)services.GetService(typeof(UserManager<IdentityUser>));
             var userIdentity = await userManager.Users.SingleOrDefaultAsync(p => p.PhoneNumber == phoneNumber, cancellationToken);
 
@@ -42,6 +53,16 @@ namespace Neighbor.Server.Identity.Controllers
         [Route("Generate")]
         public async Task<GeneratePINResultModel> Generate(CancellationToken cancellationToken)
         {
+            var environment = (IWebHostEnvironment)services.GetService(typeof(IWebHostEnvironment));
+            if (environment.EnvironmentName.ToLower() == "sit")
+            {
+                return new GeneratePINResultModel
+                {
+                    IsSuccess = true,
+                    Reference = "SITPIN"
+                };
+            }
+
             var userManager = (UserManager<IdentityUser>)services.GetService(typeof(UserManager<IdentityUser>));
             var userIdentity = await userManager.FindByNameAsync(User.Identity.Name);
 
@@ -56,6 +77,15 @@ namespace Neighbor.Server.Identity.Controllers
         [Route("Verify/{phoneNumber}")]
         public async Task<VerifyPINResultModel> Verify(string phoneNumber, [FromForm]IFormCollection forms, CancellationToken cancellationToken)
         {
+            var environment = (IWebHostEnvironment)services.GetService(typeof(IWebHostEnvironment));
+            if (environment.EnvironmentName.ToLower() == "sit")
+            {
+                return new VerifyPINResultModel
+                {
+                    Result = true
+                };
+            }
+
             var pin = forms["pin"].ToString();
             var reference = forms["reference"].ToString();
 
@@ -73,6 +103,15 @@ namespace Neighbor.Server.Identity.Controllers
         [Route("Verify")]
         public async Task<VerifyPINResultModel> Verify(IFormCollection forms, CancellationToken cancellationToken)
         {
+            var environment = (IWebHostEnvironment)services.GetService(typeof(IWebHostEnvironment));
+            if(environment.EnvironmentName.ToLower() == "sit")
+            {
+                return new VerifyPINResultModel
+                {
+                    Result = true
+                };
+            }
+
             var userManager = (UserManager<IdentityUser>)services.GetService(typeof(UserManager<IdentityUser>));
             var userIdentity = await userManager.FindByNameAsync(User.Identity.Name);
 
