@@ -17,5 +17,6 @@ namespace Neighbor.Server.Identity.Data.Entity
         public string ChannelAddress { get; set; }
         public DateTime? ChannelSendOn { get; set; }
         public bool IsEnable { get; set; }
+        public bool IsDelete { get; set; }
     }
 }

@@ -27,6 +27,14 @@ namespace Neighbor.Mobile.Views
             }
         }
 
+        public string PhoneNumber
+        {
+            set
+            {
+                viewModel.PhoneNumber = value;
+            }
+        }
+
         public EnterPinPage()
         {
             InitializeComponent();
@@ -35,11 +43,17 @@ namespace Neighbor.Mobile.Views
 
             viewModel.OnCancelSubmitPIN += ViewModel_OnCancelSubmitPIN;
             viewModel.OnSubmitPIN += ViewModel_OnSubmitPIN;
+            viewModel.OnSubmitPINError += ViewModel_OnSubmitPINError;
         }
 
-        private void ViewModel_OnSubmitPIN(object sender, EventArgs e)
+        private async void ViewModel_OnSubmitPINError(object obj, string errorMessage)
         {
-            throw new NotImplementedException();
+            await DisplayAlert("Forget Password", errorMessage, "Close");
+        }
+
+        private async void ViewModel_OnSubmitPIN(object sender, EventArgs e)
+        {
+            await DisplayAlert("Forget Password", "PIN Correct", "Close");
         }
 
         private async void ViewModel_OnCancelSubmitPIN(object sender, EventArgs e)

@@ -1,5 +1,4 @@
 ﻿using Neighbor.Mobile.ViewModels;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -21,6 +20,23 @@ namespace Neighbor.Mobile.Views
             viewModel.OnLoginSuccess += ViewModel_OnLoginSuccess;
             viewModel.OnTapLoginLabel += ViewModel_OnTapLoginLabel;
             viewModel.OnForgetPassword += ViewModel_OnForgetPasswordCommand;
+            viewModel.OnRequestPIN += ViewModel_OnRequestPIN;
+            viewModel.OnRequestPINError += ViewModel_OnRequestPINError;
+        }
+
+        private async void ViewModel_OnRequestPINError(object sender, string errorMessage)
+        {
+            await DisplayAlert("Forget Password", errorMessage, "Close");
+        }
+
+        private async void ViewModel_OnRequestPIN(object sender, string reference, string phoneNumber)
+        {
+            await Shell.Current.Navigation.PushModalAsync(new EnterPinPage()
+            {
+                Message = "Please enter OTP from your Phone in SMS.",
+                Refer = reference,
+                PhoneNumber = phoneNumber
+            });
         }
 
         private async void ViewModel_OnTapLoginLabel(object sender, System.EventArgs e)
@@ -54,14 +70,7 @@ namespace Neighbor.Mobile.Views
             if (!string.IsNullOrEmpty(phoneNumber))
             {
                 viewModel.IsBusy = true;
-                await Task.Delay(5000);
-
-                await Shell.Current.Navigation.PushModalAsync(new EnterPinPage() 
-                { 
-                    Message = "Please enter OTP from your Phone in SMS.",
-                    Refer = "Reference No. : ABC123"
-                });
-
+                viewModel.RequestPINCommand.Execute(phoneNumber);
                 viewModel.IsBusy = false;
                 return;
             }

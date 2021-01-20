@@ -30,6 +30,10 @@ namespace Neighbor.Mobile
         {
             get
             {
+#if DEBUG
+                return "Development";
+#endif
+
                 var releaseVersion = Preferences.Get("ReleaseVersion", "SIT");
 
                 if (IsProductionVersion)

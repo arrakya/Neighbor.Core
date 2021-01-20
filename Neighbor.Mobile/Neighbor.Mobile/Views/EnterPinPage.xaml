@@ -8,11 +8,12 @@
                    Margin="0,20,0,10"
                    VerticalOptions="CenterAndExpand" 
                    HorizontalOptions="CenterAndExpand" />
-            <Entry MaxLength="6"
+            <Entry Text="{Binding PIN}" 
+                   MaxLength="6"
                    Margin="0, 20, 0, 0"
                    HorizontalTextAlignment="Center"></Entry>
-            
-            <Label Text="{Binding Refer}"
+
+            <Label Text="{Binding ReferWithPrefix}"
                    Margin="0,0,0,30"
                    HorizontalOptions="EndAndExpand"></Label>
             
