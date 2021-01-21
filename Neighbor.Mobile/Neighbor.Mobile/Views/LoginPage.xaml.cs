@@ -1,4 +1,5 @@
-﻿using Neighbor.Mobile.ViewModels;
+﻿using Neighbor.Mobile.Services;
+using Neighbor.Mobile.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -8,6 +9,8 @@ namespace Neighbor.Mobile.Views
     public partial class LoginPage : ContentPage
     {
         private readonly LoginViewModel viewModel;
+
+        public string UserName => viewModel.UserName.Value;
 
         public LoginPage()
         {
@@ -79,6 +82,9 @@ namespace Neighbor.Mobile.Views
 
         private async void ViewModel_OnLoginSuccess(object sender, System.EventArgs e)
         {
+            var userContextUservice = DependencyService.Resolve<UserContextService>(DependencyFetchTarget.GlobalInstance);
+            MessagingCenter.Send(userContextUservice, "UpdateUserContext");
+
             await Shell.Current.GoToAsync("//MonthlyBalanceListViewPage");
         }
 

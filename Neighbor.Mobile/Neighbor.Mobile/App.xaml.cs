@@ -142,6 +142,7 @@ namespace Neighbor.Mobile
 
             var services = new ServiceCollection();
             DependencyService.Register<MockDataStore>();
+            DependencyService.Register<UserContextService>();
 
             var httpClientHandler = new HttpClientHandler
             {
@@ -166,9 +167,11 @@ namespace Neighbor.Mobile
             });
         }
 
-        protected override void OnStart()
+        protected async override void OnStart()
         {
             AppCenter.Start("27f68fc7-587a-48b6-aa5f-48fcdc59e28c", typeof(Analytics), typeof(Crashes));
+
+            await ((AppShell)Shell.Current).UpdateFlyoutViewModel();
         }
 
         protected override void OnSleep()
