@@ -211,5 +211,40 @@ namespace Neighbor.Server.Identity.Controllers
                 Message = result.Errors?.FirstOrDefault()?.Description
             };
         }
+
+        [Authorize(AuthenticationSchemes = "Basic", Policy = "Basic")]
+        [HttpPost]
+        [Route("activate")]
+        public async Task<IActionResult> Activate([FromForm] IFormCollection form)
+        {
+            var userName = form["userName"].ToString();
+
+            var userManager = (UserManager<IdentityUser>)services.GetService(typeof(UserManager<IdentityUser>));
+            var existedUser = await userManager.FindByNameAsync(userName);
+
+            if (existedUser == null)
+            {
+                return new ContentResult
+                {
+                    StatusCode = Convert.ToInt32(HttpStatusCode.BadRequest),
+                    Content = "USER001"
+                };
+            }
+
+            existedUser.PhoneNumberConfirmed = true;
+
+            var result = await userManager.UpdateAsync(existedUser);
+
+            if (!result.Succeeded)
+            {
+                return new ContentResult
+                {
+                    StatusCode = Convert.ToInt32(HttpStatusCode.InternalServerError),
+                    Content = result.Errors?.FirstOrDefault()?.Description
+                };
+            }
+
+            return Ok();
+        }
     }
 }

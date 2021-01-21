@@ -27,12 +27,28 @@ namespace Neighbor.Mobile.Views
             await DisplayAlert("Error", errorMessage, "Close");
         }
             
-        private async void ViewModel_OnClickSubmit(RegisterViewModel sender)
+        private async void ViewModel_OnClickSubmit(RegisterViewModel sender, string registerReferenceCode)
         {
-            var toastHelper = DependencyService.Resolve<IToastHelper>(DependencyFetchTarget.NewInstance);
-            toastHelper.Show("Now you can login");
-
             await Shell.Current.Navigation.PopModalAsync();
+
+            var enterPinPage = new EnterPinPage
+            {
+                Refer = registerReferenceCode,
+                PhoneNumber = viewModel.Phone.Value,
+                Message = "Please enter OTP PIN from your registration phone number."
+            };
+
+            enterPinPage.OnSuccessCallback += async (callbackSender, callbackArgs) =>
+            {
+                sender.ActivateAccountCommand.Execute(null);
+
+                var toastHelper = DependencyService.Resolve<IToastHelper>(DependencyFetchTarget.NewInstance);
+                toastHelper.Show("Now you can login");
+
+                await Shell.Current.Navigation.PopModalAsync();
+            };
+
+            await Shell.Current.Navigation.PushModalAsync(enterPinPage);
         }
 
         private async void ViewModel_OnClickCancel(object sender, EventArgs e)

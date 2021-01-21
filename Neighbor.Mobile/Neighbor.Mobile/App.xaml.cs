@@ -143,6 +143,7 @@ namespace Neighbor.Mobile
             var services = new ServiceCollection();
             DependencyService.Register<MockDataStore>();
             DependencyService.Register<UserContextService>();
+            DependencyService.Register<PINService>();
 
             var httpClientHandler = new HttpClientHandler
             {

@@ -5,6 +5,7 @@ using System.Net.Http;
 using Xamarin.Forms;
 using System.Linq;
 using Neighbor.Mobile.ViewModels.Base;
+using Neighbor.Mobile.Services;
 
 namespace Neighbor.Mobile.ViewModels
 {
@@ -74,10 +75,11 @@ namespace Neighbor.Mobile.ViewModels
         public Command ValidateEmailCommand { get; set; }
         public Command ValidatePhoneCommand { get; set; }
         public Command ValidateHouseNumberCommand { get; set; }
+        public Command ActivateAccountCommand { get; set; }
 
         public event EventHandler OnClickCancel;
 
-        public delegate void RegisterSuccessHandler(RegisterViewModel sender);
+        public delegate void RegisterSuccessHandler(RegisterViewModel sender, string registerReferenceCode);
         public event RegisterSuccessHandler OnRegisterSuccess;
 
         public delegate void RegisterErrorHandler(RegisterViewModel sender, string errorMessage);
@@ -97,6 +99,7 @@ namespace Neighbor.Mobile.ViewModels
             ValidateEmailCommand = new Command(() => ValidateProperty(email));
             ValidatePhoneCommand = new Command(() => ValidateProperty(phone));
             ValidateHouseNumberCommand = new Command(() => ValidateProperty(HouseNumber));
+            ActivateAccountCommand = new Command(() => ActivateAccount());
 
             userName = new ValidatableObject<string>();
             password = new ValidatableObject<string>();
@@ -126,7 +129,7 @@ namespace Neighbor.Mobile.ViewModels
 
             phone.Validations.Add(new IsNotNullOrEmptyRule<string> { ValidationMessage = isNullOrEmptyErrorMessage });
             phone.Validations.Add(new MinLenghtEntryRule<string>(6) { ValidationMessage = "Too short" });
-            phone.Validations.Add(new MaxLenghtEntryRule<string>(15) { ValidationMessage = "Too large" });            
+            phone.Validations.Add(new MaxLenghtEntryRule<string>(15) { ValidationMessage = "Too large" });
 
             houseNumber.Validations.Add(new IsNotNullOrEmptyRule<string> { ValidationMessage = isNullOrEmptyErrorMessage });
             houseNumber.Validations.Add(new RegexEntryRule<string>("^89/?([0-9]|[0-9][0-9]|1[0-5][0-4]|0[0-9][0-9])$") { ValidationMessage = "Invalid format" });
@@ -148,14 +151,14 @@ namespace Neighbor.Mobile.ViewModels
             var isPhoneValid = phone.Validate();
             var isHouseNumberValid = houseNumber.Validate();
 
-            var isValid = isUserNameValid && isPasswordValid && isRePasswordValid && isEmailValid && isEmailValid && isPhoneValid && isHouseNumberValid;            
+            var isValid = isUserNameValid && isPasswordValid && isRePasswordValid && isEmailValid && isEmailValid && isPhoneValid && isHouseNumberValid;
 
             return isValid;
         }
 
         public async void Submit(object args)
         {
-            IsBusy = true;            
+            IsBusy = true;
 
             var httpClient = GetBasicHttpClient(ClientTypeName.Identity);
             var request = new FormUrlEncodedContent(new[]
@@ -171,14 +174,39 @@ namespace Neighbor.Mobile.ViewModels
 
             IsBusy = false;
 
-            if (response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
-                OnRegisterSuccess?.Invoke(this);
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                OnRegisterError?.Invoke(this, errorMessage);
                 return;
             }
 
-            var errorMessage = await response.Content.ReadAsStringAsync();
-            OnRegisterError?.Invoke(this, errorMessage);
+            var requestPINService = DependencyService.Resolve<PINService>(DependencyFetchTarget.NewInstance);
+            var reference = await requestPINService.RequestAsync(Phone.Value, GetBasicHttpClient(ClientTypeName.Identity), null);
+
+            OnRegisterSuccess?.Invoke(this, reference);
+        }
+
+        private async void ActivateAccount()
+        {
+            IsBusy = true;
+
+            var httpClient = GetBasicHttpClient(ClientTypeName.Identity);
+            var request = new FormUrlEncodedContent(new[]
+            {
+                new KeyValuePair<string, string>(nameof(userName), UserName.Value)
+            });
+
+            var response = await httpClient.PostAsync("user/activate", request);
+
+            IsBusy = false;
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                OnRegisterError?.Invoke(this, errorMessage);
+                return;
+            }
         }
     }
 }

@@ -67,7 +67,12 @@ namespace Neighbor.Server.Identity
             }
 
             var isPasswordValid = await userManager.CheckPasswordAsync(userIdentity, password);
-            if (!isPasswordValid || !userIdentity.EmailConfirmed)
+            if (!isPasswordValid)
+            {
+                return default;
+            }
+
+            if (!userIdentity.EmailConfirmed && !userIdentity.PhoneNumberConfirmed)
             {
                 return default;
             }
