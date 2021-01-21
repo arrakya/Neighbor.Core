@@ -2,6 +2,8 @@
 <Shell xmlns="http://xamarin.com/schemas/2014/forms" 
        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
        xmlns:local="clr-namespace:Neighbor.Mobile.Views"
+       xmlns:services="clr-namespace:Neighbor.Mobile.Services"
+       xmlns:extends="clr-namespace:Neighbor.Mobile.Extends"
        Title="Neighbor.Mobile"
        x:Class="Neighbor.Mobile.AppShell">
 
@@ -47,7 +49,7 @@
                             </VisualState>
                             <VisualState x:Name="Selected">
                                 <VisualState.Setters>
-                                    <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+                                    <Setter Property="BackgroundColor" Value="{StaticResource Secondary}" />
                                 </VisualState.Setters>
                             </VisualState>
                         </VisualStateGroup>
@@ -80,7 +82,12 @@
         https://docs.microsoft.com/dotnet/api/xamarin.forms.shellgroupitem.flyoutdisplayoptions?view=xamarin-forms
     -->
     <FlyoutItem FlyoutDisplayOptions="AsMultipleItems">
-        <ShellContent Title="Monthly Balance" Icon="tab_feed.png" Route="MonthlyBalanceListViewPage" ContentTemplate="{DataTemplate local:MonthlyBalanceListViewPage}" />        
+        <extends:CustomShellContent Title="Montyly Balance" 
+                                    Route="MonthlyBalanceListViewPage" 
+                                    FontAwesomeCode="{Static services:FontAwesomeIcons.Coins}" 
+                                    FontAwesomeSet="{StaticResource FontAwesomeSolid}"
+                                    ContentTemplate="{DataTemplate local:MonthlyBalanceListViewPage}" />
+
         <!--<ShellContent Title="Browse" Icon="tab_feed.png" Route="BrowsePage" ContentTemplate="{DataTemplate local:ItemsPage}" />
         <ShellContent Title="About" Icon="tab_about.png" Route="AboutPage" ContentTemplate="{DataTemplate local:AboutPage}" />-->
     </FlyoutItem>
@@ -98,40 +105,72 @@
         If you would like to navigate to this content you can do so by calling
         await Shell.Current.GoToAsync("//LoginPage");
     -->
-    <ShellContent Route="LoginPage" Shell.FlyoutBehavior="Disabled" ContentTemplate="{DataTemplate local:LoginPage}" />
-    <ShellContent Route="Environment" Shell.FlyoutBehavior="Disabled" ContentTemplate="{DataTemplate local:SelectEnvironmentPage}" />
+    <ShellContent Route="LoginPage" FlyoutItemIsVisible="False" Shell.FlyoutBehavior="Disabled" ContentTemplate="{DataTemplate local:LoginPage}" />
+    <ShellContent Route="Environment" FlyoutItemIsVisible="False" Shell.FlyoutBehavior="Disabled" ContentTemplate="{DataTemplate local:SelectEnvironmentPage}" />
 
-    <!-- Optional Templates 
-    // These may be provided inline as below or as separate classes.
-
-    // This header appears at the top of the Flyout.
-    // https://docs.microsoft.com/xamarin/xamarin-forms/app-fundamentals/shell/flyout#flyout-header
     <Shell.FlyoutHeaderTemplate>
         <DataTemplate>
-            <Grid>ContentHere</Grid>
+            <Grid Padding="20, 50, 20, 50"
+                  BackgroundColor="{StaticResource Primary}">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="10*"></ColumnDefinition>
+                    <ColumnDefinition Width="90*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <Label VerticalOptions="Center"
+                       TextColor="White"
+                       FontSize="Title"
+                       HorizontalOptions="Start"
+                       Text="{Static services:FontAwesomeIcons.User}"                   
+                       FontFamily="{StaticResource FontAwesomeSolid}" />
+                <Label TextColor="White"
+                       FontSize="Title"
+                       VerticalOptions="Center"
+                       Grid.Column="1">Arrak Yambupah</Label>
+            </Grid>
         </DataTemplate>
     </Shell.FlyoutHeaderTemplate>
 
-    // ItemTemplate is for ShellItems as displayed in a Flyout
-    // https://docs.microsoft.com/xamarin/xamarin-forms/app-fundamentals/shell/flyout#define-flyoutitem-appearance
     <Shell.ItemTemplate>
         <DataTemplate>
             <ContentView>
-                Bindable Properties: Title, Icon
+                <Grid Padding="20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="10*"></ColumnDefinition>
+                        <ColumnDefinition Width="90*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <Label VerticalOptions="Center"
+                           FontSize="Large"
+                           HorizontalOptions="Start"
+                           Text="{Binding FontAwesomeCode}"                   
+                           FontFamily="{Binding FontAwesomeSet}" />
+                    <Label Text="{Binding Title}"
+                           Grid.Column="1"></Label>
+                </Grid>
             </ContentView>
         </DataTemplate>
     </Shell.ItemTemplate>
 
-    // MenuItemTemplate is for MenuItems as displayed in a Flyout
-    // https://docs.microsoft.com/xamarin/xamarin-forms/app-fundamentals/shell/flyout#define-menuitem-appearance
     <Shell.MenuItemTemplate>
         <DataTemplate>
             <ContentView>
-                Bindable Properties: Text, Icon
+                <Grid Padding="20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="10*"></ColumnDefinition>
+                        <ColumnDefinition Width="90*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <Label VerticalOptions="Center"
+                           FontSize="Large"
+                           HorizontalOptions="Start"
+                           Text="{Static services:FontAwesomeIcons.DoorOpen}"                   
+                           FontFamily="{StaticResource FontAwesomeSolid}" />
+                    <Label Text="{Binding Title}"
+                           Grid.Column="1"></Label>
+                </Grid>
             </ContentView>
         </DataTemplate>
     </Shell.MenuItemTemplate>
-
-    -->
-
 </Shell>
