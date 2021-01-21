@@ -1,4 +1,5 @@
-﻿using Neighbor.Mobile.Services;
+﻿using Neighbor.Mobile.NativeHelpers;
+using Neighbor.Mobile.Services;
 using Neighbor.Mobile.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -56,7 +57,8 @@ namespace Neighbor.Mobile.Views
                 {
                     await Shell.Current.Navigation.PopModalAsync();
 
-                    await DisplayAlert("Forget Password", "Reset password done. Please use new password to Login", "Close");
+                    var toastHelper = DependencyService.Resolve<IToastHelper>(DependencyFetchTarget.NewInstance);
+                    toastHelper.Show("Reset password done. Please use new password to Login");
                 };
 
                 await Shell.Current.Navigation.PushModalAsync(resetPasswordPage);
