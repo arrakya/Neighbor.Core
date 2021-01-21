@@ -31,12 +31,36 @@ namespace Neighbor.Mobile.Views
 
         private async void ViewModel_OnRequestPIN(object sender, string reference, string phoneNumber)
         {
-            await Shell.Current.Navigation.PushModalAsync(new EnterPinPage()
+            var enterPINPage = new EnterPinPage()
             {
                 Message = "Please enter OTP from your Phone in SMS.",
                 Refer = reference,
                 PhoneNumber = phoneNumber
-            });
+            };
+
+            enterPINPage.OnSuccessCallback += async (enterPINSender, args) =>
+            {
+                await Shell.Current.Navigation.PopModalAsync();
+
+                var resetPasswordPage = new ResetPasswordPage();
+                resetPasswordPage.PhoneNumber = phoneNumber;
+                resetPasswordPage.OnCancelResetPassword += async (resetPasswordSender, resetPasswordArgs) =>
+                {
+                    await Shell.Current.Navigation.PopModalAsync();
+                };
+
+                resetPasswordPage.OnSubmitResetPassword += async (resetPasswordSender, resetPasswordArgs) =>
+                {
+                    await Shell.Current.Navigation.PopModalAsync();
+
+                    await DisplayAlert("Forget Password", "Reset password done. Please use new password to Login", "Close");
+                };
+
+                await Shell.Current.Navigation.PushModalAsync(resetPasswordPage);
+            };
+
+
+            await Shell.Current.Navigation.PushModalAsync(enterPINPage);
         }
 
         private async void ViewModel_OnTapLoginLabel(object sender, System.EventArgs e)

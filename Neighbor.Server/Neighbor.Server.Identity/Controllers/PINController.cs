@@ -30,12 +30,13 @@ namespace Neighbor.Server.Identity.Controllers
         public async Task<GeneratePINResultModel> Generate(string phoneNumber, CancellationToken cancellationToken)
         {
             var environment = (IWebHostEnvironment)services.GetService(typeof(IWebHostEnvironment));
-            if (environment.EnvironmentName.ToLower() == "sit")
+            if (environment.EnvironmentName.ToLower() == "sit"
+                || environment.EnvironmentName.ToLower() == "development")
             {
                 return new GeneratePINResultModel
                 {
                     IsSuccess = true,
-                    Reference = "SITPIN"
+                    Reference = $"{environment.EnvironmentName.Substring(0, 3).ToUpper()}PIN"
                 };
             }
 
@@ -54,12 +55,13 @@ namespace Neighbor.Server.Identity.Controllers
         public async Task<GeneratePINResultModel> Generate(CancellationToken cancellationToken)
         {
             var environment = (IWebHostEnvironment)services.GetService(typeof(IWebHostEnvironment));
-            if (environment.EnvironmentName.ToLower() == "sit")
+            if (environment.EnvironmentName.ToLower() == "sit"
+                || environment.EnvironmentName.ToLower() == "development")
             {
                 return new GeneratePINResultModel
                 {
                     IsSuccess = true,
-                    Reference = "SITPIN"
+                    Reference = $"{environment.EnvironmentName.Substring(0, 3).ToUpper()}PIN"
                 };
             }
 
@@ -75,10 +77,11 @@ namespace Neighbor.Server.Identity.Controllers
         [Authorize(AuthenticationSchemes = "Basic", Policy = "Basic")]
         [HttpPost]
         [Route("Verify/{phoneNumber}")]
-        public async Task<VerifyPINResultModel> Verify(string phoneNumber, [FromForm]IFormCollection forms, CancellationToken cancellationToken)
+        public async Task<VerifyPINResultModel> Verify(string phoneNumber, [FromForm] IFormCollection forms, CancellationToken cancellationToken)
         {
             var environment = (IWebHostEnvironment)services.GetService(typeof(IWebHostEnvironment));
-            if (environment.EnvironmentName.ToLower() == "sit")
+            if (environment.EnvironmentName.ToLower() == "sit"
+                || environment.EnvironmentName.ToLower() == "development")
             {
                 return new VerifyPINResultModel
                 {
@@ -104,7 +107,8 @@ namespace Neighbor.Server.Identity.Controllers
         public async Task<VerifyPINResultModel> Verify(IFormCollection forms, CancellationToken cancellationToken)
         {
             var environment = (IWebHostEnvironment)services.GetService(typeof(IWebHostEnvironment));
-            if(environment.EnvironmentName.ToLower() == "sit")
+            if (environment.EnvironmentName.ToLower() == "sit"
+                || environment.EnvironmentName.ToLower() == "development")
             {
                 return new VerifyPINResultModel
                 {

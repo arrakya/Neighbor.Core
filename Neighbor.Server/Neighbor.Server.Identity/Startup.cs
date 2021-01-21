@@ -51,7 +51,7 @@ namespace Neighbor.Server.Identity
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequiredLength = 8;
-            }).AddEntityFrameworkStores<IdentityDbContext>();
+            }).AddEntityFrameworkStores<IdentityDbContext>().AddDefaultTokenProviders();
 
             services.AddAuthorization(options =>
             {

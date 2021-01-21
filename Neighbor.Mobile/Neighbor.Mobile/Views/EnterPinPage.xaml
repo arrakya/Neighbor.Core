@@ -17,8 +17,11 @@
                    Margin="0,0,0,30"
                    HorizontalOptions="EndAndExpand"></Label>
             
-            <Button Text="Save" Command="{Binding SubmitPINCommand}"></Button>
-            <Button Text="Cancel" Command="{Binding CancelSubmitPINCommand}" BackgroundColor="Gray"></Button>
+            <Button Text="Save" 
+                    Command="{Binding SubmitPINCommand}"></Button>
+            <Button Text="Cancel"
+                    Command="{Binding CancelSubmitPINCommand}"
+                    Style="{StaticResource SecondaryButton}"></Button>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

@@ -35,6 +35,9 @@ namespace Neighbor.Mobile.Views
             }
         }
 
+        public event EventHandler OnSuccessCallback;
+        
+
         public EnterPinPage()
         {
             InitializeComponent();
@@ -51,9 +54,9 @@ namespace Neighbor.Mobile.Views
             await DisplayAlert("Forget Password", errorMessage, "Close");
         }
 
-        private async void ViewModel_OnSubmitPIN(object sender, EventArgs e)
+        private void ViewModel_OnSubmitPIN(object sender, EventArgs args)
         {
-            await DisplayAlert("Forget Password", "PIN Correct", "Close");
+            OnSuccessCallback?.Invoke(this, null);
         }
 
         private async void ViewModel_OnCancelSubmitPIN(object sender, EventArgs e)
