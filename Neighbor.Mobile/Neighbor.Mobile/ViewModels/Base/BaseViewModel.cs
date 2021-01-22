@@ -82,7 +82,7 @@ namespace Neighbor.Mobile.ViewModels.Base
             return httpClient;
         }
 
-        protected async Task<HttpClient> GetOAuthHttpClientAsync(ClientTypeName clientTypeName, CancellationTokenSource cancellationTokenSource)
+        protected async Task<HttpClient> GetOAuthHttpClientAsync(ClientTypeName clientTypeName, CancellationToken cancellationToken)
         {
             var clientTypeNameText = clientTypeName.ToString().ToLower();
             var httpClientFactory = DependencyService.Resolve<IHttpClientFactory>(DependencyFetchTarget.NewInstance);
@@ -95,10 +95,10 @@ namespace Neighbor.Mobile.ViewModels.Base
             if (!hasRefreshToken || !isRefreshTokenValid)
             {
                 MessagingCenter.Send(this, "RefreshTokenExpired");
-                cancellationTokenSource.Cancel();
+                return null;
             }
 
-            if (!cancellationTokenSource.Token.IsCancellationRequested && (!hasAccessToken || !isAccessTokenValid))
+            if (!cancellationToken.IsCancellationRequested && (!hasAccessToken || !isAccessTokenValid))
             {
                 var requestUri = $"user/oauth/token";
                 var formContent = new FormUrlEncodedContent(new[]

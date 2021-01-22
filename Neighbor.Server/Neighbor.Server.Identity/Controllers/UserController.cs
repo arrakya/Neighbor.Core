@@ -246,5 +246,40 @@ namespace Neighbor.Server.Identity.Controllers
 
             return Ok();
         }
+
+        [Authorize]
+        [HttpPost]
+        [Route("password/change")]
+        public async Task<IActionResult> ChangePassword([FromForm] IFormCollection form)
+        {
+            var currentPassword = form["currentPassword"].ToString();
+            var password = form["password"].ToString();
+            var userName = User.Identity.Name;
+
+            var userManager = (UserManager<IdentityUser>)services.GetService(typeof(UserManager<IdentityUser>));
+            var existedUser = await userManager.FindByNameAsync(userName);
+
+            if (existedUser == null)
+            {
+                return new ContentResult
+                {
+                    StatusCode = Convert.ToInt32(HttpStatusCode.BadRequest),
+                    Content = "USER001"
+                };
+            }
+
+            var result = await userManager.ChangePasswordAsync(existedUser, currentPassword, password);
+
+            if (!result.Succeeded)
+            {
+                return new ContentResult
+                {
+                    StatusCode = Convert.ToInt32(HttpStatusCode.InternalServerError),
+                    Content = result.Errors?.FirstOrDefault()?.Description
+                };
+            }
+
+            return Ok();
+        }
     }
 }

@@ -36,7 +36,7 @@ namespace Neighbor.Mobile
         protected override void OnNavigated(ShellNavigatedEventArgs args)
         {
             base.OnNavigated(args);
-            
+
             Analytics.TrackEvent(args.Current.Location.OriginalString);
         }
 
@@ -46,6 +46,11 @@ namespace Neighbor.Mobile
             Preferences.Remove("AccessToken");
 
             await Current.GoToAsync("//LoginPage");
+        }
+
+        private async void OnChangePasswordClicked(object sender, EventArgs e)
+        {
+            await Navigation.PushModalAsync(new ChangePasswordPage());
         }
 
         private async void OnEnvironmentClicked(object sender, EventArgs e)
