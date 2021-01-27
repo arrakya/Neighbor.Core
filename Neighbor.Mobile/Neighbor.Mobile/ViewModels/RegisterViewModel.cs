@@ -6,6 +6,7 @@ using Xamarin.Forms;
 using System.Linq;
 using Neighbor.Mobile.ViewModels.Base;
 using Neighbor.Mobile.Services;
+using Neighbor.Mobile.Services.Net;
 
 namespace Neighbor.Mobile.ViewModels
 {
@@ -160,7 +161,16 @@ namespace Neighbor.Mobile.ViewModels
         {
             IsBusy = true;
 
-            var httpClient = GetBasicHttpClient(ClientTypeName.Identity);
+            var httpClientService = DependencyService.Resolve<HttpClientService>(DependencyFetchTarget.NewInstance);
+            var createBasicHttpClientResult = await httpClientService.CreateBasicHttpClientAsync(HttpClientService.ClientType.Identity);
+
+            if (!createBasicHttpClientResult.IsReady)
+            {
+                IsBusy = false;
+                return;
+            }
+
+            var httpClient = createBasicHttpClientResult.HttpClient;
             var request = new FormUrlEncodedContent(new[]
             {
                 new KeyValuePair<string, string>(nameof(userName), UserName.Value),
@@ -181,8 +191,16 @@ namespace Neighbor.Mobile.ViewModels
                 return;
             }
 
+            createBasicHttpClientResult = await httpClientService.CreateBasicHttpClientAsync(HttpClientService.ClientType.Identity);
+
+            if (!createBasicHttpClientResult.IsReady)
+            {
+                IsBusy = false;
+                return;
+            }
+
             var requestPINService = DependencyService.Resolve<PINService>(DependencyFetchTarget.NewInstance);
-            var reference = await requestPINService.RequestAsync(Phone.Value, GetBasicHttpClient(ClientTypeName.Identity), null);
+            var reference = await requestPINService.RequestAsync(Phone.Value, createBasicHttpClientResult.HttpClient, null);
 
             OnRegisterSuccess?.Invoke(this, reference);
         }
@@ -191,7 +209,16 @@ namespace Neighbor.Mobile.ViewModels
         {
             IsBusy = true;
 
-            var httpClient = GetBasicHttpClient(ClientTypeName.Identity);
+            var httpClientService = DependencyService.Resolve<HttpClientService>(DependencyFetchTarget.NewInstance);
+            var createBasicHttpClientResult = await httpClientService.CreateBasicHttpClientAsync(HttpClientService.ClientType.Identity);
+
+            if (!createBasicHttpClientResult.IsReady)
+            {
+                IsBusy = false;
+                return;
+            }
+
+            var httpClient = createBasicHttpClientResult.HttpClient;
             var request = new FormUrlEncodedContent(new[]
             {
                 new KeyValuePair<string, string>(nameof(userName), UserName.Value)

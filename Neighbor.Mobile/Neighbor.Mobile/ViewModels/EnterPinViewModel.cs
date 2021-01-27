@@ -1,4 +1,5 @@
 ﻿using Neighbor.Core.Domain.Models.Security;
+using Neighbor.Mobile.Services.Net;
 using Neighbor.Mobile.ViewModels.Base;
 using System;
 using System.Collections.Generic;
@@ -71,7 +72,18 @@ namespace Neighbor.Mobile.ViewModels
 
         public async void SubmitPIN(object obj)
         {
-            var httpClient = GetBasicHttpClient(ClientTypeName.Identity);
+            IsBusy = true;
+
+            var httpClientService = DependencyService.Resolve<HttpClientService>(DependencyFetchTarget.NewInstance);
+            var createBasicHttpClientResult = await httpClientService.CreateBasicHttpClientAsync(HttpClientService.ClientType.Identity);
+
+            if (!createBasicHttpClientResult.IsReady)
+            {
+                IsBusy = false;
+                return;
+            }
+
+            var httpClient = createBasicHttpClientResult.HttpClient;
             var form = new FormUrlEncodedContent(new KeyValuePair<string, string>[]
             {
                 new KeyValuePair<string,string>("pin",PIN),

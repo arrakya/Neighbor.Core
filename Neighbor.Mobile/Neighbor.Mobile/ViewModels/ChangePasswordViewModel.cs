@@ -1,4 +1,5 @@
-﻿using Neighbor.Mobile.Validation;
+﻿using Neighbor.Mobile.Services.Net;
+using Neighbor.Mobile.Validation;
 using Neighbor.Mobile.ViewModels.Base;
 using System;
 using System.Collections.Generic;
@@ -104,13 +105,16 @@ namespace Neighbor.Mobile.ViewModels
             IsBusy = true;
 
             var cancellationTokenSource = new CancellationTokenSource();
-            var httpClient = await GetOAuthHttpClientAsync(ClientTypeName.Identity, cancellationTokenSource.Token);
+            var httpClientService = DependencyService.Resolve<HttpClientService>(DependencyFetchTarget.NewInstance);
+            var createOAuthHttpClientResult = await httpClientService.CreateOAuthHttpClientAsync(HttpClientService.ClientType.Identity, cancellationTokenSource.Token);
 
-            if(httpClient == null)
+            if (!createOAuthHttpClientResult.IsReady)
             {
                 IsBusy = false;
                 return;
             }
+
+            var httpClient = createOAuthHttpClientResult.HttpClient;
 
             var form = new FormUrlEncodedContent(new KeyValuePair<string, string>[]
             {
@@ -118,7 +122,7 @@ namespace Neighbor.Mobile.ViewModels
                 new KeyValuePair<string,string>("password", NewPassword.Value)
             });
 
-            var response = await httpClient.PostAsync($"user/password/change", form);
+            var response = await httpClient.PostAsync($"user/password/change", form, cancellationTokenSource.Token);
 
             if (!response.IsSuccessStatusCode)
             {

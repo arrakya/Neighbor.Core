@@ -1,5 +1,6 @@
 ﻿using Neighbor.Core.Domain.Models.Security;
 using Neighbor.Mobile.NativeHelpers;
+using Neighbor.Mobile.Services.Net;
 using Neighbor.Mobile.Validation;
 using Neighbor.Mobile.ViewModels.Base;
 using System;
@@ -98,7 +99,16 @@ namespace Neighbor.Mobile.ViewModels
             IsBusy = true;
 
             var cancellationTokenSource = new CancellationTokenSource();
-            var httpClient = GetBasicHttpClient( ClientTypeName.Identity);
+            var httpClientService = DependencyService.Resolve<HttpClientService>(DependencyFetchTarget.NewInstance);
+            var createBasicHttpClientResult = await httpClientService.CreateBasicHttpClientAsync(HttpClientService.ClientType.Identity);
+
+            if (!createBasicHttpClientResult.IsReady)
+            {
+                IsBusy = false;
+                return;
+            }
+
+            var httpClient = createBasicHttpClientResult.HttpClient;
             var response = await httpClient.GetAsync($"pin/generate/{phoneNumber}");
             var responseString = await response.Content.ReadAsStringAsync();
             var jsonSerializerOption = new JsonSerializerOptions(JsonSerializerDefaults.Web);
@@ -151,7 +161,16 @@ namespace Neighbor.Mobile.ViewModels
         {
             IsBusy = true;
 
-            var httpClient = GetBasicHttpClient(ClientTypeName.Identity);
+            var httpClientService = DependencyService.Resolve<HttpClientService>(DependencyFetchTarget.NewInstance);
+            var createBasicHttpClientResult = await httpClientService.CreateBasicHttpClientAsync(HttpClientService.ClientType.Identity);
+
+            if (!createBasicHttpClientResult.IsReady)
+            {
+                IsBusy = false;
+                return;
+            }
+
+            var httpClient = createBasicHttpClientResult.HttpClient;
             var request = new FormUrlEncodedContent(new[]
             {
                 new KeyValuePair<string,string>("grant_type","password"),

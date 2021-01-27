@@ -1,5 +1,6 @@
 ﻿using Neighbor.Core.Domain.Models.Finance;
 using Neighbor.Mobile.Models;
+using Neighbor.Mobile.Services.Net;
 using Neighbor.Mobile.ViewModels.Base;
 using System;
 using System.Collections.Generic;
@@ -102,21 +103,23 @@ namespace Neighbor.Mobile.ViewModels
 
             var cancellationTokenSource = new CancellationTokenSource();
             var requestUri = $"monthlybalance?year={Year}";
-            var httpClient = await GetOAuthHttpClientAsync(ClientTypeName.Finance, cancellationTokenSource.Token);
+            var httpClientService = DependencyService.Resolve<HttpClientService>(DependencyFetchTarget.NewInstance);
+            var createOAuthHttpClientResult = await httpClientService.CreateOAuthHttpClientAsync(HttpClientService.ClientType.Finance, cancellationTokenSource.Token);
 
-            if(httpClient == null || cancellationTokenSource.IsCancellationRequested)
+            if (!createOAuthHttpClientResult.IsReady)
             {
                 IsBusy = false;
                 return;
             }
 
-            var response = await httpClient.GetAsync(requestUri);
+            var httpClient = createOAuthHttpClientResult.HttpClient;
+            var response = await httpClient.GetAsync(requestUri, cancellationTokenSource.Token);
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
-                    // Access Token Expired.
-                    IsBusy = false;
-                    return;
+                // Access Token Expired.
+                IsBusy = false;
+                return;
             }
 
             var responseContent = await response.Content.ReadAsStreamAsync();

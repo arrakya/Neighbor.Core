@@ -4,6 +4,7 @@ using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
 using Neighbor.Mobile.NativeHelpers;
 using Neighbor.Mobile.Services;
+using Neighbor.Mobile.Services.Net;
 using Neighbor.Mobile.ViewModels.Base;
 using System;
 using System.Linq;
@@ -121,7 +122,7 @@ namespace Neighbor.Mobile
                         break;
                 }
                 return financeBaseAddress;
-            }           
+            }
         }
 
         public App()
@@ -142,6 +143,7 @@ namespace Neighbor.Mobile
 
             var services = new ServiceCollection();
             DependencyService.Register<MockDataStore>();
+            DependencyService.Register<HttpClientService>();
             DependencyService.Register<UserContextService>();
             DependencyService.Register<PINService>();
 
@@ -159,7 +161,7 @@ namespace Neighbor.Mobile
             DependencyResolver.ResolveUsing(type => services.Any(p => p.ServiceType == type) ? serviceProvider.GetService(type) : null);
 
             MainPage = new AppShell();
-            MessagingCenter.Subscribe<BaseViewModel>(this, "RefreshTokenExpired", async (viewModel) =>
+            MessagingCenter.Subscribe<HttpClientService>(this, "RefreshTokenExpired", async (viewModel) =>
             {
                 Preferences.Remove("RefreshToken");
                 Preferences.Remove("AccessToken");
