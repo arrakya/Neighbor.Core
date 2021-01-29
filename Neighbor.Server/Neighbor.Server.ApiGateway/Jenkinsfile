@@ -1,27 +1,28 @@
-def DOCKER_TAG = 'arrak/neighbor.server.api_gateway:sit-latest'
-
 properties(
     [
         buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '5')), 
-        parameters(
-            [stringParam(defaultValue: 'develop', description: 'Branch', name: 'BRANCH')]
-        )
     ]
 )
+
 pipeline {
     agent any
-
+    
+    parameters {
+        string(defaultValue: 'develop', description: 'Branch', name: 'BRANCH')
+        string(defaultValue: 'sit', description: 'Configuration Environment', name: 'ENV')
+    }
+    
     stages {
         stage('Code Checkout') {
             steps {
-                git branch: "${BRANCH}", credentialsId: 'ArrakGit', url: 'https://github.com/arrakya/Neighbor.Core.git'
+                git branch: "${params.BRANCH}", credentialsId: 'GitHub', url: 'https://github.com/arrakya/Neighbor.Core.git'
             }
         }
         stage('Docker Build') {
             steps {
                 script {
                     dir('Neighbor.Server/Neighbor.Server.ApiGateway'){
-                        sh "docker build -f Dockerfile -t ${DOCKER_TAG} --build-arg EnvName=sit --no-cache ."
+                        sh "docker build -f Dockerfile -t arrak/neighbor.server.api_gateway:${params.ENV}-latest --build-arg EnvName=${params.ENV} --no-cache ."
                     }
                 }
             }
@@ -31,9 +32,9 @@ pipeline {
                 script {
                     dir('Neighbor.Server'){
                         catchError(buildResult: 'SUCCESS') {
-                            sh "docker container rm gateway-sit --force"
+                            sh "docker container rm gateway-${params.ENV} --force"
                         }
-                        sh "docker-compose -f docker-compose.yml up -d gateway-sit"
+                        sh "docker-compose -f docker-compose.yml up -d gateway-${params.ENV}"
                     }
                 }
             }
