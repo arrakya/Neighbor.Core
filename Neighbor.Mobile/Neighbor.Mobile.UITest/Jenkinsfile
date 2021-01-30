@@ -8,13 +8,19 @@ pipeline {
     agent any
 
     parameters{
+            string(defaultValue: '180', description: 'Delay start in secounds', name: 'delayStart')
             string(defaultValue: '192.168.1.58', description: 'Device IP Address to run test', name: 'deviceIPAddress')
     }
 
     stages {
+        stage('Deplay Start') {
+            steps {
+                sleep params.delayStart.toInteger()
+            }
+        }
         stage('Download Artifact') {
             steps {
-                script {                    
+                script {
                     try {
                         sh "mkdir ${workspace}/apks"
                     }catch(err){
