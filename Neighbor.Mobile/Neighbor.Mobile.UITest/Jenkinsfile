@@ -1,14 +1,16 @@
 properties(
     [
-        buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '5')), 
-        parameters(
-            [stringParam(defaultValue: '/home/arrak/neighbor/apks/com.companyname.neighbor.mobile.apk', description: 'APK Path', name: 'apkPath')]
-        )
+        buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '5'))
     ]
 )
 
 pipeline {
     agent any
+
+    parameters{
+            string(defaultValue: '/home/arrak/neighbor/apks/com.companyname.neighbor.mobile.apk', description: 'APK Path', name: 'apkPath')
+            string(defaultValue: '192.168.1.58', description: 'Device IP Address to run test', name: 'deviceIPAddress')
+    }
 
     stages {
         stage('Code Checkout') {
@@ -23,13 +25,20 @@ pipeline {
                 }
             }
         }
+        stage('Connect to Device'){
+            steps {
+                script {
+                    sh "adb connect ${params.deviceIPAddress}"
+                }
+            }
+        }
         stage('Start UI Test') {
             steps {
                 script {
                     sh """
-                        mono /home/arrak/nunit/nunit-console/nunit3-console.exe ${workspace}/output/Neighbor.Mobile.UITest.dll \
-                            --test=\\"Neighbor.Mobile.UITest.Tests\\(Android\\)\\" \
-                            --testparam=\\"apkPath=${apkPath}\\"
+                        mono /usr/bin/nunit/nunit3-console.exe ${workspace}/output/Neighbor.Mobile.UITest.dll \
+                            --test=Neighbor.Mobile.UITest.Tests\\(Android\\) \
+                            --testparam=apkPath=${params.apkPath}
                     """
                 }
             }

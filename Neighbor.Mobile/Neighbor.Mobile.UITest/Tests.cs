@@ -29,7 +29,6 @@ namespace Neighbor.Mobile.UITest
         public void WelcomeTextIsDisplayed()
         {
             AppResult[] results = app.WaitForElement(c => c.Marked("Groove Ville"));
-            FileInfo sfi = app.Screenshot("Welcome screen.");
 
             Assert.IsTrue(results.Any());
         }

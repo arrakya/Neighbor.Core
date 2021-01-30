@@ -9,10 +9,12 @@ namespace Neighbor.Mobile.UITest
         {
             if (platform == Platform.Android)
             {
-                ConfigureApp.Android.DevicePort(5554);
+
 #if DEBUG
+                ConfigureApp.Android.DevicePort(5554);
                 return ConfigureApp.Android.ApkFile(@"C:\Users\arrak\Downloads\com.companyname.neighbor.mobile.apk").StartApp();
 #else
+                ConfigureApp.Android.DevicePort(5555);
                 var apkPath = TestContext.Parameters["apkPath"];
                 return ConfigureApp.Android.ApkFile(apkPath).StartApp();
 #endif
