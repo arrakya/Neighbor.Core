@@ -8,6 +8,7 @@ pipeline {
     agent any
 
     parameters{
+            string(defaultValue: '0', description: 'AppCenter Release Id', name: 'appCenterReleaseId')
             string(defaultValue: '180', description: 'Delay start in secounds', name: 'delayStart')
             string(defaultValue: '192.168.1.58', description: 'Device IP Address to run test', name: 'deviceIPAddress')
     }
@@ -27,14 +28,22 @@ pipeline {
                         sh "echo ${err}"
                     }                  
 
-                    sh """
-                        json=`curl -X GET \"https://api.appcenter.ms/v0.1/apps/arrak.ya/Neighbor/releases/latest\" -H \"accept: application/json\" -H \"X-API-Token: 94de6cf09fc62cc7681e7a5724c56bf03c00a1e2\"`
-                        # version=\$(echo \$json | jq -r '.version')
-                        # version_name=\$(echo \$json | jq -r '.short_version')
-                        url=\$(echo \$json | jq -r '.download_url')
+                    def getReleaseURL = "https://api.appcenter.ms/v0.1/apps/arrak.ya/Neighbor/releases/latest"
+                    
+                    if(params.appCenterReleaseId != '0'){
+                        getReleaseURL = "https://api.appcenter.ms/v0.1/apps/arrak.ya/Neighbor/releases/${appCenterReleaseId}"
+                    }
+
+                    withCredentials([string(credentialsId: 'AppCenterApiToken', variable: 'appCenterApiToken')]) {
+                        sh """
+                            json=`curl -X GET \"${getReleaseURL}\" -H \"accept: application/json\" -H \"X-API-Token: ${appCenterApiToken}\"`
+                            # version=\$(echo \$json | jq -r '.version')
+                            # version_name=\$(echo \$json | jq -r '.short_version')
+                            url=\$(echo \$json | jq -r '.download_url')
                         
-                        curl \$url > ${workspace}/apks/test.apk
-                    """
+                            curl \$url > ${workspace}/apks/test.apk
+                        """
+                    }
                 }
             }
         }
