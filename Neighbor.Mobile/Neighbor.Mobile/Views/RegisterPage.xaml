@@ -37,7 +37,7 @@
                 FontSize="Title"/>
 
             <!-- UserName Entry -->
-            <Entry Grid.Row="1" Text="{Binding UserName.Value}" Placeholder="Username" IsEnabled="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}">
+            <Entry AutomationId="Register_UserNameEntry" Grid.Row="1" Text="{Binding UserName.Value}" Placeholder="Username" IsEnabled="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}">
                 <Entry.Behaviors>
                     <behaviors:EventToCommandBehavior EventName="TextChanged" Command="{Binding ValidateUserNameCommand}"></behaviors:EventToCommandBehavior>
                 </Entry.Behaviors>
@@ -50,7 +50,7 @@
             <Label  Grid.Row="2" Text="{Binding UserName.Errors, Converter={StaticResource FirstValidationErrorConverter}}" Style="{StaticResource ValidationErrorLabelStyle}" />
 
             <!-- Password Entry -->
-            <Entry Grid.Row="3" Text="{Binding Password.Value}" Placeholder="Password" IsPassword="True" IsEnabled="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}">
+            <Entry AutomationId="Register_PasswordEntry" Grid.Row="3" Text="{Binding Password.Value}" Placeholder="Password" IsPassword="True" IsEnabled="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}">
                 <Entry.Behaviors>
                     <behaviors:EventToCommandBehavior EventName="TextChanged" Command="{Binding ValidatePasswordCommand}"></behaviors:EventToCommandBehavior>
                 </Entry.Behaviors>
@@ -63,7 +63,7 @@
             <Label  Grid.Row="4" Text="{Binding Password.Errors, Converter={StaticResource FirstValidationErrorConverter}}" Style="{StaticResource ValidationErrorLabelStyle}" />
             
             <!-- RePassword Entry -->
-            <Entry Grid.Row="5" Text="{Binding RePassword.Value}" Placeholder="Re-Password" IsPassword="True" IsEnabled="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}" >
+            <Entry AutomationId="Register_RePasswordEntry" Grid.Row="5" Text="{Binding RePassword.Value}" Placeholder="Re-Password" IsPassword="True" IsEnabled="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}" >
                 <Entry.Behaviors>
                     <behaviors:EventToCommandBehavior EventName="TextChanged" Command="{Binding ValidateRePasswordCommand}"></behaviors:EventToCommandBehavior>
                 </Entry.Behaviors>
@@ -76,7 +76,7 @@
             <Label  Grid.Row="6" Text="{Binding RePassword.Errors, Converter={StaticResource FirstValidationErrorConverter}}" Style="{StaticResource ValidationErrorLabelStyle}" />
 
             <!-- Email Entry -->
-            <Entry Grid.Row="7" Text="{Binding Email.Value, Mode=TwoWay}" Placeholder="Email" IsEnabled="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}">
+            <Entry AutomationId="Register_EmailEntry" Grid.Row="7" Text="{Binding Email.Value, Mode=TwoWay}" Placeholder="Email" IsEnabled="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}">
                 <Entry.Behaviors>
                     <behaviors:EventToCommandBehavior EventName="TextChanged" Command="{Binding ValidateEmailCommand}"></behaviors:EventToCommandBehavior>
                 </Entry.Behaviors>
@@ -89,7 +89,7 @@
             <Label  Grid.Row="8" Text="{Binding Email.Errors, Converter={StaticResource FirstValidationErrorConverter}}" Style="{StaticResource ValidationErrorLabelStyle}" />
 
             <!-- Phone Entry -->
-            <Entry Grid.Row="9" Text="{Binding Phone.Value}" Placeholder="Phone" IsEnabled="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}" >
+            <Entry AutomationId="Register_PhoneEntry" Grid.Row="9" Text="{Binding Phone.Value}" Placeholder="Phone" IsEnabled="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}" >
                 <Entry.Behaviors>
                     <behaviors:EventToCommandBehavior EventName="TextChanged" Command="{Binding ValidatePhoneCommand}"></behaviors:EventToCommandBehavior>
                 </Entry.Behaviors>
@@ -102,7 +102,7 @@
             <Label  Grid.Row="10" Text="{Binding Phone.Errors, Converter={StaticResource FirstValidationErrorConverter}}" Style="{StaticResource ValidationErrorLabelStyle}" />
             
             <!-- House Number -->
-            <Entry Grid.Row="11" Text="{Binding HouseNumber.Value}" Placeholder="House Number" IsEnabled="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}">
+            <Entry AutomationId="Register_HouseNumberEntry" Grid.Row="11" Text="{Binding HouseNumber.Value}" Placeholder="House Number" IsEnabled="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}">
                 <Entry.Behaviors>
                     <behaviors:EventToCommandBehavior EventName="TextChanged" Command="{Binding ValidateHouseNumberCommand}"></behaviors:EventToCommandBehavior>
                 </Entry.Behaviors>
@@ -115,7 +115,7 @@
             <Label  Grid.Row="12" Text="{Binding HouseNumber.Errors, Converter={StaticResource FirstValidationErrorConverter}}" Style="{StaticResource ValidationErrorLabelStyle}" />
 
             <StackLayout Grid.Row="13" VerticalOptions="EndAndExpand">
-                <Button Text="Submit" Command="{Binding SubmitCommand}" IsVisible="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}"></Button>
+                <Button AutomationId="Register_SubmitEntry" Text="Submit" Command="{Binding SubmitCommand}" IsVisible="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}"></Button>
                 <ActivityIndicator HorizontalOptions="Center" IsRunning="True" IsVisible="{Binding IsBusy}"></ActivityIndicator>
                 <Button Text="Cancel" BackgroundColor="Gray" Command="{Binding CancelCommand}" IsVisible="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}" IsEnabled="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}" ></Button>
             </StackLayout>

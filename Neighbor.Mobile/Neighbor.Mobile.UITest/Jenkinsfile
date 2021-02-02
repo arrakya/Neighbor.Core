@@ -8,7 +8,7 @@ pipeline {
     agent any
 
     parameters{
-            string(defaultValue: '0', description: 'AppCenter Release Id', name: 'appCenterReleaseId')
+            string(defaultValue: '0', description: 'AppCenter Release Id. Enter 0 for latest version', name: 'appCenterReleaseId')
             string(defaultValue: '180', description: 'Delay start in secounds', name: 'delayStart')
             string(defaultValue: '192.168.1.58', description: 'Device IP Address to run test', name: 'deviceIPAddress')
     }
@@ -69,8 +69,8 @@ pipeline {
         stage('Prepare Database'){
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'SqlAccount', usernameVariable: 'username', passwordVariable: 'password']){
-                        sh "sqlcmd -U ${username} -P ${password} -d Neighbor.SIT -Q \"SET QUOTED_IDENTIFIER ON; delete from [identity].[Users]\""
+                    withCredentials([usernamePassword(credentialsId: 'SqlAccount', usernameVariable: 'username', passwordVariable: 'password')]){
+                        sh "/opt/mssql-tools/bin/sqlcmd -U ${username} -P ${password} -d Neighbor.SIT -Q \"SET QUOTED_IDENTIFIER ON; delete from [identity].[Users]\""
                     }
                 }
             }
