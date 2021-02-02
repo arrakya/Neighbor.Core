@@ -58,11 +58,20 @@ pipeline {
                     sh "docker run --rm -v ${workspace}:/app -v ${workspace}/output:/output mcr.microsoft.com/dotnet/sdk:5.0-alpine3.12 dotnet build -c Release -r windows-x86 -o /output /app/Neighbor.Mobile/Neighbor.Mobile.UITest/Neighbor.Mobile.UITest.csproj"
                 }
             }
-        }        
+        }
         stage('Connect to Device'){
             steps {
                 script {
                     sh "adb connect ${params.deviceIPAddress}"
+                }
+            }
+        }
+        stage('Prepare Database'){
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'SqlAccount', usernameVariable: 'username', passwordVariable: 'password']){
+                        sh "sqlcmd -U ${username} -P ${password} -d Neighbor.SIT -Q \"SET QUOTED_IDENTIFIER ON; delete from [identity].[Users]\""
+                    }
                 }
             }
         }
