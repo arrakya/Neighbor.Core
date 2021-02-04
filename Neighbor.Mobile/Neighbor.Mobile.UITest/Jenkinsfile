@@ -59,19 +59,20 @@ pipeline {
                 }
             }
         }
-        stage('Connect to Device'){
-            steps {
-                script {
-                    sh "adb connect ${params.deviceIPAddress}"
-                }
-            }
-        }
+        
         stage('Prepare Database'){
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'SqlAccount', usernameVariable: 'username', passwordVariable: 'password')]){
                         sh "/opt/mssql-tools/bin/sqlcmd -U ${username} -P ${password} -d Neighbor.SIT -Q \"SET QUOTED_IDENTIFIER ON; delete from [identity].[Users]\""
                     }
+                }
+            }
+        }
+        stage('Connect to Device'){
+            steps {
+                script {
+                    sh "adb connect ${params.deviceIPAddress}"
                 }
             }
         }
