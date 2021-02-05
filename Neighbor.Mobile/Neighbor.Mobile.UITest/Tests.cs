@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Neighbor.Mobile.UITest.User;
 using NUnit.Framework;
 using Xamarin.UITest;
 using Xamarin.UITest.Queries;
@@ -67,32 +68,36 @@ namespace Neighbor.Mobile.UITest
 
             app.Tap(registerNavLink);
 
-            app.WaitForElement(registerNserNameEntry);            
+            var tcTest = new TermAndConditionTest(app);
+            tcTest.AcceptTC();
 
-            app.EnterText(registerNserNameEntry, registerDic["Register_UserNameEntry"]);
-            app.EnterText(registerPasswordEntry, registerDic["Register_PasswordEntry"]);
-            app.EnterText(register_RePasswordEntry, registerDic["Register_RePasswordEntry"]);
-            app.EnterText(emailEntry, registerDic["Register_EmailEntry"]);
-            app.Back();
-            app.EnterText(phoneEntry, registerDic["Register_PhoneEntry"]);
-            app.Back();
-            app.EnterText(houseNumberEntry, registerDic["Register_HouseNumberEntry"]);
-            app.Back();
 
-            app.Tap(submitEntry);
+            //app.WaitForElement(registerNserNameEntry);            
 
-            app.WaitForElement(enterPINEntry);
+            //app.EnterText(registerNserNameEntry, registerDic["Register_UserNameEntry"]);
+            //app.EnterText(registerPasswordEntry, registerDic["Register_PasswordEntry"]);
+            //app.EnterText(register_RePasswordEntry, registerDic["Register_RePasswordEntry"]);
+            //app.EnterText(emailEntry, registerDic["Register_EmailEntry"]);
+            //app.Back();
+            //app.EnterText(phoneEntry, registerDic["Register_PhoneEntry"]);
+            //app.Back();
+            //app.EnterText(houseNumberEntry, registerDic["Register_HouseNumberEntry"]);
+            //app.Back();
 
-            app.EnterText(enterPINEntry, registerDic["EnterPIN_PINEntry"]);
+            //app.Tap(submitEntry);
 
-            app.Tap(enterPINButton);
+            //app.WaitForElement(enterPINEntry);
 
-            app.WaitForElement(loginUserNameEntry);
+            //app.EnterText(enterPINEntry, registerDic["EnterPIN_PINEntry"]);
 
-            app.EnterText(loginUserNameEntry, registerDic["Login_UserNameEntry"]);
-            app.EnterText(loginPasswordEntry, registerDic["Login_PasswordEntry"]);
+            //app.Tap(enterPINButton);
 
-            app.Tap(loginButton);
+            //app.WaitForElement(loginUserNameEntry);
+
+            //app.EnterText(loginUserNameEntry, registerDic["Login_UserNameEntry"]);
+            //app.EnterText(loginPasswordEntry, registerDic["Login_PasswordEntry"]);
+
+            //app.Tap(loginButton);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Neighbor.Mobile.NativeHelpers;
 using Neighbor.Mobile.Services;
 using Neighbor.Mobile.ViewModels;
+using Neighbor.Mobile.Views.User;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -92,7 +93,8 @@ namespace Neighbor.Mobile.Views
 
         private async void ViewModel_OnClickRegister(object sender, System.EventArgs e)
         {
-            await Shell.Current.Navigation.PushModalAsync(new RegisterPage());
+            //await Shell.Current.Navigation.PushModalAsync(new RegisterPage());
+            await Shell.Current.Navigation.PushModalAsync(new TermAndConditionPage());
         }
 
         private async void ViewModel_OnForgetPasswordCommand(object sender, System.EventArgs e)
