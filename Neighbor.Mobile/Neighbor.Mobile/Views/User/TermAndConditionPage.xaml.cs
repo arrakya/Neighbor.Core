@@ -19,6 +19,12 @@ namespace Neighbor.Mobile.Views.User
             BindingContext = viewModel = new TermAndConditionViewModel();
 
             viewModel.OnCancelAcceptTC += ViewModel_OnCancelAcceptTC;
+            viewModel.OnAcceptTC += ViewModel_OnAcceptTC;
+        }
+
+        private async void ViewModel_OnAcceptTC(object sender, EventArgs e)
+        {
+            await Shell.Current.Navigation.PushModalAsync(new RegisterAccountPage());
         }
 
         protected override void OnAppearing()

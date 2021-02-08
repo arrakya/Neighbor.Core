@@ -43,7 +43,8 @@
                            TextColor="White"
                            Text="{Static services:FontAwesomeIcons.Home}"                   
                            FontFamily="{StaticResource FontAwesomeSolid}" />
-                    <Label Grid.Column="1"
+                    <Label AutomationId="Login_Title"
+                           Grid.Column="1"
                            Text="Groove Ville"
                            VerticalOptions="CenterAndExpand" 
                            HorizontalOptions="StartAndExpand"

@@ -35,6 +35,7 @@ namespace Neighbor.Mobile.ViewModels.User
         public Command AcceptTCCommand { get; private set; }
         public Command CancelAcceptTCCommand { get; private set; }
 
+        public event EventHandler OnAcceptTC;
         public event EventHandler OnCancelAcceptTC;
 
         public TermAndConditionViewModel()
@@ -52,7 +53,7 @@ namespace Neighbor.Mobile.ViewModels.User
 
         private void AcceptTCCommandHandler(object args)
         {
-
+            OnAcceptTC?.Invoke(this, null);
         }
 
         private void CancelAcceptTCCommandHandler(object args)

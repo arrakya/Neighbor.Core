@@ -3,13 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:converters="clr-namespace:Neighbor.Mobile.Converters"
              xmlns:behaviors="clr-namespace:Neighbor.Mobile.Behaviors"
-             x:Class="Neighbor.Mobile.Views.User.RegisterAccountPage">
+             x:Class="Neighbor.Mobile.Views.User.RegisterUserInfoPage">
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:InvertBooleanConverter x:Key="invertBooleanConverter" />
             <converters:FirstValidationErrorConverter x:Key="FirstValidationErrorConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
+    
     <ContentPage.Content>
         <Grid>
             <Grid.RowDefinitions>
@@ -24,52 +25,51 @@
                 <RowDefinition Height="Auto"></RowDefinition>
             </Grid.RowDefinitions>
 
-            <Label AutomationId="RegisterAccountTitle" 
+            <Label AutomationId="RegisterUserInfoTitle" 
                    Grid.Row="0"
                    Margin="0,20,0,10"
-                   Text="User Account"
+                   Text="User Info"
                    VerticalOptions="CenterAndExpand" 
                    HorizontalOptions="CenterAndExpand"
                    FontSize="Title"/>
 
-            <Entry AutomationId="RegisterContactUserName"
+            <Entry AutomationId="RegisterUserInfoPhoneNumber"
                    Grid.Row="1"
                    Margin="10,10,10,0"
-                   Placeholder="UserName"
+                   Placeholder="Phone Number"
                    IsEnabled="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}"
-                   Text="{Binding UserName.Value}">
+                   Text="{Binding PhoneNumber.Value}">
                 <Entry.Behaviors>
                     <behaviors:EventToCommandBehavior EventName="TextChanged" 
-                                                      Command="{Binding ValidateUserNameCommand}"></behaviors:EventToCommandBehavior>
+                                                      Command="{Binding ValidatePhoneNumberCommand}"></behaviors:EventToCommandBehavior>
                 </Entry.Behaviors>
                 <Entry.Triggers>
                     <DataTrigger TargetType="Entry" 
-                                 Binding="{Binding UserName.IsValid}" 
+                                 Binding="{Binding PhoneNumber.IsValid}" 
                                  Value="False">
                         <Setter Property="TextColor" 
                                 Value="{StaticResource ErrorColor}"></Setter>
                     </DataTrigger>
                 </Entry.Triggers>
             </Entry>
-            <Label AutomationId="RegisterContactUserNameErrorMessage"
+            <Label AutomationId="RegisterUserInfoPhoneNumberErrorMessage"
                    Grid.Row="2"
-                   Text="{Binding UserName.Errors, Converter={StaticResource FirstValidationErrorConverter}}" 
+                   Text="{Binding PhoneNumber.Errors, Converter={StaticResource FirstValidationErrorConverter}}" 
                    Style="{StaticResource ValidationErrorLabelStyle}"></Label>
-            
-            <Entry AutomationId="RegisterContactPassword"
+
+            <Entry AutomationId="RegisterUserInfoEmail"
                    Grid.Row="3"
                    Margin="10,0,10,0"
-                   Placeholder="Password"
+                   Placeholder="Email"
                    IsEnabled="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}"
-                   Text="{Binding Password.Value}"
-                   IsPassword="true">
+                   Text="{Binding Email.Value}">
                 <Entry.Behaviors>
                     <behaviors:EventToCommandBehavior EventName="TextChanged" 
-                                                      Command="{Binding ValidatePasswordCommand}"></behaviors:EventToCommandBehavior>
+                                                      Command="{Binding ValidateEmailCommand}"></behaviors:EventToCommandBehavior>
                 </Entry.Behaviors>
                 <Entry.Triggers>
                     <DataTrigger TargetType="Entry" 
-                                 Binding="{Binding Password.IsValid}" 
+                                 Binding="{Binding Email.IsValid}" 
                                  Value="False">
                         <Setter Property="TextColor" 
                                 Value="{StaticResource ErrorColor}"></Setter>
@@ -78,23 +78,22 @@
             </Entry>
             <Label AutomationId="RegisterContactPasswordErrorMessage"
                    Grid.Row="4"
-                   Text="{Binding Password.Errors, Converter={StaticResource FirstValidationErrorConverter}}" 
+                   Text="{Binding Email.Errors, Converter={StaticResource FirstValidationErrorConverter}}" 
                    Style="{StaticResource ValidationErrorLabelStyle}"></Label>
-            
-            <Entry AutomationId="RegisterContactConfirmPassword"
+
+            <Entry AutomationId="RegisterUserInfoHouseNumber"
                    Grid.Row="5"
                    Margin="10,0,10,0"
-                   Placeholder="Confirm Password"
+                   Placeholder="House Number"
                    IsEnabled="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}"
-                   Text="{Binding ConfirmPassword.Value}"
-                   IsPassword="true">
+                   Text="{Binding HouseNumber.Value}">
                 <Entry.Behaviors>
                     <behaviors:EventToCommandBehavior EventName="TextChanged" 
-                                                      Command="{Binding ValidateConfirmPasswordCommand}"></behaviors:EventToCommandBehavior>
+                                                      Command="{Binding ValidateHouseNumberCommand}"></behaviors:EventToCommandBehavior>
                 </Entry.Behaviors>
                 <Entry.Triggers>
                     <DataTrigger TargetType="Entry" 
-                                 Binding="{Binding ConfirmPassword.IsValid}" 
+                                 Binding="{Binding HouseNumber.IsValid}" 
                                  Value="False">
                         <Setter Property="TextColor" 
                                 Value="{StaticResource ErrorColor}"></Setter>
@@ -103,28 +102,28 @@
             </Entry>
             <Label AutomationId="RegisterContactConfirmPasswordErrorMessage"
                    Grid.Row="6"
-                   Text="{Binding ConfirmPassword.Errors, Converter={StaticResource FirstValidationErrorConverter}}" 
+                   Text="{Binding HouseNumber.Errors, Converter={StaticResource FirstValidationErrorConverter}}" 
                    Style="{StaticResource ValidationErrorLabelStyle}"></Label>
 
             <ActivityIndicator Grid.Row="7" 
                                HorizontalOptions="Center" 
                                IsRunning="True" 
                                IsVisible="{Binding IsBusy}"></ActivityIndicator>
-            
-            <Button AutomationId="RegisterAccountSubmitButton"
+
+            <Button AutomationId="RegisterUserInfoSubmitButton"
                     Text="Next"
-                    Command="{Binding SubmitAccountCommand}"
+                    Command="{Binding SubmitUserInfoCommand}"
                     IsVisible="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}"
                     Grid.Row="7"
                     Margin="10,10,10,0"></Button>
 
-            <Label AutomationId="CancelRegisterAccountButton"
+            <Label AutomationId="CancelRegisterUserInfoButton"
                    Grid.Row="8"
                    HorizontalOptions="Center"
                    Margin="0,10"
                    Text="Cancel">
                 <Label.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding CancelRegisterAccountCommand}"></TapGestureRecognizer>
+                    <TapGestureRecognizer Command="{Binding CancelUserInfoCommand}"></TapGestureRecognizer>
                 </Label.GestureRecognizers>
             </Label>
         </Grid>

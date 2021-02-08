@@ -62,7 +62,7 @@
     <EmbeddedResource Update="Views\User\RegisterAccountPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\User\RegisterContactPage.xaml">
+    <EmbeddedResource Update="Views\User\RegisterUserInfoPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\User\TermAndConditionPage.xaml">
