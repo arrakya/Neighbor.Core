@@ -31,18 +31,18 @@ namespace Neighbor.Mobile
         {
             get
             {
-#if DEBUG
-                return "Development";
-#endif
-
                 var releaseVersion = Preferences.Get("ReleaseVersion", "SIT");
 
                 if (IsProductionVersion)
                 {
                     return "Production";
                 }
+                else if (releaseVersion == "SIT")
+                {
+                    return "SIT";
+                }
 
-                return releaseVersion;
+                return "Development";
             }
             set
             {
@@ -53,7 +53,7 @@ namespace Neighbor.Mobile
                 switch (value)
                 {
                     case "SIT":
-                        ServerAddress = "arrakya.thddns.net:4431";
+                        ServerAddress = "192.168.1.56:4431";
                         break;
                     case "Production":
                         ServerAddress = "arrakya.thddns.net:443";
@@ -132,7 +132,7 @@ namespace Neighbor.Mobile
             switch (ReleaseVersion)
             {
                 case "SIT":
-                    ServerAddress = "arrakya.thddns.net:4431";
+                    ServerAddress = "192.168.1.56:4431";
                     break;
                 case "Production":
                     ServerAddress = "arrakya.thddns.net:443";
