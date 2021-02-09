@@ -80,7 +80,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                        mono /usr/bin/nunit/nunit3-console.exe ${workspace}/output/Neighbor.Mobile.UITest.dll \
+                        mono /usr/lib/nunit/bin/net35/nunit3-console.exe ${workspace}/output/Neighbor.Mobile.UITest.dll \
                             --test=Neighbor.Mobile.UITest.Tests\\(Android\\) \
                             --testparam=apkPath=${workspace}/apks/test.apk
                     """
