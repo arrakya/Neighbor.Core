@@ -9,8 +9,7 @@ pipeline {
 
     parameters{
             string(defaultValue: '0', description: 'AppCenter Release Id. Enter 0 for latest version', name: 'appCenterReleaseId')
-            string(defaultValue: '180', description: 'Delay start in secounds', name: 'delayStart')
-            string(defaultValue: '192.168.1.58', description: 'Device IP Address to run test', name: 'deviceIPAddress')
+            string(defaultValue: '180', description: 'Delay start in secounds', name: 'delayStart')            
     }
 
     stages {
@@ -69,19 +68,12 @@ pipeline {
                 }
             }
         }
-        stage('Connect to Device'){
-            steps {
-                script {
-                    sh "adb connect ${params.deviceIPAddress}"
-                }
-            }
-        }
         stage('Start UI Test') {
             steps {
                 script {
                     sh """
-                        mono /usr/lib/nunit/bin/net35/nunit3-console.exe ${workspace}/output/Neighbor.Mobile.UITest.dll \
-                            --test=Neighbor.Mobile.UITest.Tests\\(Android\\) \
+                        mono /usr/bin/nunit/bin/net35/nunit3-console.exe ${workspace}/output/Neighbor.Mobile.UITest.dll \
+                            --test=Neighbor.Mobile.UITest.Tests.Tests\\(Android\\) \
                             --testparam=apkPath=${workspace}/apks/test.apk
                     """
                 }

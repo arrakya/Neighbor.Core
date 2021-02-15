@@ -13,7 +13,7 @@ namespace Neighbor.Mobile.UITest
 #if DEBUG
                 return ConfigureApp.Android.InstalledApp("com.companyname.neighbor.mobile").StartApp();
 #else
-                ConfigureApp.Android.DevicePort(5555);
+                ConfigureApp.Android.DevicePort(5554);
                 var apkPath = TestContext.Parameters["apkPath"];
                 return ConfigureApp.Android.ApkFile(apkPath).StartApp();
 #endif
