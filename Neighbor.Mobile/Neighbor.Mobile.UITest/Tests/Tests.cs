@@ -35,7 +35,7 @@ namespace Neighbor.Mobile.UITest.Tests
         public void Register()
         {
             var tcScene = new TermAndConditionScene(app);
-            var registerAccountScehe = new RegisterAccountScene(app);
+            var registerAccountScene = new RegisterAccountScene(app);
             var registerUserInfoScene = new RegisterUserInfoScene(app);
             var enterPINScene = new EnterPINScene(app);
             var loginScene = new LoginScene(app);
@@ -44,7 +44,7 @@ namespace Neighbor.Mobile.UITest.Tests
             app.Tap(registerNavLink);
 
             tcScene.Play();
-            registerAccountScehe.Play();
+            registerAccountScene.Play();
             registerUserInfoScene.Play();
             enterPINScene.Play();
             loginScene.Play();

@@ -7,9 +7,6 @@ namespace Neighbor.Mobile.UITest.Scenes.User
     {
         private IApp app;
 
-        public AppQuery RegisterUserInfoPhoneNumber(AppQuery c) => c.Marked("RegisterUserInfoPhoneNumber");
-        public AppQuery RegisterUserInfoEmail(AppQuery c) => c.Marked("RegisterUserInfoEmail");
-        public AppQuery RegisterUserInfoHouseNumber(AppQuery c) => c.Marked("RegisterUserInfoHouseNumber");
         public AppQuery RegisterUserInfoSubmitButton(AppQuery c) => c.Marked("RegisterUserInfoSubmitButton");
 
 
@@ -20,9 +17,10 @@ namespace Neighbor.Mobile.UITest.Scenes.User
 
         public void Play()
         {
-            app.EnterText(RegisterUserInfoPhoneNumber, "0987654321");
-            app.EnterText(RegisterUserInfoEmail, "Test001@test01.com");
-            app.EnterText(RegisterUserInfoHouseNumber, "89/86");
+            app.WaitForElement("RegisterUserInfoPhoneNumber");
+            app.Query(e => e.Marked("RegisterUserInfoPhoneNumber").Invoke("setText", "0987654321"));
+            app.Query(e => e.Marked("RegisterUserInfoEmail").Invoke("setText", "Test001@test01.com"));
+            app.Query(e => e.Marked("RegisterUserInfoHouseNumber").Invoke("setText", "89/86"));
 
             app.Tap(RegisterUserInfoSubmitButton);
         }

@@ -7,9 +7,6 @@ namespace Neighbor.Mobile.UITest.Scenes.User
     {
         private IApp app;
 
-        public AppQuery RegisterContactUserName(AppQuery c) => c.Marked("RegisterContactUserName");
-        public AppQuery RegisterContactPassword(AppQuery c) => c.Marked("RegisterContactPassword");
-        public AppQuery RegisterContactConfirmPassword(AppQuery c) => c.Marked("RegisterContactConfirmPassword");
         public AppQuery RegisterAccountSubmitButton(AppQuery c) => c.Marked("RegisterAccountSubmitButton");
 
 
@@ -20,9 +17,10 @@ namespace Neighbor.Mobile.UITest.Scenes.User
 
         public void Play()
         {
-            app.EnterText(RegisterContactUserName, "Test001");
-            app.EnterText(RegisterContactPassword, "Password123");
-            app.EnterText(RegisterContactConfirmPassword, "Password123");
+            app.WaitForElement("RegisterContactUserName");
+            app.Query(e => e.Marked("RegisterContactUserName").Invoke("setText", "Test001"));
+            app.Query(e => e.Marked("RegisterContactPassword").Invoke("setText", "Password123"));
+            app.Query(e => e.Marked("RegisterContactConfirmPassword").Invoke("setText", "Password123"));
 
             app.Tap(RegisterAccountSubmitButton);
         }

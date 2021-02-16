@@ -7,9 +7,6 @@ namespace Neighbor.Mobile.UITest.Scenes.User
     {
         private IApp app;
 
-        public AppQuery Login_Title(AppQuery c) => c.Marked("Login_Title");
-        public AppQuery Login_UserNameEntry(AppQuery c) => c.Marked("Login_UserNameEntry");
-        public AppQuery Login_PasswordEntry(AppQuery c) => c.Marked("Login_PasswordEntry");
         public AppQuery Login_SubmitButton(AppQuery c) => c.Marked("Login_SubmitButton");
 
 
@@ -20,10 +17,10 @@ namespace Neighbor.Mobile.UITest.Scenes.User
 
         public void Play()
         {
-            app.WaitForElement(Login_Title);
+            app.WaitForElement("Login_Title");
 
-            app.EnterText(Login_UserNameEntry, "Test001");
-            app.EnterText(Login_PasswordEntry, "Password123");
+            app.Query(e => e.Marked("Login_UserNameEntry").Invoke("setText", "Test001"));
+            app.Query(e => e.Marked("Login_PasswordEntry").Invoke("setText", "Password123"));
 
             app.Tap(Login_SubmitButton);
         }

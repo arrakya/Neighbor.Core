@@ -7,7 +7,6 @@ namespace Neighbor.Mobile.UITest.Scenes.User
     {
         private IApp app;
 
-        public AppQuery EnterPIN_PINEntry(AppQuery c) => c.Marked("EnterPIN_PINEntry");
         public AppQuery EnterPIN_SubmitButton(AppQuery c) => c.Marked("EnterPIN_SubmitButton");
 
 
@@ -18,7 +17,8 @@ namespace Neighbor.Mobile.UITest.Scenes.User
 
         public void Play()
         {
-            app.EnterText(EnterPIN_PINEntry, "123456");
+            app.WaitForElement("EnterPIN_PINEntry");
+            app.Query(e => e.Marked("EnterPIN_PINEntry").Invoke("setText", "123456"));
 
             app.Tap(EnterPIN_SubmitButton);
         }
