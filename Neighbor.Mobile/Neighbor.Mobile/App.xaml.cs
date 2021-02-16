@@ -53,7 +53,7 @@ namespace Neighbor.Mobile
                 switch (value)
                 {
                     case "SIT":
-                        ServerAddress = "192.168.1.145:4431";
+                        ServerAddress = "arrakya.thddns.net:4431";
                         break;
                     case "Production":
                         ServerAddress = "arrakya.thddns.net:443";
@@ -132,7 +132,7 @@ namespace Neighbor.Mobile
             switch (ReleaseVersion)
             {
                 case "SIT":
-                    ServerAddress = "192.168.1.145:4431";
+                    ServerAddress = "arrakya.thddns.net:4431";
                     break;
                 case "Production":
                     ServerAddress = "arrakya.thddns.net:443";

@@ -12,17 +12,22 @@
         <StackLayout VerticalOptions="StartAndExpand"
                      Margin="20,40,20,40">
             <Label Text="Environments"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
-            <Picker SelectedItem="{Binding SelectedEnvironment}">
+                   VerticalOptions="CenterAndExpand" 
+                   HorizontalOptions="CenterAndExpand" />
+            <Picker AutomationId="SelectEnvironmentPicker"
+                    SelectedItem="{Binding SelectedEnvironment}">
                 <Picker.Items>
                     <x:String>Production</x:String>
                     <x:String>SIT</x:String>
                     <x:String>Development</x:String>
                 </Picker.Items>
             </Picker>
-            <Button Text="Save" Command="{Binding SaveSelectEnvironmentCommand}"></Button>
-            <Button Text="Cancel" Command="{Binding CancelSelectEnvironmentCommand}" BackgroundColor="Gray"></Button>
+            <Button AutomationId="SelectEnvironmentSaveButton"
+                    Text="Save" 
+                    Command="{Binding SaveSelectEnvironmentCommand}"></Button>
+            <Button AutomationId="SelectEnvironmentCancelButton"
+                    Text="Cancel" 
+                    Command="{Binding CancelSelectEnvironmentCommand}" BackgroundColor="Gray"></Button>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
