@@ -1,0 +1,83 @@
+properties(
+    [
+        buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '5'))
+    ]
+)
+
+pipeline {
+    agent any
+
+    parameters{
+            string(defaultValue: '0', description: 'AppCenter Release Id. Enter 0 for latest version', name: 'appCenterReleaseId')
+            string(defaultValue: '180', description: 'Delay start in secounds', name: 'delayStart')            
+    }
+
+    stages {
+        stage('Deplay Start') {
+            steps {
+                sleep params.delayStart.toInteger()
+            }
+        }
+        stage('Download Artifact') {
+            steps {
+                script {
+                    try {
+                        sh "mkdir ${workspace}/apks"
+                    }catch(err){
+                        sh "echo ${err}"
+                    }                  
+
+                    def getReleaseURL = "https://api.appcenter.ms/v0.1/apps/arrak.ya/Neighbor/releases/latest"
+                    
+                    if(params.appCenterReleaseId != '0'){
+                        getReleaseURL = "https://api.appcenter.ms/v0.1/apps/arrak.ya/Neighbor/releases/${appCenterReleaseId}"
+                    }
+
+                    withCredentials([string(credentialsId: 'AppCenterApiToken', variable: 'appCenterApiToken')]) {
+                        sh """
+                            json=`curl -X GET \"${getReleaseURL}\" -H \"accept: application/json\" -H \"X-API-Token: ${appCenterApiToken}\"`
+                            # version=\$(echo \$json | jq -r '.version')
+                            # version_name=\$(echo \$json | jq -r '.short_version')
+                            url=\$(echo \$json | jq -r '.download_url')
+                        
+                            curl \$url > ${workspace}/apks/test.apk
+                        """
+                    }
+                }
+            }
+        }
+        stage('Code Checkout') {
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name: 'develop']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'GitHub', url: 'https://github.com/arrakya/Neighbor.Core.git']]])
+            }
+        }        
+        stage('Build Test Library') {
+            steps {
+                script {
+                    sh "docker run --rm -v ${workspace}:/app -v ${workspace}/output:/output mcr.microsoft.com/dotnet/sdk:5.0-alpine3.12 dotnet build -c Release -r windows-x86 -o /output /app/Neighbor.Mobile/Neighbor.Mobile.UITest/Neighbor.Mobile.UITest.csproj"
+                }
+            }
+        }
+        
+        stage('Prepare Database'){
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'SqlAccount', usernameVariable: 'username', passwordVariable: 'password')]){
+                        sh "/opt/mssql-tools/bin/sqlcmd -U ${username} -P ${password} -d Neighbor.SIT -Q \"SET QUOTED_IDENTIFIER ON; delete from [identity].[Users]\""
+                    }
+                }
+            }
+        }
+        stage('Start UI Test') {
+            steps {
+                script {
+                    sh """
+                        mono /usr/bin/nunit/bin/net35/nunit3-console.exe ${workspace}/output/Neighbor.Mobile.UITest.dll \
+                            --test=Neighbor.Mobile.UITest.Tests.Tests\\(Android\\) \
+                            --testparam=apkPath=${workspace}/apks/test.apk
+                    """
+                }
+            }
+        }
+    }
+}

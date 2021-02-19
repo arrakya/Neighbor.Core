@@ -67,7 +67,12 @@ namespace Neighbor.Server.Identity
             }
 
             var isPasswordValid = await userManager.CheckPasswordAsync(userIdentity, password);
-            if (!isPasswordValid || !userIdentity.EmailConfirmed)
+            if (!isPasswordValid)
+            {
+                return default;
+            }
+
+            if (!userIdentity.EmailConfirmed && !userIdentity.PhoneNumberConfirmed)
             {
                 return default;
             }
@@ -115,6 +120,11 @@ namespace Neighbor.Server.Identity
 
             var userManager = (UserManager<IdentityUser>)services.GetService(typeof(UserManager<IdentityUser>));
             var identityUser = await userManager.FindByNameAsync(userName);
+            if (!identityUser.EmailConfirmed && !identityUser.PhoneNumberConfirmed)
+            {
+                return default;
+            }
+
             var identityRoles = await userManager.GetRolesAsync(identityUser);
             var roleNames = string.Join("|", identityRoles.Select(p => p.Normalize()));
 

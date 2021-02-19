@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:Neighbor.Mobile.Converters"
+             xmlns:behaviors="clr-namespace:Neighbor.Mobile.Behaviors"
+             x:Class="Neighbor.Mobile.Views.User.RegisterUserInfoPage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:InvertBooleanConverter x:Key="invertBooleanConverter" />
+            <converters:FirstValidationErrorConverter x:Key="FirstValidationErrorConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
+    <ContentPage.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <Label AutomationId="RegisterUserInfoTitle" 
+                   Grid.Row="0"
+                   Margin="0,20,0,10"
+                   Text="User Info"
+                   VerticalOptions="CenterAndExpand" 
+                   HorizontalOptions="CenterAndExpand"
+                   FontSize="Title"/>
+
+            <Entry AutomationId="RegisterUserInfoPhoneNumber"
+                   Grid.Row="1"
+                   Margin="10,10,10,0"
+                   Placeholder="Phone Number"
+                   IsEnabled="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}"
+                   Text="{Binding PhoneNumber.Value}">
+                <Entry.Behaviors>
+                    <behaviors:EventToCommandBehavior EventName="TextChanged" 
+                                                      Command="{Binding ValidatePhoneNumberCommand}"></behaviors:EventToCommandBehavior>
+                </Entry.Behaviors>
+                <Entry.Triggers>
+                    <DataTrigger TargetType="Entry" 
+                                 Binding="{Binding PhoneNumber.IsValid}" 
+                                 Value="False">
+                        <Setter Property="TextColor" 
+                                Value="{StaticResource ErrorColor}"></Setter>
+                    </DataTrigger>
+                </Entry.Triggers>
+            </Entry>
+            <Label AutomationId="RegisterUserInfoPhoneNumberErrorMessage"
+                   Grid.Row="2"
+                   Text="{Binding PhoneNumber.Errors, Converter={StaticResource FirstValidationErrorConverter}}" 
+                   Style="{StaticResource ValidationErrorLabelStyle}"></Label>
+
+            <Entry AutomationId="RegisterUserInfoEmail"
+                   Grid.Row="3"
+                   Margin="10,0,10,0"
+                   Placeholder="Email"
+                   IsEnabled="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}"
+                   Text="{Binding Email.Value}">
+                <Entry.Behaviors>
+                    <behaviors:EventToCommandBehavior EventName="TextChanged" 
+                                                      Command="{Binding ValidateEmailCommand}"></behaviors:EventToCommandBehavior>
+                </Entry.Behaviors>
+                <Entry.Triggers>
+                    <DataTrigger TargetType="Entry" 
+                                 Binding="{Binding Email.IsValid}" 
+                                 Value="False">
+                        <Setter Property="TextColor" 
+                                Value="{StaticResource ErrorColor}"></Setter>
+                    </DataTrigger>
+                </Entry.Triggers>
+            </Entry>
+            <Label AutomationId="RegisterContactPasswordErrorMessage"
+                   Grid.Row="4"
+                   Text="{Binding Email.Errors, Converter={StaticResource FirstValidationErrorConverter}}" 
+                   Style="{StaticResource ValidationErrorLabelStyle}"></Label>
+
+            <Entry AutomationId="RegisterUserInfoHouseNumber"
+                   Grid.Row="5"
+                   Margin="10,0,10,0"
+                   Placeholder="House Number"
+                   IsEnabled="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}"
+                   Text="{Binding HouseNumber.Value}">
+                <Entry.Behaviors>
+                    <behaviors:EventToCommandBehavior EventName="TextChanged" 
+                                                      Command="{Binding ValidateHouseNumberCommand}"></behaviors:EventToCommandBehavior>
+                </Entry.Behaviors>
+                <Entry.Triggers>
+                    <DataTrigger TargetType="Entry" 
+                                 Binding="{Binding HouseNumber.IsValid}" 
+                                 Value="False">
+                        <Setter Property="TextColor" 
+                                Value="{StaticResource ErrorColor}"></Setter>
+                    </DataTrigger>
+                </Entry.Triggers>
+            </Entry>
+            <Label AutomationId="RegisterContactConfirmPasswordErrorMessage"
+                   Grid.Row="6"
+                   Text="{Binding HouseNumber.Errors, Converter={StaticResource FirstValidationErrorConverter}}" 
+                   Style="{StaticResource ValidationErrorLabelStyle}"></Label>
+
+            <ActivityIndicator Grid.Row="7" 
+                               HorizontalOptions="Center" 
+                               IsRunning="True" 
+                               IsVisible="{Binding IsBusy}"></ActivityIndicator>
+
+            <Button AutomationId="RegisterUserInfoSubmitButton"
+                    Text="Next"
+                    Command="{Binding SubmitUserInfoCommand}"
+                    IsVisible="{Binding IsBusy, Converter={StaticResource invertBooleanConverter}}"
+                    Grid.Row="7"
+                    Margin="10,10,10,0"></Button>
+
+            <Label AutomationId="CancelRegisterUserInfoButton"
+                   Grid.Row="8"
+                   HorizontalOptions="Center"
+                   Margin="0,10"
+                   Text="Cancel">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding CancelUserInfoCommand}"></TapGestureRecognizer>
+                </Label.GestureRecognizers>
+            </Label>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

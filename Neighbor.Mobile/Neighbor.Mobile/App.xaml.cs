@@ -4,6 +4,7 @@ using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
 using Neighbor.Mobile.NativeHelpers;
 using Neighbor.Mobile.Services;
+using Neighbor.Mobile.Services.Net;
 using Neighbor.Mobile.ViewModels.Base;
 using System;
 using System.Linq;
@@ -36,8 +37,12 @@ namespace Neighbor.Mobile
                 {
                     return "Production";
                 }
+                else if (releaseVersion == "SIT")
+                {
+                    return "SIT";
+                }
 
-                return releaseVersion;
+                return "Development";
             }
             set
             {
@@ -117,7 +122,7 @@ namespace Neighbor.Mobile
                         break;
                 }
                 return financeBaseAddress;
-            }           
+            }
         }
 
         public App()
@@ -138,6 +143,9 @@ namespace Neighbor.Mobile
 
             var services = new ServiceCollection();
             DependencyService.Register<MockDataStore>();
+            DependencyService.Register<HttpClientService>();
+            DependencyService.Register<UserContextService>();
+            DependencyService.Register<PINService>();
 
             var httpClientHandler = new HttpClientHandler
             {
@@ -153,7 +161,7 @@ namespace Neighbor.Mobile
             DependencyResolver.ResolveUsing(type => services.Any(p => p.ServiceType == type) ? serviceProvider.GetService(type) : null);
 
             MainPage = new AppShell();
-            MessagingCenter.Subscribe<BaseViewModel>(this, "RefreshTokenExpired", async (viewModel) =>
+            MessagingCenter.Subscribe<HttpClientService>(this, "RefreshTokenExpired", async (viewModel) =>
             {
                 Preferences.Remove("RefreshToken");
                 Preferences.Remove("AccessToken");
@@ -162,9 +170,11 @@ namespace Neighbor.Mobile
             });
         }
 
-        protected override void OnStart()
+        protected async override void OnStart()
         {
             AppCenter.Start("27f68fc7-587a-48b6-aa5f-48fcdc59e28c", typeof(Analytics), typeof(Crashes));
+
+            await ((AppShell)Shell.Current).UpdateFlyoutViewModel();
         }
 
         protected override void OnSleep()

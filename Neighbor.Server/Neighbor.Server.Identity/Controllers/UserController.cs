@@ -2,10 +2,12 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Neighbor.Core.Domain.Models.Identity;
 using Neighbor.Core.Domain.Models.Security;
 using Neighbor.Server.Identity.Services.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Security.Claims;
@@ -19,6 +21,11 @@ namespace Neighbor.Server.Identity.Controllers
     public class UserController : Controller
     {
         private readonly IServiceProvider services;
+
+        public IDictionary<string, string> ErrorCodes = new Dictionary<string, string>(new[]
+        {
+            new KeyValuePair<string,string>("USER001","User not found.")
+        });
 
         public UserController(IServiceProvider serviceProvider)
         {
@@ -107,7 +114,7 @@ namespace Neighbor.Server.Identity.Controllers
                 Email = email,
                 PhoneNumber = phone,
                 NormalizedEmail = email.ToUpper().Normalize(),
-                NormalizedUserName = userName.ToUpper().Normalize()                
+                NormalizedUserName = userName.ToUpper().Normalize()
             };
 
             var passwordHashed = new PasswordHasher<IdentityUser>();
@@ -171,6 +178,108 @@ namespace Neighbor.Server.Identity.Controllers
             }
 
             return userContext;
+        }
+
+        [Authorize(AuthenticationSchemes = "Basic", Policy = "Basic")]
+        [HttpPost]
+        [Route("password/reset")]
+        public async Task<ResetPasswordResultModel> ResetPassword([FromForm] IFormCollection form)
+        {
+            var phoneNumber = form["phoneNumber"].ToString();
+            var password = form["password"].ToString();
+
+            var userManager = (UserManager<IdentityUser>)services.GetService(typeof(UserManager<IdentityUser>));
+            var existedUser = await userManager.Users.SingleOrDefaultAsync(p => p.PhoneNumber == phoneNumber);
+
+            if (existedUser == null)
+            {
+                return new ResetPasswordResultModel
+                {
+                    Code = "USER001",
+                    Message = ErrorCodes["USER001"],
+                    Result = false
+                };
+            }
+
+            var token = await userManager.GeneratePasswordResetTokenAsync(existedUser);
+            var result = await userManager.ResetPasswordAsync(existedUser, token, password);
+
+            return new ResetPasswordResultModel
+            {
+                Result = result.Succeeded,
+                Code = result.Errors?.FirstOrDefault()?.Code,
+                Message = result.Errors?.FirstOrDefault()?.Description
+            };
+        }
+
+        [Authorize(AuthenticationSchemes = "Basic", Policy = "Basic")]
+        [HttpPost]
+        [Route("activate")]
+        public async Task<IActionResult> Activate([FromForm] IFormCollection form)
+        {
+            var userName = form["userName"].ToString();
+
+            var userManager = (UserManager<IdentityUser>)services.GetService(typeof(UserManager<IdentityUser>));
+            var existedUser = await userManager.FindByNameAsync(userName);
+
+            if (existedUser == null)
+            {
+                return new ContentResult
+                {
+                    StatusCode = Convert.ToInt32(HttpStatusCode.BadRequest),
+                    Content = "USER001"
+                };
+            }
+
+            existedUser.PhoneNumberConfirmed = true;
+
+            var result = await userManager.UpdateAsync(existedUser);
+
+            if (!result.Succeeded)
+            {
+                return new ContentResult
+                {
+                    StatusCode = Convert.ToInt32(HttpStatusCode.InternalServerError),
+                    Content = result.Errors?.FirstOrDefault()?.Description
+                };
+            }
+
+            return Ok();
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("password/change")]
+        public async Task<IActionResult> ChangePassword([FromForm] IFormCollection form)
+        {
+            var currentPassword = form["currentPassword"].ToString();
+            var password = form["password"].ToString();
+            var userName = User.Identity.Name;
+
+            var userManager = (UserManager<IdentityUser>)services.GetService(typeof(UserManager<IdentityUser>));
+            var existedUser = await userManager.FindByNameAsync(userName);
+
+            if (existedUser == null)
+            {
+                return new ContentResult
+                {
+                    StatusCode = Convert.ToInt32(HttpStatusCode.BadRequest),
+                    Content = "USER001"
+                };
+            }
+
+            var result = await userManager.ChangePasswordAsync(existedUser, currentPassword, password);
+
+            if (!result.Succeeded)
+            {
+                return new ContentResult
+                {
+                    StatusCode = Convert.ToInt32(HttpStatusCode.InternalServerError),
+                    Content = result.Errors?.FirstOrDefault()?.Description
+                };
+            }
+
+            return Ok();
         }
     }
 }

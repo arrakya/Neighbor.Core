@@ -1,11 +1,14 @@
 ﻿using Neighbor.Core.Domain.Models.Security;
 using Neighbor.Mobile.NativeHelpers;
+using Neighbor.Mobile.Services.Net;
 using Neighbor.Mobile.Validation;
 using Neighbor.Mobile.ViewModels.Base;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace Neighbor.Mobile.ViewModels
@@ -46,13 +49,20 @@ namespace Neighbor.Mobile.ViewModels
         public Command ValidateUserNameCommand { get; set; }
         public Command ValidatePasswordCommand { get; set; }
         public Command TapLoginLabelCommand { get; set; }
+        public Command ForgetPasswordCommand { get; set; }
+        public Command RequestPINCommand { get; set; }
+
+        public delegate void RequestPINHandler(object sender, string reference, string phoneNumber);
+        public delegate void RequestPINErrorHandler(object sender, string errorMessage);
+        public delegate void LoginErrorHandler(LoginViewModel sender, string errorMessage);
 
         public event EventHandler OnLoginSuccess;
         public event EventHandler OnTapLoginLabel;
         public event EventHandler OnClickRegister;
-
-        public delegate void LoginErrorHandler(LoginViewModel sender, string errorMessage);
+        public event EventHandler OnForgetPassword;
+        public event RequestPINHandler OnRequestPIN;
         public event LoginErrorHandler OnLoginError;
+        public event RequestPINErrorHandler OnRequestPINError;
 
         public LoginViewModel()
         {
@@ -80,6 +90,54 @@ namespace Neighbor.Mobile.ViewModels
             });
 
             TapLoginLabelCommand = new Command(() => OnTapLoginLabel?.Invoke(this, null));
+            ForgetPasswordCommand = new Command(() => OnForgetPassword?.Invoke(this, null));
+            RequestPINCommand = new Command(async (obj) => await RequestPIN(obj.ToString()));
+        }
+
+        private async Task RequestPIN(string phoneNumber)
+        {
+            IsBusy = true;
+
+            var cancellationTokenSource = new CancellationTokenSource();
+            var httpClientService = DependencyService.Resolve<HttpClientService>(DependencyFetchTarget.NewInstance);
+            var createBasicHttpClientResult = await httpClientService.CreateBasicHttpClientAsync(HttpClientService.ClientType.Identity);
+
+            if (!createBasicHttpClientResult.IsReady)
+            {
+                IsBusy = false;
+                return;
+            }
+
+            var httpClient = createBasicHttpClientResult.HttpClient;
+            var response = await httpClient.GetAsync($"pin/generate/{phoneNumber}");
+            var responseString = await response.Content.ReadAsStringAsync();
+            var jsonSerializerOption = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+            var requestPINResult = JsonSerializer.Deserialize<GeneratePINResultModel>(responseString, jsonSerializerOption);
+
+            if (!requestPINResult.IsSuccess)
+            {
+                var errorMessage = requestPINResult.Message;
+                switch (requestPINResult.Code)
+                {
+                    case "PIN0002":
+                        errorMessage = "Phone number not found";
+                        break;
+                    case "PIN0003":
+                        errorMessage = "Too many time request. Please try again in next 24 hrs.";
+                        break;
+                }
+
+                OnRequestPINError?.Invoke(this, errorMessage);
+                IsBusy = false;
+
+                return;
+            }
+
+            var pinReference = requestPINResult.Reference;
+
+            OnRequestPIN?.Invoke(this, pinReference, phoneNumber);
+
+            IsBusy = false;
         }
 
         public bool ValidateProperty<T>(ValidatableObject<T> property)
@@ -103,7 +161,16 @@ namespace Neighbor.Mobile.ViewModels
         {
             IsBusy = true;
 
-            var httpClient = GetBasicHttpClient(ClientTypeName.Identity);
+            var httpClientService = DependencyService.Resolve<HttpClientService>(DependencyFetchTarget.NewInstance);
+            var createBasicHttpClientResult = await httpClientService.CreateBasicHttpClientAsync(HttpClientService.ClientType.Identity);
+
+            if (!createBasicHttpClientResult.IsReady)
+            {
+                IsBusy = false;
+                return;
+            }
+
+            var httpClient = createBasicHttpClientResult.HttpClient;
             var request = new FormUrlEncodedContent(new[]
             {
                 new KeyValuePair<string,string>("grant_type","password"),

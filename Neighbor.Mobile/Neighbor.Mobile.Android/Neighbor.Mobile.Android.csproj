@@ -74,6 +74,7 @@
   <ItemGroup>
     <Compile Include="AppversionHelper.cs" />
     <Compile Include="AssetsProvider.cs" />
+    <Compile Include="CustomRenderers\HtmlLabelRenderer.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -84,6 +85,8 @@
     <AndroidAsset Include="Assets\FontAwesome5BrandsRegular400.otf" />
     <AndroidAsset Include="Assets\FontAwesome5FreeRegular400.otf" />
     <AndroidAsset Include="Assets\FontAwesome5FreeSolid900.otf" />
+    <None Include="appcenter-post-build.sh" />
+    <None Include="appcenter-pre-build.sh" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
     <None Include="Properties\AndroidManifest.xml" />
@@ -118,7 +121,7 @@
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties XamarinHotReloadUnhandledDeviceExceptionNeighborMobileAndroidHideInfoBar="True" TriggeredFromHotReload="False" />
+      <UserProperties TriggeredFromHotReload="False" XamarinHotReloadUnhandledDeviceExceptionNeighborMobileAndroidHideInfoBar="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

@@ -27,6 +27,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Neighbor.Server.ApiGateway", "Neighbor.Server.ApiGateway", "{EACCAE06-6657-4E51-91CB-80A344BC5855}"
 	ProjectSection(SolutionItems) = preProject
 		Neighbor.Server\Neighbor.Server.ApiGateway\Dockerfile = Neighbor.Server\Neighbor.Server.ApiGateway\Dockerfile
+		Jenkinsfile.txt = Jenkinsfile.txt
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "etc_nginx_confd", "etc_nginx_confd", "{E5D26263-B789-4812-B104-60772E367F86}"
@@ -35,6 +36,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "etc_nginx_confd", "etc_ngin
 		Neighbor.Server\Neighbor.Server.ApiGateway\etc_nginx_confd\neighbor-prod.conf = Neighbor.Server\Neighbor.Server.ApiGateway\etc_nginx_confd\neighbor-prod.conf
 		Neighbor.Server\Neighbor.Server.ApiGateway\etc_nginx_confd\neighbor-sit.conf = Neighbor.Server\Neighbor.Server.ApiGateway\etc_nginx_confd\neighbor-sit.conf
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neighbor.Mobile.UITest", "Neighbor.Mobile\Neighbor.Mobile.UITest\Neighbor.Mobile.UITest.csproj", "{CD0EF9CD-D403-44BF-B9DC-7F5DB1C0D0A2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -122,6 +125,18 @@ Global
 		{F87D2C77-7116-4702-85A8-AD5F8967C8DD}.Release|iPhone.Build.0 = Release|Any CPU
 		{F87D2C77-7116-4702-85A8-AD5F8967C8DD}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{F87D2C77-7116-4702-85A8-AD5F8967C8DD}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{CD0EF9CD-D403-44BF-B9DC-7F5DB1C0D0A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD0EF9CD-D403-44BF-B9DC-7F5DB1C0D0A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD0EF9CD-D403-44BF-B9DC-7F5DB1C0D0A2}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{CD0EF9CD-D403-44BF-B9DC-7F5DB1C0D0A2}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{CD0EF9CD-D403-44BF-B9DC-7F5DB1C0D0A2}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{CD0EF9CD-D403-44BF-B9DC-7F5DB1C0D0A2}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{CD0EF9CD-D403-44BF-B9DC-7F5DB1C0D0A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD0EF9CD-D403-44BF-B9DC-7F5DB1C0D0A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD0EF9CD-D403-44BF-B9DC-7F5DB1C0D0A2}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{CD0EF9CD-D403-44BF-B9DC-7F5DB1C0D0A2}.Release|iPhone.Build.0 = Release|Any CPU
+		{CD0EF9CD-D403-44BF-B9DC-7F5DB1C0D0A2}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{CD0EF9CD-D403-44BF-B9DC-7F5DB1C0D0A2}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -135,6 +150,7 @@ Global
 		{F87D2C77-7116-4702-85A8-AD5F8967C8DD} = {E6842ADC-E320-4E58-AAAD-CE82B3A294DA}
 		{EACCAE06-6657-4E51-91CB-80A344BC5855} = {E6842ADC-E320-4E58-AAAD-CE82B3A294DA}
 		{E5D26263-B789-4812-B104-60772E367F86} = {EACCAE06-6657-4E51-91CB-80A344BC5855}
+		{CD0EF9CD-D403-44BF-B9DC-7F5DB1C0D0A2} = {B8E5D408-F5FF-44AB-A37A-FFA61CFA2CD8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {59130B6D-3637-4C7E-A587-5B5CAC809A58}

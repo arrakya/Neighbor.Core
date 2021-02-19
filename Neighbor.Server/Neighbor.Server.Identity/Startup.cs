@@ -11,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Neighbor.Server.Identity.Data;
+using Neighbor.Server.Identity.Services;
 using Neighbor.Server.Identity.Services.Interfaces;
 using System;
 using System.Security.Cryptography.X509Certificates;
@@ -50,7 +51,7 @@ namespace Neighbor.Server.Identity
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequiredLength = 8;
-            }).AddEntityFrameworkStores<IdentityDbContext>();
+            }).AddEntityFrameworkStores<IdentityDbContext>().AddDefaultTokenProviders();
 
             services.AddAuthorization(options =>
             {
@@ -88,6 +89,7 @@ namespace Neighbor.Server.Identity
                 .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("Basic", null);
 
             services.AddTransient<ITokenService, TokenService>();
+            services.AddTransient<IPINService, PINService>();
 
             services.AddControllers();
         }
