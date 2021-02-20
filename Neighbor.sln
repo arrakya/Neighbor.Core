@@ -33,7 +33,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "etc_nginx_confd", "etc_nginx_confd", "{E5D26263-B789-4812-B104-60772E367F86}"
 	ProjectSection(SolutionItems) = preProject
 		Neighbor.Server\Neighbor.Server.ApiGateway\etc_nginx_confd\default.conf = Neighbor.Server\Neighbor.Server.ApiGateway\etc_nginx_confd\default.conf
-		Neighbor.Server\Neighbor.Server.ApiGateway\etc_nginx_confd\neighbor-prod.conf = Neighbor.Server\Neighbor.Server.ApiGateway\etc_nginx_confd\neighbor-prod.conf
+		Neighbor.Server\Neighbor.Server.ApiGateway\etc_nginx_confd\neighbor-Production.conf = Neighbor.Server\Neighbor.Server.ApiGateway\etc_nginx_confd\neighbor-Production.conf
 		Neighbor.Server\Neighbor.Server.ApiGateway\etc_nginx_confd\neighbor-sit.conf = Neighbor.Server\Neighbor.Server.ApiGateway\etc_nginx_confd\neighbor-sit.conf
 	EndProjectSection
 EndProject
