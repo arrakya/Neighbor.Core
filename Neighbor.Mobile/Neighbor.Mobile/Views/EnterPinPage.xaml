@@ -21,7 +21,8 @@
             <Button AutomationId="EnterPIN_SubmitButton"
                     Text="Save"                     
                     Command="{Binding SubmitPINCommand}"></Button>
-            <Button Text="Cancel"
+            <Button AutomationId="EnterPIN_CancelButton"
+                    Text="Cancel"
                     Command="{Binding CancelSubmitPINCommand}"
                     Style="{StaticResource SecondaryButton}"></Button>
         </StackLayout>

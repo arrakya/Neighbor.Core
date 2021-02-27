@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Neighbor.Server.Identity.Services.Interfaces;
+using Neighbor.Server.Identity.Services.Models;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -56,25 +57,35 @@ namespace Neighbor.Server.Identity
             return userName;
         }
 
-        public async Task<string> CreateRefreshTokenAsync(string username, string password)
+        public async Task<CreateRefreshTokenResult> CreateRefreshTokenAsync(string username, string password)
         {
             var userManager = (UserManager<IdentityUser>)services.GetService(typeof(UserManager<IdentityUser>));
             var userIdentity = await userManager.FindByNameAsync(username.ToUpper().Normalize());
+            var result = new CreateRefreshTokenResult();
 
             if (userIdentity == null)
             {
-                return default;
+                result.FailCase = CreateRefreshTokenResult.FailCases.UserNotFound;
+                result.Message = "User Not Found";
+
+                return result;
             }
 
             var isPasswordValid = await userManager.CheckPasswordAsync(userIdentity, password);
             if (!isPasswordValid)
             {
-                return default;
+                result.FailCase = CreateRefreshTokenResult.FailCases.WrongCredential;
+                result.Message = "Wrong Password";
+
+                return result;
             }
 
             if (!userIdentity.EmailConfirmed && !userIdentity.PhoneNumberConfirmed)
             {
-                return default;
+                result.FailCase = CreateRefreshTokenResult.FailCases.FailAccountNotConfirm;
+                result.Message = "Account not confirmed";
+
+                return result;
             }
 
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -100,7 +111,9 @@ namespace Neighbor.Server.Identity
             await userManager.RemoveAuthenticationTokenAsync(userIdentity, "neighbor", "refresh_token");
             await userManager.SetAuthenticationTokenAsync(userIdentity, "neighbor", "refresh_token", tokenString);
 
-            return tokenString;
+            result.Context = tokenString;
+
+            return result;
         }
 
         public async Task<string> CreateAccessTokenAsync(string refreshToken)

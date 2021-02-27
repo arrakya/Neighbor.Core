@@ -179,16 +179,16 @@ namespace Neighbor.Mobile.ViewModels
             });
 
             var response = await httpClient.PostAsync("user/oauth/token", request);
+            var content = await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode)
             {
-                OnLoginError?.Invoke(this, "Login fail");
+                OnLoginError?.Invoke(this, content);
                 IsBusy = false;
                 return;
             }
 
-            var tokenString = await response.Content.ReadAsStringAsync();
-            var tokens = JsonSerializer.Deserialize<TokensModel>(tokenString);
+            var tokens = JsonSerializer.Deserialize<TokensModel>(content);
 
             App.RefreshToken = tokens.refresh_token;
             App.AccessToken = tokens.access_token;

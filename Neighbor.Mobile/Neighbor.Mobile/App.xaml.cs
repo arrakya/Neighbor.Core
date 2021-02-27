@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Neighbor.Mobile.NativeHelpers;
 using Neighbor.Mobile.Services;
 using Neighbor.Mobile.Services.Net;
-using Neighbor.Mobile.ViewModels.Base;
 using System;
 using System.Linq;
 using System.Net.Http;
@@ -17,13 +16,13 @@ namespace Neighbor.Mobile
 {
     public partial class App : Xamarin.Forms.Application
     {
-        public static bool IsProductionVersion
+        public static string BranchVersion
         {
             get
             {
                 var appVersionHelper = DependencyService.Resolve<IAppVersionHelper>(DependencyFetchTarget.NewInstance);
 
-                return appVersionHelper.AppVersion.ToLower().Contains("master");
+                return appVersionHelper.AppVersion.ToLower();
             }
         }
 
@@ -31,34 +30,12 @@ namespace Neighbor.Mobile
         {
             get
             {
-                var releaseVersion = Preferences.Get("ReleaseVersion", "SIT");
-
-                if (IsProductionVersion)
-                {
-                    return "Production";
-                }
-                else if (releaseVersion == "SIT")
-                {
-                    return "SIT";
-                }
-
-                return "Development";
+                var releaseVersion = Preferences.Get("ReleaseVersion", "Production");                
+                return releaseVersion;
             }
             set
             {
-                Preferences.Set("ReleaseVersion", value);
-
-                ServerAddress = "10.0.2.2";
-
-                switch (value)
-                {
-                    case "SIT":
-                        ServerAddress = "arrakya.thddns.net:4431";
-                        break;
-                    case "Production":
-                        ServerAddress = "arrakya.thddns.net:443";
-                        break;
-                }
+                Preferences.Set("ReleaseVersion", value);                
             }
         }
 
@@ -82,10 +59,15 @@ namespace Neighbor.Mobile
 
         public static string ServerAddress
         {
-            get => Preferences.Get("ServerAddress", string.Empty);
-            set
+            get
             {
-                Preferences.Set("ServerAddress", value);
+                switch (ReleaseVersion)
+                {
+                    //case "SIT": return "arrakya.thddns.net:4431";
+                    case "SIT": return "192.168.1.145:4431";
+                    case "Production": return "arrakya.thddns.net:443";
+                    default: return "10.0.2.2";
+                };
             }
         }
 
@@ -93,16 +75,13 @@ namespace Neighbor.Mobile
         {
             get
             {
-                var identityBaseAddress = $"https://{ServerAddress}:6001";
-                switch (ReleaseVersion)
+                var identityBaseAddress = $"https://{ServerAddress}/neighbor/identity/"; 
+
+                if(ReleaseVersion == "Development")
                 {
-                    case "SIT":
-                        identityBaseAddress = $"https://{ServerAddress}/neighbor/identity/";
-                        break;
-                    case "Production":
-                        identityBaseAddress = $"https://{ServerAddress}/neighbor/identity/";
-                        break;
+                    identityBaseAddress = $"https://{ServerAddress}:6001";
                 }
+
                 return identityBaseAddress;
             }
         }
@@ -111,32 +90,26 @@ namespace Neighbor.Mobile
         {
             get
             {
-                var financeBaseAddress = $"https://{ServerAddress}:5001";
-                switch (ReleaseVersion)
+                var identityBaseAddress = $"https://{ServerAddress}/neighbor/finance/";
+
+                if (ReleaseVersion == "Development")
                 {
-                    case "SIT":
-                        financeBaseAddress = $"https://{ServerAddress}/neighbor/finance/";
-                        break;
-                    case "Production":
-                        financeBaseAddress = $"https://{ServerAddress}/neighbor/finance/";
-                        break;
+                    identityBaseAddress = $"https://{ServerAddress}:5001/";
                 }
-                return financeBaseAddress;
+
+                return identityBaseAddress;
             }
         }
 
         public App()
         {
-            ServerAddress = "10.0.2.2";
-
-            switch (ReleaseVersion)
+            if (BranchVersion.Contains("master"))
             {
-                case "SIT":
-                    ServerAddress = "arrakya.thddns.net:4431";
-                    break;
-                case "Production":
-                    ServerAddress = "arrakya.thddns.net:443";
-                    break;
+                Preferences.Set("ReleaseVersion", "Production");
+            }
+            else
+            {
+                Preferences.Set("ReleaseVersion", "SIT");
             }
 
             InitializeComponent();

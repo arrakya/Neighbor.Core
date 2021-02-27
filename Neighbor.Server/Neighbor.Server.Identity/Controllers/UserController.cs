@@ -52,12 +52,22 @@ namespace Neighbor.Server.Identity.Controllers
                     var username = form["username"].ToString();
                     var password = form["password"].ToString();
 
-                    refreshToken = await tokenService.CreateRefreshTokenAsync(username, password);
+                    var createRefreshTokenResult = await tokenService.CreateRefreshTokenAsync(username, password);
 
-                    if (string.IsNullOrEmpty(refreshToken))
+                    if (!createRefreshTokenResult.IsSuccess)
                     {
-                        return new ContentResult { Content = "Invalid Credential", StatusCode = Convert.ToInt16(HttpStatusCode.Unauthorized), ContentType = "text/plain" };
+                        return createRefreshTokenResult.FailCase switch
+                        {
+                            Services.Models.CreateRefreshTokenResult.FailCases.WrongCredential
+                                => new ContentResult { Content = createRefreshTokenResult.Message, StatusCode = Convert.ToInt16(HttpStatusCode.Unauthorized), ContentType = "text/plain" },
+                            Services.Models.CreateRefreshTokenResult.FailCases.FailAccountNotConfirm 
+                                => new ContentResult { Content = createRefreshTokenResult.Message, StatusCode = Convert.ToInt16(HttpStatusCode.Forbidden), ContentType = "text/plain" },
+                            _
+                                => new ContentResult { Content = createRefreshTokenResult.Message, StatusCode = Convert.ToInt16(HttpStatusCode.BadRequest), ContentType = "text/plain" }
+                        }; 
                     }
+
+                    refreshToken = createRefreshTokenResult.Context;
 
                     break;
                 case "refresh_token":

@@ -61,7 +61,7 @@ namespace Neighbor.Mobile.Views
 
         private async void ViewModel_OnCancelSubmitPIN(object sender, EventArgs e)
         {
-            await Shell.Current.Navigation.PopModalAsync(true);
+            await Shell.Current.Navigation.PopToRootAsync(true);
         }
     }
 }

@@ -49,5 +49,26 @@ namespace Neighbor.Mobile.UITest.Tests
             enterPINScene.Play();
             loginScene.Play();
         }
+
+        [Test]
+        public void RegisterButNotConfirm()
+        {
+            var tcScene = new TermAndConditionScene(app);
+            var registerAccountScene = new RegisterAccountScene(app);
+            var registerUserInfoScene = new RegisterUserInfoScene(app);
+            var enterPINScene = new EnterPINScene(app);
+            var loginScene = new LoginScene(app);
+            AppQuery registerNavLink(AppQuery c) => c.Marked("Register_NavLink");
+
+            app.Tap(registerNavLink);
+
+            tcScene.Play();
+            registerAccountScene.Play();
+            registerUserInfoScene.Play();
+            enterPINScene.PlayCancel();
+            loginScene.Play();
+
+            app.Query("Account not confirmed");            
+        }
     }
 }

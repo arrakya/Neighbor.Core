@@ -71,7 +71,7 @@ namespace Neighbor.Mobile.Views
 
         private async void ViewModel_OnTapLoginLabel(object sender, System.EventArgs e)
         {
-            if (App.IsProductionVersion)
+            if (App.BranchVersion.Contains("master"))
             {
                 return;
             }
@@ -80,7 +80,7 @@ namespace Neighbor.Mobile.Views
 
         private void ViewModel_OnLoginError(LoginViewModel sender, string errorMessage)
         {
-            DisplayAlert("Fail", "Unauthorized", "Close");
+            DisplayAlert("Fail", errorMessage, "Close");
         }
 
         private async void ViewModel_OnLoginSuccess(object sender, System.EventArgs e)

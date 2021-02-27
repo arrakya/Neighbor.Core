@@ -22,5 +22,12 @@ namespace Neighbor.Mobile.UITest.Scenes.User
 
             app.Tap(EnterPIN_SubmitButton);
         }
+
+        public void PlayCancel()
+        {
+            app.WaitForElement("EnterPIN_CancelButton");
+
+            app.Tap("EnterPIN_CancelButton");
+        }
     }
 }
